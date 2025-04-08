@@ -25,6 +25,15 @@ import ParentMessages from "./pages/parent/Messages";
 import ParentPayments from "./pages/parent/Payments";
 import ParentReports from "./pages/parent/Reports";
 
+// Teacher Dashboard
+import TeacherDashboard from "./pages/teacher/Dashboard";
+import TeacherAttendance from "./pages/teacher/Attendance";
+import TeacherAssignments from "./pages/teacher/Assignments";
+import TeacherExams from "./pages/teacher/Exams";
+import TeacherResources from "./pages/teacher/Resources";
+import TeacherMessages from "./pages/teacher/Messages";
+import TeacherSettings from "./pages/teacher/Settings";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -54,8 +63,15 @@ const App = () => (
             <Route path="/parent/reports" element={<ParentReports />} />
             <Route path="/parent/messages/:id" element={<ParentMessages />} />
             
-            {/* Teacher Dashboard Routes - Future Implementation */}
-            {/* <Route path="/teacher/dashboard" element={<TeacherDashboard />} /> */}
+            {/* Teacher Dashboard Routes */}
+            <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+            <Route path="/teacher/assignments" element={<TeacherAssignments />} />
+            <Route path="/teacher/exams" element={<TeacherExams />} />
+            <Route path="/teacher/resources" element={<TeacherResources />} />
+            <Route path="/teacher/messages" element={<TeacherMessages />} />
+            <Route path="/teacher/settings" element={<TeacherSettings />} />
+            <Route path="/teacher/messages/:id" element={<TeacherMessages />} />
             
             {/* Catch-all route for 404 */}
             <Route path="*" element={<NotFound />} />
