@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -36,12 +35,25 @@ import {
   Monitor, 
   FileText, 
   Calendar, 
-  CheckCheck 
+  CheckCheck,
+  GraduationCap,
+  School,
+  Music,
+  Code,
+  Palette,
+  Trophy,
+  Puzzle,
+  Book,
+  Brain,
 } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
 
 const Admission = () => {
   const [activeStep, setActiveStep] = useState(1);
+  const [activeProgramTab, setActiveProgramTab] = useState("early-years");
+  const [selectedProgram, setSelectedProgram] = useState(0);
 
   const testimonials = [
     {
@@ -90,24 +102,6 @@ const Admission = () => {
     },
   ];
 
-  const programs = [
-    {
-      title: "Early Years (Ages 3-5)",
-      description: "Foundation for lifelong learning through play-based activities and early literacy development.",
-      features: ["Play-based learning", "Early literacy", "Social skills development", "Introduction to technology"]
-    },
-    {
-      title: "Primary School (Ages 6-11)",
-      description: "Comprehensive curriculum focusing on core subjects while fostering creativity and critical thinking.",
-      features: ["Core academics", "Project-based learning", "Digital literacy", "Arts and physical education"]
-    },
-    {
-      title: "Secondary School (Ages 12-18)",
-      description: "Rigorous academic program preparing students for university with specialized tracks available.",
-      features: ["Advanced academics", "Specialized tracks", "College preparation", "Leadership opportunities"]
-    },
-  ];
-
   const admissionSteps = [
     {
       title: "Apply Online",
@@ -135,6 +129,105 @@ const Admission = () => {
       icon: <Calendar className="h-10 w-10 text-primary" />,
     },
   ];
+
+  const programs = [
+    {
+      id: "early-years",
+      title: "Early Years (Ages 3-5)",
+      description: "A nurturing foundation for lifelong learning through play-based activities and early literacy development.",
+      icon: <School className="h-16 w-16 text-primary" />,
+      features: ["Play-based learning", "Early literacy", "Social skills development", "Introduction to technology"],
+      curriculum: [
+        {
+          name: "Playful Learning",
+          description: "Children learn fundamental concepts through guided play activities."
+        },
+        {
+          name: "Early Literacy",
+          description: "Introduction to phonics, storytelling, and print awareness."
+        },
+        {
+          name: "Number Sense",
+          description: "Basic counting, patterns, and spatial awareness through games."
+        },
+        {
+          name: "Creative Expression",
+          description: "Art, music, and movement activities to develop motor skills."
+        }
+      ],
+      activities: ["Music & Movement", "Art Studio", "Nature Exploration", "Dramatic Play"],
+      success: "Our Early Years program has been recognized for excellence in early childhood education, with 97% of parents reporting their children transition smoothly to primary school."
+    },
+    {
+      id: "primary",
+      title: "Primary School (Ages 6-11)",
+      description: "A comprehensive curriculum focusing on core subjects while fostering creativity and critical thinking skills.",
+      icon: <Book className="h-16 w-16 text-primary" />,
+      features: ["Core academics", "Project-based learning", "Digital literacy", "Arts and physical education"],
+      curriculum: [
+        {
+          name: "Core Subjects",
+          description: "Strong foundation in literacy, mathematics, science, and social studies."
+        },
+        {
+          name: "Project-Based Learning",
+          description: "Interdisciplinary projects that develop research and collaboration skills."
+        },
+        {
+          name: "Technology Integration",
+          description: "Digital literacy and responsible technology use integrated across subjects."
+        },
+        {
+          name: "Languages",
+          description: "Second language instruction starting from Grade 1."
+        }
+      ],
+      activities: ["Robotics Club", "Young Scientists", "Chess Club", "Sports Teams"],
+      success: "Our Primary students consistently score in the top 15% nationally in standardized assessments, with exceptional growth in critical thinking skills."
+    },
+    {
+      id: "secondary",
+      title: "Secondary School (Ages 12-18)",
+      description: "A rigorous academic program preparing students for university with specialized tracks available.",
+      icon: <GraduationCap className="h-16 w-16 text-primary" />,
+      features: ["Advanced academics", "Specialized tracks", "College preparation", "Leadership opportunities"],
+      curriculum: [
+        {
+          name: "Advanced Placement",
+          description: "College-level courses with potential for university credit."
+        },
+        {
+          name: "STEM Excellence",
+          description: "Advanced mathematics, computer science, and scientific research."
+        },
+        {
+          name: "Humanities Pathway",
+          description: "Literature, philosophy, history, and social sciences."
+        },
+        {
+          name: "Career Preparation",
+          description: "Internships, career exploration, and professional skill development."
+        }
+      ],
+      activities: ["Debate Team", "Model UN", "Entrepreneurship Club", "Advanced Research"],
+      success: "95% of our graduates are accepted to their first-choice universities, with over $3.2 million in scholarships awarded last year."
+    },
+  ];
+
+  const programIcons = {
+    "Music & Movement": <Music className="h-5 w-5" />,
+    "Art Studio": <Palette className="h-5 w-5" />,
+    "Nature Exploration": <School className="h-5 w-5" />,
+    "Dramatic Play": <Puzzle className="h-5 w-5" />,
+    "Robotics Club": <Code className="h-5 w-5" />,
+    "Young Scientists": <Brain className="h-5 w-5" />,
+    "Chess Club": <Puzzle className="h-5 w-5" />,
+    "Sports Teams": <Trophy className="h-5 w-5" />,
+    "Debate Team": <MessageSquare className="h-5 w-5" />,
+    "Model UN": <Users className="h-5 w-5" />,
+    "Entrepreneurship Club": <Trophy className="h-5 w-5" />,
+    "Advanced Research": <Brain className="h-5 w-5" />,
+  };
 
   return (
     <MainLayout>
@@ -244,53 +337,156 @@ const Admission = () => {
       </section>
 
       {/* Programs Offered */}
-      <section className="py-16 bg-muted/50">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Academic Programs</h2>
+      <section className="py-20 bg-gradient-to-b from-muted/30 to-background/80 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-primary/5 blur-3xl"></div>
+          <div className="absolute top-1/2 -right-24 w-80 h-80 rounded-full bg-secondary/5 blur-3xl"></div>
+          <div className="absolute -bottom-32 left-1/4 w-72 h-72 rounded-full bg-primary/5 blur-3xl"></div>
+        </div>
+        
+        <div className="container relative z-10">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary inline-block">
+              Our Academic Programs
+            </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive educational programs designed to nurture intellectual curiosity and academic excellence.
+              Comprehensive educational programs designed to nurture intellectual curiosity, 
+              develop character, and prepare students for future success in a rapidly changing world.
             </p>
           </div>
 
-          <Tabs defaultValue="early-years" className="w-full max-w-4xl mx-auto">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="early-years">Early Years</TabsTrigger>
-              <TabsTrigger value="primary">Primary School</TabsTrigger>
-              <TabsTrigger value="secondary">Secondary School</TabsTrigger>
-            </TabsList>
-            
-            {programs.map((program, index) => (
-              <TabsContent 
-                key={index} 
-                value={program.title.toLowerCase().replace(/\s+/g, '-')}
-                className="mt-6"
-              >
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="text-2xl font-semibold mb-3">{program.title}</h3>
-                    <p className="mb-6 text-muted-foreground">{program.description}</p>
+          <div className="mb-12 max-w-md mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              {programs.map((program, index) => (
+                <button 
+                  key={index}
+                  onClick={() => {
+                    setSelectedProgram(index);
+                    setActiveProgramTab(program.id);
+                  }}
+                  className={cn(
+                    "flex flex-col items-center transition-all duration-300 transform",
+                    selectedProgram === index 
+                      ? "scale-110 text-primary" 
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <div className={cn(
+                    "p-3 rounded-full mb-2 transition-colors duration-300",
+                    selectedProgram === index 
+                      ? "bg-primary/10" 
+                      : "bg-transparent"
+                  )}>
+                    {program.icon}
+                  </div>
+                  <span className="text-sm font-medium">{program.title.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+            <Slider 
+              value={[selectedProgram]} 
+              min={0} 
+              max={programs.length - 1} 
+              step={1}
+              onValueChange={(value) => {
+                setSelectedProgram(value[0]);
+                setActiveProgramTab(programs[value[0]].id);
+              }}
+              className="mt-4"
+            />
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            <Tabs value={activeProgramTab} onValueChange={setActiveProgramTab} className="w-full">
+              <TabsList className="hidden">
+                {programs.map((program) => (
+                  <TabsTrigger key={program.id} value={program.id}>
+                    {program.title}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
+              {programs.map((program) => (
+                <TabsContent 
+                  key={program.id} 
+                  value={program.id}
+                  className="mt-6 focus:outline-none"
+                >
+                  <Card className="overflow-hidden border-0 shadow-lg animate-fade-in">
+                    <div className="bg-gradient-to-r from-primary/90 to-secondary/90 text-white p-6 md:p-8">
+                      <h3 className="text-2xl md:text-3xl font-bold mb-2 animate-fade-in">{program.title}</h3>
+                      <p className="opacity-90 animate-fade-in">{program.description}</p>
+                    </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {program.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                          <CheckCircle className="h-5 w-5 text-primary" />
-                          <span>{feature}</span>
+                    <CardContent className="p-6 md:p-8">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="space-y-6 animate-fade-in">
+                          <div>
+                            <h4 className="text-xl font-semibold mb-4 flex items-center">
+                              <BookOpen className="h-5 w-5 mr-2 text-primary" />
+                              Curriculum Highlights
+                            </h4>
+                            <div className="space-y-4">
+                              {program.curriculum.map((item, idx) => (
+                                <div 
+                                  key={idx} 
+                                  className="p-4 bg-muted/50 rounded-lg hover:bg-muted/80 transition-colors"
+                                  style={{ animationDelay: `${idx * 100}ms` }}
+                                >
+                                  <h5 className="font-medium mb-1">{item.name}</h5>
+                                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                    
-                    <div className="mt-6">
-                      <Button className="w-full sm:w-auto">
-                        Learn More
-                        <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            ))}
-          </Tabs>
+                        
+                        <div className="space-y-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
+                          <div>
+                            <h4 className="text-xl font-semibold mb-4 flex items-center">
+                              <Puzzle className="h-5 w-5 mr-2 text-primary" />
+                              Co-Curricular Activities
+                            </h4>
+                            <div className="grid grid-cols-2 gap-3">
+                              {program.activities.map((activity, idx) => (
+                                <div 
+                                  key={idx}
+                                  className="flex items-center gap-2 p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                                  style={{ animationDelay: `${idx * 100 + 300}ms` }}
+                                >
+                                  <div className="text-primary">
+                                    {programIcons[activity]}
+                                  </div>
+                                  <span className="text-sm font-medium">{activity}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          <div className="mt-6 animate-fade-in" style={{ animationDelay: '500ms' }}>
+                            <h4 className="text-xl font-semibold mb-4 flex items-center">
+                              <Trophy className="h-5 w-5 mr-2 text-primary" />
+                              Student Success
+                            </h4>
+                            <div className="p-4 border border-primary/20 bg-primary/5 rounded-lg">
+                              <p className="italic">{program.success}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="pt-4 animate-fade-in" style={{ animationDelay: '600ms' }}>
+                            <Button className="w-full sm:w-auto group">
+                              Learn More About {program.title.split(' ')[0]} Program
+                              <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              ))}
+            </Tabs>
+          </div>
         </div>
       </section>
 
@@ -358,10 +554,8 @@ const Admission = () => {
           </div>
 
           <div className="relative max-w-4xl mx-auto">
-            {/* Progress Line */}
             <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-primary/30 z-0 transform -translate-x-1/2 hidden md:block"></div>
             
-            {/* Steps */}
             <div className="space-y-12">
               {admissionSteps.map((step, index) => (
                 <div 
@@ -370,12 +564,10 @@ const Admission = () => {
                     index % 2 === 1 ? 'md:flex-row-reverse' : ''
                   }`}
                 >
-                  {/* Step Number Circle */}
                   <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold z-10">
                     {index + 1}
                   </div>
                   
-                  {/* Step Content */}
                   <div className="flex-1 md:w-[calc(50%-3rem)]">
                     <Card className="h-full">
                       <CardContent className="p-6 flex flex-col md:flex-row items-center gap-4">
