@@ -1,4 +1,3 @@
-
 import { TeacherLayout } from "@/components/layout/teacher-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { 
   BookOpen, 
   FileText, 
-  FilePdf, 
   FileVideo, 
   Link as LinkIcon, 
   Search, 
@@ -41,7 +39,7 @@ const TeacherResources = () => {
   const getResourceIcon = (type: string) => {
     switch (type) {
       case "pdf":
-        return <FilePdf className="h-4 w-4 text-red-500" />;
+        return <FileText className="h-4 w-4 text-red-500" />;
       case "video":
         return <FileVideo className="h-4 w-4 text-blue-500" />;
       case "link":
@@ -295,7 +293,6 @@ const TeacherResources = () => {
           </TabsContent>
           
           <TabsContent value="documents" className="space-y-6">
-            {/* Similar content for documents tab */}
             <Card>
               <CardHeader>
                 <CardTitle>Document Resources</CardTitle>
@@ -338,7 +335,6 @@ const TeacherResources = () => {
           </TabsContent>
           
           <TabsContent value="videos" className="space-y-6">
-            {/* Similar content for videos tab */}
             <Card>
               <CardHeader>
                 <CardTitle>Video Resources</CardTitle>
@@ -379,7 +375,6 @@ const TeacherResources = () => {
           </TabsContent>
           
           <TabsContent value="links" className="space-y-6">
-            {/* Similar content for links tab */}
             <Card>
               <CardHeader>
                 <CardTitle>External Links</CardTitle>

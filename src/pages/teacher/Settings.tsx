@@ -18,6 +18,7 @@ import {
   History, 
   Laptop, 
   Lock, 
+  Plus,
   Save, 
   User, 
   UserCheck 

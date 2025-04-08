@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { FilePdf, FileText, FileVideo, Link as LinkIcon, Plus, Upload } from "lucide-react";
+import { FileText, FileVideo, Link as LinkIcon, Plus, Upload } from "lucide-react";
 
 interface ResourceSharingCardProps {
   isLoading?: boolean;
@@ -42,7 +42,7 @@ export function ResourceSharingCard({ isLoading = false }: ResourceSharingCardPr
   const getResourceIcon = (type: string) => {
     switch (type) {
       case "pdf":
-        return <FilePdf className="h-4 w-4 text-red-500" />;
+        return <FileText className="h-4 w-4 text-red-500" />;
       case "video":
         return <FileVideo className="h-4 w-4 text-blue-500" />;
       case "link":
