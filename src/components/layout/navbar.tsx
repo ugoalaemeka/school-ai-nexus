@@ -30,6 +30,9 @@ export function Navbar() {
           <Link to="/about" className="font-medium hover:text-primary transition-colors">
             About
           </Link>
+          <Link to="/admission" className="font-medium hover:text-primary transition-colors">
+            Admission
+          </Link>
           <Link to="/news" className="font-medium hover:text-primary transition-colors">
             News & Events
           </Link>
@@ -77,6 +80,13 @@ export function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               About
+            </Link>
+            <Link 
+              to="/admission" 
+              className="font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Admission
             </Link>
             <Link 
               to="/news" 

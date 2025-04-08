@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 // Public Pages
 import Index from "./pages/Index";
 import About from "./pages/About";
+import Admission from "./pages/Admission";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -47,6 +48,7 @@ const App = () => (
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
+            <Route path="/admission" element={<Admission />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             
