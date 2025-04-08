@@ -19,6 +19,12 @@ import StudentDashboard from "./pages/student/Dashboard";
 // Admin Dashboard
 import AdminDashboard from "./pages/admin/Dashboard";
 
+// Parent Dashboard
+import ParentDashboard from "./pages/parent/Dashboard";
+import ParentMessages from "./pages/parent/Messages";
+import ParentPayments from "./pages/parent/Payments";
+import ParentReports from "./pages/parent/Reports";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -41,11 +47,15 @@ const App = () => (
             {/* Admin Dashboard Routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             
+            {/* Parent Dashboard Routes */}
+            <Route path="/parent/dashboard" element={<ParentDashboard />} />
+            <Route path="/parent/messages" element={<ParentMessages />} />
+            <Route path="/parent/payments" element={<ParentPayments />} />
+            <Route path="/parent/reports" element={<ParentReports />} />
+            <Route path="/parent/messages/:id" element={<ParentMessages />} />
+            
             {/* Teacher Dashboard Routes - Future Implementation */}
             {/* <Route path="/teacher/dashboard" element={<TeacherDashboard />} /> */}
-            
-            {/* Parent Dashboard Routes - Future Implementation */}
-            {/* <Route path="/parent/dashboard" element={<ParentDashboard />} /> */}
             
             {/* Catch-all route for 404 */}
             <Route path="*" element={<NotFound />} />
