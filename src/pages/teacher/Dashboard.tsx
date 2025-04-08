@@ -8,6 +8,7 @@ import { ResourceSharingCard } from "@/components/teacher/resource-sharing-card"
 import { RecentMessagesCard } from "@/components/teacher/recent-messages-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FileText, Plus, Share, UserCheck } from "lucide-react";
 
 const TeacherDashboard = () => {
@@ -27,18 +28,50 @@ const TeacherDashboard = () => {
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-1 gap-3">
-                  <Button className="w-full justify-start" size="lg">
-                    <UserCheck className="mr-2 h-5 w-5" />
-                    Mark Attendance
-                  </Button>
-                  <Button className="w-full justify-start" size="lg">
-                    <FileText className="mr-2 h-5 w-5" />
-                    Upload Assignment
-                  </Button>
-                  <Button className="w-full justify-start" size="lg">
-                    <Share className="mr-2 h-5 w-5" />
-                    Share Resources
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="w-full justify-start" size="lg">
+                        <UserCheck className="mr-2 h-5 w-5" />
+                        Mark Attendance
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold">Quick Attendance</h3>
+                        <p className="text-muted-foreground mt-2">Mark attendance for your current class.</p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="w-full justify-start" size="lg">
+                        <FileText className="mr-2 h-5 w-5" />
+                        Upload Assignment
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold">Quick Assignment Upload</h3>
+                        <p className="text-muted-foreground mt-2">Upload a new assignment for your class.</p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="w-full justify-start" size="lg">
+                        <Share className="mr-2 h-5 w-5" />
+                        Share Resources
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold">Quick Resource Sharing</h3>
+                        <p className="text-muted-foreground mt-2">Share learning materials with your students.</p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
@@ -88,11 +121,35 @@ const TeacherDashboard = () => {
         </div>
         
         {/* Floating Action Button - Mobile Only */}
-        <div className="md:hidden fixed bottom-4 right-4 z-10">
-          <Button size="icon" className="h-14 w-14 rounded-full shadow-lg">
-            <Plus className="h-6 w-6" />
-          </Button>
-        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <div className="md:hidden fixed bottom-4 right-4 z-10">
+              <Button size="icon" className="h-14 w-14 rounded-full shadow-lg">
+                <Plus className="h-6 w-6" />
+              </Button>
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <div className="p-4">
+              <h3 className="text-lg font-semibold">Quick Actions</h3>
+              <p className="text-muted-foreground mt-2">Choose an action to perform.</p>
+              <div className="grid grid-cols-1 gap-2 mt-4">
+                <Button className="w-full justify-start" size="lg">
+                  <UserCheck className="mr-2 h-5 w-5" />
+                  Mark Attendance
+                </Button>
+                <Button className="w-full justify-start" size="lg">
+                  <FileText className="mr-2 h-5 w-5" />
+                  Upload Assignment
+                </Button>
+                <Button className="w-full justify-start" size="lg">
+                  <Share className="mr-2 h-5 w-5" />
+                  Share Resources
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </TeacherLayout>
   );

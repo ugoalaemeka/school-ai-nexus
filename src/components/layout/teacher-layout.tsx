@@ -116,11 +116,9 @@ export function TeacherLayout({ children }: TeacherLayoutProps) {
           <div className="container flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
               {/* Mobile Menu Trigger */}
-              <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
+              <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden">
+                <Menu className="h-6 w-6" />
+              </Button>
               
               {/* Logo - always visible */}
               <Link to="/" className="font-bold text-lg">
