@@ -18,9 +18,7 @@ import {
   Calendar,
   Trophy,
   ArrowUp,
-  Filter,
   Upload,
-  Download,
 } from "lucide-react";
 
 // Animation variants
@@ -484,3 +482,4 @@ const GalleryPage = () => {
 };
 
 export default GalleryPage;
+
