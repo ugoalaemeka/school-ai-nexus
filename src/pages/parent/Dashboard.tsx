@@ -305,41 +305,6 @@ const ParentDashboard = () => {
                   categories={["current", "previous"]}
                   colors={["violet", "blue"]}
                   valueFormatter={(value) => `${value}%`}
-                  customTooltip={(props) => {
-                    const { payload, active } = props;
-                    if (!active || !payload) return null;
-                    
-                    return (
-                      <div className="rounded-lg border bg-background p-2 shadow-sm">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div className="flex flex-col">
-                            <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Subject
-                            </span>
-                            <span className="font-bold text-sm">
-                              {payload[0]?.payload.subject}
-                            </span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Current Term
-                            </span>
-                            <span className="font-bold text-sm">
-                              {payload[0]?.value}%
-                            </span>
-                          </div>
-                          <div className="col-span-2 flex flex-col">
-                            <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Previous Term
-                            </span>
-                            <span className="font-bold text-sm">
-                              {payload[1]?.value}%
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
                 />
               </CardContent>
             </Card>

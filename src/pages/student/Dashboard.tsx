@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
@@ -31,7 +32,8 @@ import {
   Calendar as CalendarIcon,
   BookOpenCheck,
   BookmarkIcon,
-  Brain
+  Brain,
+  Download
 } from "lucide-react";
 
 // Type definitions

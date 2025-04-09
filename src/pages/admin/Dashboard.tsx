@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// Sample data for demonstration
 const recentEnrollments = [
   {
     id: 1,
@@ -125,11 +124,11 @@ const recentActivities = [
 ];
 
 const students = [
-  { id: 1, name: "Alice Smith", grade: "Grade 9A", attendance: "95%", fees: "Paid", performance: "Excellent" },
-  { id: 2, name: "Bob Johnson", grade: "Grade 10B", attendance: "88%", fees: "Partial", performance: "Good" },
-  { id: 3, name: "Charlie Brown", grade: "Grade 8C", attendance: "92%", fees: "Paid", performance: "Very Good" },
-  { id: 4, name: "Diana Prince", grade: "Grade 11A", attendance: "98%", fees: "Paid", performance: "Excellent" },
-  { id: 5, name: "Edward Martin", grade: "Grade 9B", attendance: "85%", fees: "Overdue", performance: "Average" },
+  { id: 1, name: "Alice Smith", grade: "Grade 9A", attendance: "95%", fees: "Paid", performance: "Excellent", status: "Active" },
+  { id: 2, name: "Bob Johnson", grade: "Grade 10B", attendance: "88%", fees: "Partial", performance: "Good", status: "Active" },
+  { id: 3, name: "Charlie Brown", grade: "Grade 8C", attendance: "92%", fees: "Paid", performance: "Very Good", status: "Active" },
+  { id: 4, name: "Diana Prince", grade: "Grade 11A", attendance: "98%", fees: "Paid", performance: "Excellent", status: "Active" },
+  { id: 5, name: "Edward Martin", grade: "Grade 9B", attendance: "85%", fees: "Overdue", performance: "Average", status: "Pending" },
 ];
 
 const teachers = [
@@ -139,7 +138,6 @@ const teachers = [
   { id: 4, name: "Dr. Thompson", subject: "History", classes: "3", students: "85" },
 ];
 
-// Attendance data for the chart
 const attendanceData = [
   { month: "Jan", attendance: 92 },
   { month: "Feb", attendance: 94 },
@@ -155,7 +153,6 @@ const attendanceData = [
   { month: "Dec", attendance: 90 },
 ];
 
-// Performance data for the chart
 const performanceData = [
   { name: "A", students: 65 },
   { name: "B", students: 115 },
@@ -164,7 +161,6 @@ const performanceData = [
   { name: "F", students: 8 },
 ];
 
-// Fee data for the chart
 const feeData = [
   { name: "Paid", value: 75 },
   { name: "Partial", value: 15 },
@@ -176,7 +172,6 @@ const AdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // Animation variants for Framer Motion
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
@@ -613,8 +608,6 @@ const AdminDashboard = () => {
                   <div className="h-64">
                     <PieChart
                       data={feeData}
-                      index="name"
-                      categories={["value"]}
                       colors={["green", "amber", "red"]}
                       valueFormatter={(value) => `${value}%`}
                       className="h-64"

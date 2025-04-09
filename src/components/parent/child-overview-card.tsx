@@ -5,10 +5,24 @@ import { Badge } from "@/components/ui/badge";
 import { User } from "lucide-react";
 
 interface ChildOverviewCardProps {
-  isLoading: boolean;
+  isLoading?: boolean;
+  childName?: string;
+  grade?: string;
+  avatarSrc?: string;
+  attendance?: string;
+  recentGrade?: string;
+  nextExam?: string;
 }
 
-export function ChildOverviewCard({ isLoading }: ChildOverviewCardProps) {
+export function ChildOverviewCard({ 
+  isLoading, 
+  childName = "Sarah Johnson", 
+  grade = "Grade 6-A", 
+  avatarSrc = "", 
+  attendance = "95%", 
+  recentGrade = "A", 
+  nextExam = "Math - April 15"
+}: ChildOverviewCardProps) {
   if (isLoading) {
     return (
       <Card className="col-span-1">
@@ -38,11 +52,15 @@ export function ChildOverviewCard({ isLoading }: ChildOverviewCardProps) {
       <CardContent>
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <User className="h-8 w-8 text-primary" />
+            {avatarSrc ? (
+              <img src={avatarSrc} alt={childName} className="h-16 w-16 rounded-full object-cover" />
+            ) : (
+              <User className="h-8 w-8 text-primary" />
+            )}
           </div>
           <div>
-            <div className="font-bold">Sarah Johnson</div>
-            <div className="text-sm text-muted-foreground">Grade 6-A</div>
+            <div className="font-bold">{childName}</div>
+            <div className="text-sm text-muted-foreground">{grade}</div>
             <div className="mt-1">
               <Badge className="bg-secondary hover:bg-secondary/90">ID: 2404875</Badge>
             </div>
