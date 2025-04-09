@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -105,6 +106,44 @@ const TableCaption = React.forwardRef<
 ))
 TableCaption.displayName = "TableCaption"
 
+const TableEmpty = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex justify-center items-center py-6 text-muted-foreground", className)}
+    {...props}
+  />
+))
+TableEmpty.displayName = "TableEmpty"
+
+const TableSearch = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }
+>(({ className, children, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center justify-between py-4", className)}
+    {...props}
+  >
+    {children}
+  </div>
+))
+TableSearch.displayName = "TableSearch"
+
+const TablePagination = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center justify-end space-x-2 py-4", className)}
+    {...props}
+  />
+))
+TablePagination.displayName = "TablePagination"
+
 export {
   Table,
   TableHeader,
@@ -114,4 +153,7 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  TableEmpty,
+  TableSearch,
+  TablePagination,
 }

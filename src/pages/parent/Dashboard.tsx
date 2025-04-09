@@ -1,235 +1,526 @@
 
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar } from "@/components/ui/avatar";
-import { CalendarCheck, Download, FileText, TrendingUp, User, DollarSign, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LineChart, BarChart } from "@/components/ui/chart";
+import { Badge } from "@/components/ui/badge";
 import { PerformanceChart } from "@/components/parent/performance-chart";
 import { AttendanceCalendar } from "@/components/parent/attendance-calendar";
 import { RecentPayments } from "@/components/parent/recent-payments";
 import { RecentMessages } from "@/components/parent/recent-messages";
 import { ChildOverviewCard } from "@/components/parent/child-overview-card";
+import {
+  Calendar,
+  Clock,
+  Download,
+  FileText,
+  BookOpen,
+  DollarSign,
+  User,
+  Users,
+  MessageSquare,
+  ChevronRight,
+  Bell,
+  Backpack
+} from "lucide-react";
 
-export default function ParentDashboard() {
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    // Simulate data loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+const childrenData = [
+  {
+    id: 1,
+    name: "Emma Thompson",
+    grade: "Grade 8",
+    avatar: "",
+    attendance: "95%",
+    recentGrade: "A",
+    nextExam: "Math - April 15"
+  },
+  {
+    id: 2,
+    name: "Noah Thompson",
+    grade: "Grade 5",
+    avatar: "",
+    attendance: "92%",
+    recentGrade: "B+",
+    nextExam: "Science - April 18"
+  }
+];
+
+const attendanceData = [
+  { month: "Jan", attendance: 98 },
+  { month: "Feb", attendance: 95 },
+  { month: "Mar", attendance: 92 },
+  { month: "Apr", attendance: 95 },
+  { month: "May", attendance: 100 },
+  { month: "Jun", attendance: 98 },
+  { month: "Jul", attendance: 95 },
+  { month: "Aug", attendance: 92 },
+  { month: "Sep", attendance: 90 },
+  { month: "Oct", attendance: 94 },
+  { month: "Nov", attendance: 96 },
+  { month: "Dec", attendance: 98 },
+];
+
+const academicProgress = [
+  { subject: "Math", current: 85, previous: 78 },
+  { subject: "Science", current: 92, previous: 88 },
+  { subject: "English", current: 78, previous: 75 },
+  { subject: "History", current: 88, previous: 80 },
+  { subject: "Art", current: 95, previous: 90 },
+];
+
+const upcomingEvents = [
+  {
+    id: 1,
+    title: "Parent-Teacher Meeting",
+    date: "April 15, 2025",
+    time: "3:00 PM - 6:00 PM",
+    location: "School Auditorium"
+  },
+  {
+    id: 2,
+    title: "Math Quiz",
+    date: "April 18, 2025",
+    time: "10:00 AM",
+    location: "Room 205"
+  },
+  {
+    id: 3,
+    title: "Science Fair",
+    date: "April 27, 2025",
+    time: "10:00 AM - 2:00 PM",
+    location: "School Hall"
+  }
+];
+
+const ParentDashboard = () => {
+  const [selectedChild, setSelectedChild] = useState(childrenData[0]);
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
 
   return (
     <DashboardLayout userRole="parent">
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+        className="space-y-6"
+      >
+        {/* Header with welcome message */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Parent Dashboard</h1>
-            <p className="text-muted-foreground">
-              Monitor your child's academic progress and school activities
-            </p>
+            <h1 className="text-3xl font-bold">Hello, Mrs. Thompson</h1>
+            <p className="text-muted-foreground">Welcome to your Parent Dashboard</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Download Report
+          <div className="flex gap-2 mt-4 sm:mt-0">
+            <Button size="sm" variant="outline">
+              <Bell className="h-4 w-4 mr-2" />
+              Notifications
             </Button>
             <Button size="sm">
-              <DollarSign className="mr-2 h-4 w-4" />
-              Pay Fees
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Contact Teacher
             </Button>
           </div>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
+        {/* Child selector cards */}
+        <motion.div variants={fadeIn}>
+          <div className="flex flex-wrap gap-4">
+            {childrenData.map((child) => (
+              <Card 
+                key={child.id} 
+                className={`w-full sm:w-[calc(50%-8px)] lg:w-[calc(33.33%-11px)] cursor-pointer transition-all hover:shadow-md ${
+                  selectedChild.id === child.id ? 'ring-2 ring-primary' : ''
+                }`}
+                onClick={() => setSelectedChild(child)}
+              >
+                <CardContent className="p-4 flex items-center gap-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={child.avatar} alt={child.name} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {child.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-medium">{child.name}</h3>
+                    <p className="text-sm text-muted-foreground">{child.grade}</p>
+                  </div>
+                  <Badge variant="outline" className="ml-auto">
+                    {selectedChild.id === child.id ? 'Selected' : 'Select'}
+                  </Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+       
+        {/* Main dashboard content */}
+        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-3 lg:grid-cols-5 w-full mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
+            <TabsTrigger value="academics">Academics</TabsTrigger>
+            <TabsTrigger value="attendance">Attendance</TabsTrigger>
             <TabsTrigger value="payments">Payments</TabsTrigger>
-            <TabsTrigger value="communication">Communication</TabsTrigger>
+            <TabsTrigger value="communications">Communications</TabsTrigger>
           </TabsList>
           
+          {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <ChildOverviewCard isLoading={isLoading} />
-              
-              <Card className="col-span-1">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Academic Standing</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">Excellent</div>
-                  <div className="text-xs text-muted-foreground">
-                    Average Grade: A (92%)
-                  </div>
-                  <div className="mt-4">
-                    <Badge className="bg-green-500 hover:bg-green-600">Top 5%</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="col-span-1">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Attendance Record</CardTitle>
-                  <CalendarCheck className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">96%</div>
-                  <div className="text-xs text-muted-foreground">
-                    Present: 48 days | Absent: 2 days
-                  </div>
-                  <div className="mt-4">
-                    <Badge className="bg-primary hover:bg-primary/90">Excellent</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="col-span-1 md:col-span-2 lg:col-span-1">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="font-medium">Parent-Teacher Meeting</div>
-                        <div className="text-xs text-muted-foreground">April 15, 2025</div>
-                      </div>
-                      <Badge variant="outline">5 days</Badge>
+            <motion.div variants={fadeIn}>
+              <ChildOverviewCard child={selectedChild} />
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Recent Performance */}
+              <motion.div variants={fadeIn}>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Academic Performance</CardTitle>
+                      <Button variant="ghost" size="sm" className="gap-1">
+                        <FileText className="h-4 w-4" />
+                        Full Report
+                      </Button>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="font-medium">End of Term Exam</div>
-                        <div className="text-xs text-muted-foreground">April 28, 2025</div>
-                      </div>
-                      <Badge variant="outline">18 days</Badge>
+                    <CardDescription>Latest grades and academic progress</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    <PerformanceChart />
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Attendance Overview */}
+              <motion.div variants={fadeIn}>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Attendance Overview</CardTitle>
+                      <Button variant="ghost" size="sm" className="gap-1">
+                        <Calendar className="h-4 w-4" />
+                        Calendar
+                      </Button>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <CardDescription>Monthly attendance summary</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    <LineChart
+                      className="h-[280px]"
+                      data={attendanceData}
+                      index="month"
+                      categories={["attendance"]}
+                      colors={["green"]}
+                      valueFormatter={(value) => `${value}%`}
+                    />
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
             
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card className="col-span-1">
-                <CardHeader>
-                  <CardTitle>Performance Trends</CardTitle>
-                  <CardDescription>
-                    Academic performance over the last term
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <PerformanceChart isLoading={isLoading} />
-                </CardContent>
-              </Card>
+            {/* Upcoming Events and Payments Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Upcoming Events */}
+              <motion.div variants={fadeIn}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Upcoming Events</CardTitle>
+                    <CardDescription>Scheduled events and activities</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {upcomingEvents.map((event) => (
+                        <div key={event.id} className="flex items-center p-3 bg-muted/40 rounded-lg">
+                          <div className="w-12 h-12 flex flex-col items-center justify-center bg-primary/10 rounded-lg mr-3">
+                            <span className="text-xs text-primary">Apr</span>
+                            <span className="text-lg font-bold text-primary">{event.date.split(" ")[1].replace(",", "")}</span>
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium">{event.title}</div>
+                            <div className="text-sm text-muted-foreground mt-1">{event.time} • {event.location}</div>
+                          </div>
+                          <Button size="sm" variant="outline">Details</Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
               
-              <Card className="col-span-1">
-                <CardHeader>
-                  <CardTitle>Attendance History</CardTitle>
-                  <CardDescription>
-                    Daily attendance record for current term
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <AttendanceCalendar isLoading={isLoading} />
-                </CardContent>
-              </Card>
+              {/* Recent Payments */}
+              <motion.div variants={fadeIn}>
+                <RecentPayments />
+              </motion.div>
             </div>
             
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card className="col-span-1">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                  <div>
-                    <CardTitle>Recent Fee Payments</CardTitle>
-                    <CardDescription>
-                      Payment history and pending invoices
-                    </CardDescription>
-                  </div>
-                  <Link to="/parent/payments">
-                    <Button variant="ghost" size="sm">View All</Button>
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentPayments isLoading={isLoading} />
-                </CardContent>
-              </Card>
-              
-              <Card className="col-span-1">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                  <div>
-                    <CardTitle>Recent Messages</CardTitle>
-                    <CardDescription>
-                      Communication with teachers and school staff
-                    </CardDescription>
-                  </div>
-                  <Link to="/parent/messages">
-                    <Button variant="ghost" size="sm">View All</Button>
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <RecentMessages isLoading={isLoading} />
-                </CardContent>
-              </Card>
-            </div>
+            {/* Recent Messages */}
+            <motion.div variants={fadeIn}>
+              <RecentMessages />
+            </motion.div>
           </TabsContent>
           
-          <TabsContent value="performance" className="space-y-4">
+          {/* Academics Tab */}
+          <TabsContent value="academics" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Academic Performance</CardTitle>
-                <CardDescription>
-                  Detailed view of your child's academic performance
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-end">
-                  <Button variant="outline" size="sm">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Report Card
+                <div className="flex items-center justify-between">
+                  <CardTitle>Academic Progress</CardTitle>
+                  <Button variant="outline" size="sm" className="gap-1">
+                    <Download className="h-4 w-4" />
+                    Export Report
                   </Button>
                 </div>
-                <PerformanceChart isLoading={isLoading} showDetails />
+                <CardDescription>Subject-wise performance compared to previous term</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[400px]">
+                <BarChart
+                  className="h-[380px]"
+                  data={academicProgress}
+                  index="subject"
+                  categories={["current", "previous"]}
+                  colors={["violet", "blue"]}
+                  valueFormatter={(value) => `${value}%`}
+                  customTooltip={(props) => {
+                    const { payload, active } = props;
+                    if (!active || !payload) return null;
+                    
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-sm">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col">
+                            <span className="text-[0.70rem] uppercase text-muted-foreground">
+                              Subject
+                            </span>
+                            <span className="font-bold text-sm">
+                              {payload[0]?.payload.subject}
+                            </span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[0.70rem] uppercase text-muted-foreground">
+                              Current Term
+                            </span>
+                            <span className="font-bold text-sm">
+                              {payload[0]?.value}%
+                            </span>
+                          </div>
+                          <div className="col-span-2 flex flex-col">
+                            <span className="text-[0.70rem] uppercase text-muted-foreground">
+                              Previous Term
+                            </span>
+                            <span className="font-bold text-sm">
+                              {payload[1]?.value}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
+              </CardContent>
+            </Card>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Assignment Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                        <span className="text-sm">Completed</span>
+                      </div>
+                      <span className="font-medium">12</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                        <span className="text-sm">In Progress</span>
+                      </div>
+                      <span className="font-medium">3</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-red-500"></div>
+                        <span className="text-sm">Overdue</span>
+                      </div>
+                      <span className="font-medium">1</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Latest Grades</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Math Quiz</span>
+                      <Badge>A-</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Science Project</span>
+                      <Badge>B+</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">English Essay</span>
+                      <Badge>A</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">History Test</span>
+                      <Badge>B</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Upcoming Exams</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    {[
+                      { subject: "Mathematics", date: "April 15" },
+                      { subject: "Science", date: "April 18" },
+                      { subject: "English", date: "April 22" },
+                      { subject: "Social Studies", date: "April 25" }
+                    ].map((exam, index) => (
+                      <div key={index} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{exam.subject}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">{exam.date}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <Button variant="ghost" size="sm" className="w-full mt-4">
+                    View All Exams
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          {/* Attendance Tab */}
+          <TabsContent value="attendance">
+            <AttendanceCalendar />
+          </TabsContent>
+          
+          {/* Payments Tab */}
+          <TabsContent value="payments">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Fee Management</CardTitle>
+                  <Button>Make a Payment</Button>
+                </div>
+                <CardDescription>Manage and track payments for your children</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-muted/40">
+                    <CardContent className="p-6">
+                      <DollarSign className="h-8 w-8 text-primary mb-2" />
+                      <h3 className="text-xl font-bold">$1,850</h3>
+                      <p className="text-sm text-muted-foreground">Total Paid (2025)</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/40">
+                    <CardContent className="p-6">
+                      <DollarSign className="h-8 w-8 text-yellow-500 mb-2" />
+                      <h3 className="text-xl font-bold">$450</h3>
+                      <p className="text-sm text-muted-foreground">Due Next Month</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/40">
+                    <CardContent className="p-6">
+                      <FileText className="h-8 w-8 text-green-500 mb-2" />
+                      <h3 className="text-xl font-bold">12</h3>
+                      <p className="text-sm text-muted-foreground">Payment Receipts</p>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <RecentPayments showAll={true} />
               </CardContent>
             </Card>
           </TabsContent>
           
-          <TabsContent value="payments" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Fee Management</CardTitle>
-                <CardDescription>
-                  View and manage school fee payments
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RecentPayments isLoading={isLoading} showAll />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="communication" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Messages</CardTitle>
-                <CardDescription>
-                  Communication with teachers and school administration
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RecentMessages isLoading={isLoading} showAll />
-              </CardContent>
-            </Card>
+          {/* Communications Tab */}
+          <TabsContent value="communications">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="md:col-span-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>School Contacts</CardTitle>
+                    <CardDescription>Key people you may need to reach</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { name: "Mrs. Jenkins", role: "Class Teacher", avatar: "" },
+                        { name: "Mr. Phillips", role: "Science Teacher", avatar: "" },
+                        { name: "Ms. Rodriguez", role: "Principal", avatar: "" },
+                        { name: "Mr. Carter", role: "Admin Officer", avatar: "" }
+                      ].map((contact, index) => (
+                        <div key={index} className="flex items-center p-2 rounded-lg hover:bg-muted/50 cursor-pointer">
+                          <Avatar className="h-10 w-10 mr-3">
+                            <AvatarImage src={contact.avatar} alt={contact.name} />
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {contact.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium">{contact.name}</div>
+                            <div className="text-sm text-muted-foreground">{contact.role}</div>
+                          </div>
+                          <Button size="icon" variant="ghost" className="ml-auto">
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="md:col-span-8">
+                <RecentMessages showAll={true} />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
-      </div>
+      </motion.div>
     </DashboardLayout>
   );
-}
+};
+
+export default ParentDashboard;
