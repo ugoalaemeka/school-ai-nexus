@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
@@ -6,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LineChart, BarChart } from "@/components/ui/chart";
+import { LineChart, BarChart } from "@/components/ui/recharts";
 import { Badge } from "@/components/ui/badge";
 import { PerformanceChart } from "@/components/parent/performance-chart";
 import { AttendanceCalendar } from "@/components/parent/attendance-calendar";
@@ -187,7 +186,14 @@ const ParentDashboard = () => {
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-4">
             <motion.div variants={fadeIn}>
-              <ChildOverviewCard child={selectedChild} />
+              <ChildOverviewCard 
+                childName={selectedChild.name}
+                grade={selectedChild.grade}
+                avatarSrc={selectedChild.avatar}
+                attendance={selectedChild.attendance}
+                recentGrade={selectedChild.recentGrade}
+                nextExam={selectedChild.nextExam}
+              />
             </motion.div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -205,7 +211,7 @@ const ParentDashboard = () => {
                     <CardDescription>Latest grades and academic progress</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px]">
-                    <PerformanceChart />
+                    <PerformanceChart isLoading={false} />
                   </CardContent>
                 </Card>
               </motion.div>
@@ -268,13 +274,13 @@ const ParentDashboard = () => {
               
               {/* Recent Payments */}
               <motion.div variants={fadeIn}>
-                <RecentPayments />
+                <RecentPayments isLoading={false} showAll={true} />
               </motion.div>
             </div>
             
             {/* Recent Messages */}
             <motion.div variants={fadeIn}>
-              <RecentMessages />
+              <RecentMessages isLoading={false} showAll={true} />
             </motion.div>
           </TabsContent>
           
@@ -431,7 +437,7 @@ const ParentDashboard = () => {
           
           {/* Attendance Tab */}
           <TabsContent value="attendance">
-            <AttendanceCalendar />
+            <AttendanceCalendar isLoading={false} />
           </TabsContent>
           
           {/* Payments Tab */}
@@ -469,7 +475,7 @@ const ParentDashboard = () => {
                   </Card>
                 </div>
                 
-                <RecentPayments showAll={true} />
+                <RecentPayments isLoading={false} showAll={true} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -513,7 +519,7 @@ const ParentDashboard = () => {
               </div>
               
               <div className="md:col-span-8">
-                <RecentMessages showAll={true} />
+                <RecentMessages isLoading={false} showAll={true} />
               </div>
             </div>
           </TabsContent>

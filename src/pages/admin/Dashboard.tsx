@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
+import { BarChart, LineChart, PieChart } from "@/components/ui/recharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import {
@@ -417,8 +416,11 @@ const AdminDashboard = () => {
                           <TableCell>{student.grade}</TableCell>
                           <TableCell>{student.attendance}</TableCell>
                           <TableCell>
-                            <Badge variant={student.fees === "Paid" ? "success" : student.fees === "Partial" ? "warning" : "destructive"}>
-                              {student.fees}
+                            <Badge 
+                              variant="default" 
+                              className={student.status === "Active" ? "bg-green-500" : student.status === "Pending" ? "bg-yellow-500" : "bg-destructive"}
+                            >
+                              {student.status}
                             </Badge>
                           </TableCell>
                           <TableCell>{student.performance}</TableCell>

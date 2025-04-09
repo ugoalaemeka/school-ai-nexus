@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
@@ -8,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { LineChart, BarChart } from "@/components/ui/chart";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { LineChart, BarChart } from "@/components/ui/recharts";
 import {
   BookOpen,
   Calendar,
@@ -22,7 +21,6 @@ import {
   BellRing,
   Search,
   Send,
-  Download,
   User,
   MessageSquare,
   PlusCircle,
@@ -632,7 +630,7 @@ const StudentDashboard = () => {
                             <div className="text-xs text-muted-foreground">{resource.type} • {resource.size}</div>
                           </div>
                         </div>
-                        <Button size="sm" variant="ghost">
+                        <Button size="sm" variant="ghost" className="h-6 px-2 text-xs gap-1">
                           <Download className="h-4 w-4" />
                         </Button>
                       </div>
