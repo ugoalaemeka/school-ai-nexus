@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { User } from "lucide-react";
+import { User, Calendar, Clock, BookOpen } from "lucide-react";
 
 interface ChildOverviewCardProps {
   isLoading?: boolean;
@@ -25,7 +25,7 @@ export function ChildOverviewCard({
 }: ChildOverviewCardProps) {
   if (isLoading) {
     return (
-      <Card className="col-span-1">
+      <Card className="w-full">
         <CardHeader className="pb-2">
           <Skeleton className="h-5 w-[140px]" />
         </CardHeader>
@@ -44,25 +44,49 @@ export function ChildOverviewCard({
   }
 
   return (
-    <Card className="col-span-1">
+    <Card className="w-full transition-all hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Student Information</CardTitle>
         <User className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
             {avatarSrc ? (
               <img src={avatarSrc} alt={childName} className="h-16 w-16 rounded-full object-cover" />
             ) : (
               <User className="h-8 w-8 text-primary" />
             )}
           </div>
-          <div>
+          <div className="text-center sm:text-left mt-2 sm:mt-0">
             <div className="font-bold">{childName}</div>
             <div className="text-sm text-muted-foreground">{grade}</div>
             <div className="mt-1">
               <Badge className="bg-secondary hover:bg-secondary/90">ID: 2404875</Badge>
+            </div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-4">
+          <div className="flex items-center p-2 bg-muted/40 rounded-lg">
+            <Clock className="h-4 w-4 mr-2 text-primary" />
+            <div className="text-sm">
+              <div className="font-medium">Attendance</div>
+              <div>{attendance}</div>
+            </div>
+          </div>
+          <div className="flex items-center p-2 bg-muted/40 rounded-lg">
+            <BookOpen className="h-4 w-4 mr-2 text-primary" />
+            <div className="text-sm">
+              <div className="font-medium">Recent Grade</div>
+              <div>{recentGrade}</div>
+            </div>
+          </div>
+          <div className="flex items-center p-2 bg-muted/40 rounded-lg">
+            <Calendar className="h-4 w-4 mr-2 text-primary" />
+            <div className="text-sm">
+              <div className="font-medium">Next Exam</div>
+              <div>{nextExam}</div>
             </div>
           </div>
         </div>

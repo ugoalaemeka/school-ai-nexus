@@ -1,5 +1,5 @@
 
-import { cn } from "@/lib/utils";
+import React from "react";
 import {
   BarChart as RechartsBarChart,
   LineChart as RechartsLineChart,
@@ -7,93 +7,56 @@ import {
   Bar,
   Line,
   Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Cell,
   TooltipProps,
 } from "recharts";
-import { ChartTooltipContent } from "./chart";
+import { cn } from "@/lib/utils";
 
-// Common props for all chart types
-interface ChartBaseProps {
-  className?: string;
-  data: Record<string, any>[];
+interface ChartProps extends React.HTMLAttributes<HTMLDivElement> {
+  data: any[];
+}
+
+interface BarChartProps extends ChartProps {
   index: string;
   categories: string[];
   colors?: string[];
   valueFormatter?: (value: number) => string;
 }
 
-// BarChart component
-interface BarChartProps extends ChartBaseProps {
-  stack?: boolean;
-  horizontal?: boolean;
-}
-
-export const BarChart = ({
-  className,
+export function BarChart({
   data,
   index,
   categories,
-  colors = ["hsl(var(--primary))", "hsl(var(--secondary))"],
-  valueFormatter = (value: number) => `${value}`,
-  stack = false,
-  horizontal = false,
-}: BarChartProps) => {
+  colors = ["#2563eb", "#4ade80", "#f59e0b", "#ef4444"],
+  valueFormatter = (value: number) => value.toString(),
+  className,
+  ...props
+}: BarChartProps) {
   return (
-    <div className={cn("w-full h-full", className)}>
+    <div className={cn("h-[200px] w-full", className)} {...props}>
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsBarChart
-          data={data}
-          layout={horizontal ? "vertical" : "horizontal"}
-          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-        >
+        <RechartsBarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          {horizontal ? (
-            <>
-              <XAxis type="number" />
-              <YAxis dataKey={index} type="category" />
-            </>
-          ) : (
-            <>
-              <XAxis dataKey={index} />
-              <YAxis />
-            </>
-          )}
-          <Tooltip 
-            content={({ active, payload }) => {
-              if (active && payload && payload.length) {
-                return (
-                  <div className="rounded-lg border bg-background p-2 shadow-sm">
-                    <div className="grid grid-cols-2 gap-2">
-                      {payload.map((entry, index) => (
-                        <div key={`item-${index}`} className="flex flex-col">
-                          <span className="text-xs text-muted-foreground">
-                            {entry.name}:
-                          </span>
-                          <span className="font-bold text-sm">
-                            {valueFormatter(entry.value as number)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            }}
+          <XAxis dataKey={index} />
+          <YAxis />
+          <Tooltip
+            formatter={(value: number, name: string) => [
+              valueFormatter(value),
+              name,
+            ]}
           />
           <Legend />
-          {categories.map((category, index) => (
+          {categories.map((category, i) => (
             <Bar
               key={category}
               dataKey={category}
-              stackId={stack ? "stack" : undefined}
-              fill={colors[index % colors.length]}
+              fill={colors[i % colors.length]}
               radius={[4, 4, 0, 0]}
             />
           ))}
@@ -101,140 +64,93 @@ export const BarChart = ({
       </ResponsiveContainer>
     </div>
   );
-};
-
-// LineChart component
-interface LineChartProps extends ChartBaseProps {
-  showDots?: boolean;
-  curveType?: "linear" | "monotone" | "natural";
 }
 
-export const LineChart = ({
-  className,
+interface LineChartProps extends ChartProps {
+  index: string;
+  categories: string[];
+  colors?: string[];
+  valueFormatter?: (value: number) => string;
+}
+
+export function LineChart({
   data,
   index,
   categories,
-  colors = ["hsl(var(--primary))", "hsl(var(--secondary))"],
-  valueFormatter = (value: number) => `${value}`,
-  showDots = true,
-  curveType = "monotone",
-}: LineChartProps) => {
+  colors = ["#2563eb", "#4ade80", "#f59e0b", "#ef4444"],
+  valueFormatter = (value: number) => value.toString(),
+  className,
+  ...props
+}: LineChartProps) {
   return (
-    <div className={cn("w-full h-full", className)}>
+    <div className={cn("h-[200px] w-full", className)} {...props}>
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsLineChart
-          data={data}
-          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-        >
+        <RechartsLineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey={index} />
           <YAxis />
-          <Tooltip 
-            content={({ active, payload }) => {
-              if (active && payload && payload.length) {
-                return (
-                  <div className="rounded-lg border bg-background p-2 shadow-sm">
-                    <div className="grid grid-cols-2 gap-2">
-                      {payload.map((entry, index) => (
-                        <div key={`item-${index}`} className="flex flex-col">
-                          <span className="text-xs text-muted-foreground">
-                            {entry.name}:
-                          </span>
-                          <span className="font-bold text-sm">
-                            {valueFormatter(entry.value as number)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            }}
+          <Tooltip
+            formatter={(value: number, name: string) => [
+              valueFormatter(value),
+              name,
+            ]}
           />
           <Legend />
-          {categories.map((category, index) => (
+          {categories.map((category, i) => (
             <Line
               key={category}
-              type={curveType}
+              type="monotone"
               dataKey={category}
-              stroke={colors[index % colors.length]}
+              stroke={colors[i % colors.length]}
               activeDot={{ r: 8 }}
-              dot={showDots}
             />
           ))}
         </RechartsLineChart>
       </ResponsiveContainer>
     </div>
   );
-};
-
-// PieChart component
-interface PieChartProps {
-  className?: string;
-  data: Array<{ name: string; value: number }>;
-  colors?: string[];
-  valueFormatter?: (value: number) => string;
-  innerRadius?: number;
-  outerRadius?: number;
 }
 
-export const PieChart = ({
-  className,
+interface PieChartProps extends ChartProps {
+  category: string;
+  colors?: string[];
+  valueFormatter?: (value: number) => string;
+  nameKey?: string;
+  dataKey?: string;
+}
+
+export function PieChart({
   data,
-  colors = [
-    "hsl(var(--primary))",
-    "hsl(var(--secondary))",
-    "#10b981",
-    "#3b82f6",
-    "#ef4444",
-    "#f59e0b",
-  ],
-  valueFormatter = (value: number) => `${value}`,
-  innerRadius = 0,
-  outerRadius = 80,
-}: PieChartProps) => {
+  category,
+  nameKey = "name",
+  dataKey = "value",
+  colors = ["#2563eb", "#4ade80", "#f59e0b", "#ef4444", "#a855f7", "#ec4899"],
+  valueFormatter = (value: number) => value.toString(),
+  className,
+  ...props
+}: PieChartProps) {
   return (
-    <div className={cn("w-full h-full", className)}>
+    <div className={cn("h-[200px] w-full", className)} {...props}>
       <ResponsiveContainer width="100%" height="100%">
-        <RechartsPieChart>
+        <RechartsPieChart margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
             labelLine={false}
-            innerRadius={innerRadius}
-            outerRadius={outerRadius}
-            dataKey="value"
+            outerRadius={80}
+            dataKey={dataKey}
+            nameKey={nameKey}
             label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Pie>
-          <Tooltip
-            content={({ active, payload }) => {
-              if (active && payload && payload.length) {
-                const data = payload[0];
-                return (
-                  <div className="rounded-lg border bg-background p-2 shadow-sm">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground">
-                        {data.name}:
-                      </span>
-                      <span className="font-bold text-sm">
-                        {valueFormatter(data.value as number)}
-                      </span>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            }}
-          />
+          <Tooltip formatter={(value: number) => [valueFormatter(value), category]} />
           <Legend />
         </RechartsPieChart>
       </ResponsiveContainer>
     </div>
   );
-};
+}

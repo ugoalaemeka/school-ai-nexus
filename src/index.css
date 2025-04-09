@@ -84,8 +84,22 @@
   .dashboard-link.active {
     @apply bg-primary/10 text-primary font-medium;
   }
+  
+  /* Mobile optimized components */
+  .mobile-card {
+    @apply w-full p-4 rounded-lg border border-border transition-all hover:shadow-md;
+  }
+  
+  .mobile-nav-item {
+    @apply flex items-center justify-center p-3 rounded-full bg-muted/30 text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors;
+  }
+  
+  .mobile-nav-item.active {
+    @apply bg-primary/10 text-primary;
+  }
 }
 
+/* Animation keyframes */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -95,7 +109,6 @@
   }
 }
 
-/* Add animations for home page elements */
 @keyframes slide-in {
   from {
     opacity: 0;
@@ -124,4 +137,57 @@
 
 .animate-scale-in {
   animation: scale-in 0.6s ease-out forwards;
+}
+
+/* Responsive table styles */
+@layer components {
+  .responsive-table {
+    @apply w-full border-collapse;
+  }
+  
+  .responsive-table th {
+    @apply px-4 py-2 text-left font-medium text-muted-foreground hidden md:table-cell;
+  }
+  
+  .responsive-table td {
+    @apply px-4 py-2;
+  }
+  
+  @media (max-width: 768px) {
+    .responsive-table thead {
+      @apply hidden;
+    }
+    
+    .responsive-table tbody tr {
+      @apply block border rounded-lg mb-2 shadow-sm;
+    }
+    
+    .responsive-table tbody td {
+      @apply block text-right pl-4 pr-4 py-2 relative;
+    }
+    
+    .responsive-table tbody td::before {
+      content: attr(data-label);
+      @apply absolute left-4 text-sm font-medium text-muted-foreground;
+    }
+  }
+  
+  /* Glassmorphic effect */
+  .glassmorphic {
+    @apply backdrop-blur-lg bg-white/5 border border-white/10 dark:bg-gray-900/50;
+  }
+  
+  /* Swipeable containers */
+  .swipe-container {
+    @apply overflow-x-auto pb-2 snap-x flex gap-4;
+  }
+  
+  .swipe-item {
+    @apply snap-start flex-shrink-0 w-[90%];
+  }
+}
+
+/* Card animations and hover effects */
+.hover-card {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
 }
