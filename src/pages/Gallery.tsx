@@ -266,9 +266,7 @@ const GalleryPage = () => {
                     className="group relative aspect-square overflow-hidden rounded-xl cursor-pointer"
                     variants={fadeIn}
                     whileHover="hover"
-                    initial="rest"
                     animate="rest"
-                    variants={cardHover}
                   >
                     <img 
                       src={item.src} 
@@ -482,4 +480,3 @@ const GalleryPage = () => {
 };
 
 export default GalleryPage;
-
