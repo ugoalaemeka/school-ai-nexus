@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { ParentLayout } from "@/components/layout/parent-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -78,7 +78,7 @@ export default function ParentPayments() {
   );
 
   return (
-    <DashboardLayout userRole="parent">
+    <ParentLayout>
       <div className="space-y-6 animate-fade-in">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -132,7 +132,7 @@ export default function ParentPayments() {
           </Card>
         </div>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Payment History</CardTitle>
             <CardDescription>
@@ -299,7 +299,7 @@ export default function ParentPayments() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Payment Methods</CardTitle>
             <CardDescription>
@@ -342,6 +342,6 @@ export default function ParentPayments() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </ParentLayout>
   );
 }

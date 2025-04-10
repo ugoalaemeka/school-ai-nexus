@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { ParentLayout } from "@/components/layout/parent-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -72,7 +72,7 @@ export default function ParentMessages() {
   };
 
   return (
-    <DashboardLayout userRole="parent">
+    <ParentLayout>
       <div className="space-y-6 animate-fade-in">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Messages</h1>
@@ -246,6 +246,6 @@ export default function ParentMessages() {
           </Card>
         </div>
       </div>
-    </DashboardLayout>
+    </ParentLayout>
   );
 }
