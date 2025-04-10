@@ -60,9 +60,22 @@ const App = () => (
             
             {/* Student Dashboard Routes */}
             <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/student/timetable" element={<StudentDashboard />} />
+            <Route path="/student/assignments" element={<StudentDashboard />} />
+            <Route path="/student/resources" element={<StudentDashboard />} />
+            <Route path="/student/exams" element={<StudentDashboard />} />
+            <Route path="/student/messages" element={<StudentDashboard />} />
+            <Route path="/student/messages/:id" element={<StudentDashboard />} />
+            <Route path="/student/settings" element={<StudentDashboard />} />
             
             {/* Admin Dashboard Routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminDashboard />} />
+            <Route path="/admin/classes" element={<AdminDashboard />} />
+            <Route path="/admin/fees" element={<AdminDashboard />} />
+            <Route path="/admin/events" element={<AdminDashboard />} />
+            <Route path="/admin/reports" element={<AdminDashboard />} />
+            <Route path="/admin/settings" element={<AdminDashboard />} />
             
             {/* Parent Dashboard Routes */}
             <Route path="/parent/dashboard" element={<ParentDashboard />} />
