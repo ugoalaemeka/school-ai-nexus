@@ -608,6 +608,7 @@ const AdminDashboard = () => {
                   <div className="h-64">
                     <PieChart
                       data={feeData}
+                      category="Fee Status"
                       colors={["green", "amber", "red"]}
                       valueFormatter={(value) => `${value}%`}
                       className="h-64"
