@@ -27,6 +27,8 @@ import ParentDashboard from "./pages/parent/Dashboard";
 import ParentMessages from "./pages/parent/Messages";
 import ParentPayments from "./pages/parent/Payments";
 import ParentReports from "./pages/parent/Reports";
+import ParentPerformance from "./pages/parent/Performance";
+import ParentSettings from "./pages/parent/Settings";
 
 // Teacher Dashboard
 import TeacherDashboard from "./pages/teacher/Dashboard";
@@ -64,10 +66,12 @@ const App = () => (
             
             {/* Parent Dashboard Routes */}
             <Route path="/parent/dashboard" element={<ParentDashboard />} />
-            <Route path="/parent/messages" element={<ParentMessages />} />
+            <Route path="/parent/performance" element={<ParentPerformance />} />
             <Route path="/parent/payments" element={<ParentPayments />} />
             <Route path="/parent/reports" element={<ParentReports />} />
+            <Route path="/parent/messages" element={<ParentMessages />} />
             <Route path="/parent/messages/:id" element={<ParentMessages />} />
+            <Route path="/parent/settings" element={<ParentSettings />} />
             
             {/* Teacher Dashboard Routes */}
             <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
