@@ -103,7 +103,7 @@ export function ParentLayout({ children }: ParentLayoutProps) {
         </div>
       </aside>
 
-      {/* Mobile/Tablet Sidebar */}
+      {/* Mobile/Tablet Sidebar - Fixed issue by ensuring Sheet wraps SheetTrigger */}
       <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
         <SheetContent side="left" className="backdrop-blur-lg bg-white/5 border-r border-white/10 dark:bg-gray-900/50 p-0 w-64">
           <div className="p-4 flex items-center justify-between border-b border-white/10">
@@ -131,11 +131,13 @@ export function ParentLayout({ children }: ParentLayoutProps) {
           <div className="container flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
               {/* Mobile Menu Trigger */}
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMobileMenuOpen(true)}>
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+              </Sheet>
               
               {/* Logo - always visible */}
               <Link to="/" className="font-bold text-lg">
