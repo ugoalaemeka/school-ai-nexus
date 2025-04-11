@@ -17,7 +17,8 @@ import {
   LogOut,
   Upload,
   Clock,
-  PlusCircle
+  PlusCircle,
+  Files
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +43,7 @@ export function StudentSidebar({ children }: StudentSidebarProps) {
     { icon: LayoutDashboard, label: "Dashboard", path: "/student/dashboard" },
     { icon: Calendar, label: "Timetable", path: "/student/timetable" },
     { icon: FileText, label: "Assignments", path: "/student/assignments", badge: 2 },
-    { icon: BookOpen, label: "Resources", path: "/student/resources" },
+    { icon: Files, label: "Resources", path: "/student/resources" },
     { icon: Clock, label: "Exam Timetable", path: "/student/exams" },
     { icon: MessageSquare, label: "Messages", path: "/student/messages", badge: 1 },
     { icon: Settings, label: "Settings", path: "/student/settings" },
