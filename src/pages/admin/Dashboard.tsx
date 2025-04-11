@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -91,6 +90,13 @@ const AdminDashboard = () => {
     { name: "Paid", value: 75 },
     { name: "Partial", value: 15 },
     { name: "Unpaid", value: 10 }
+  ];
+
+  const distributionData = [
+    { name: "Students", value: 1452 },
+    { name: "Teachers", value: 86 },
+    { name: "Revenue", value: 854200 },
+    { name: "Attendance", value: 9230 }
   ];
 
   return (
@@ -221,10 +227,11 @@ const AdminDashboard = () => {
                 </CardHeader>
                 <CardContent className="h-64">
                   <PieChart
-                    data={feeData}
-                    index="name"
-                    categories={["value"]}
-                    colors={["emerald", "amber", "rose"]}
+                    data={distributionData}
+                    category="Students"
+                    nameKey="name"
+                    dataKey="value"
+                    colors={["#4f46e5", "#06b6d4", "#8b5cf6", "#f43f5e"]}
                     className="h-full"
                   />
                 </CardContent>

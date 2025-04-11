@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { StudentSidebar } from "@/components/layout/student-sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, LineChart } from "@/components/ui/recharts";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   BookOpen,
   Calendar,
@@ -17,17 +18,16 @@ import {
   Download,
   FileText,
   GraduationCap,
-  LayoutDashboard,
   MessageSquare,
-  MoreHorizontal,
-  PenSquare,
   PlayCircle,
-  User,
   CheckCircle2,
   AlertCircle,
   ArrowRight,
   Bell,
-  Upload
+  Upload,
+  BookMarked,
+  PieChart as PieChartIcon,
+  CheckCircle
 } from "lucide-react";
 
 const StudentDashboard = () => {
@@ -67,10 +67,10 @@ const StudentDashboard = () => {
     { id: 3, subject: "English", title: "Essay Submission", due: "April 15, 11:59 PM", progress: 100, status: "completed" }
   ];
   
-  const resources = [
-    { title: "Mathematics Formulas", type: "PDF", date: "April 5, 2025", size: "2.4 MB" },
-    { title: "Science Lab Guidelines", type: "PDF", date: "April 3, 2025", size: "1.8 MB" },
-    { title: "History Timeline Video", type: "Video", date: "April 1, 2025", size: "45 MB" }
+  const pinnedResources = [
+    { title: "Mathematics Formulas", type: "PDF", date: "April 5, 2025", size: "2.4 MB", pinned: true },
+    { title: "Science Lab Guidelines", type: "PDF", date: "April 3, 2025", size: "1.8 MB", pinned: true },
+    { title: "History Timeline Video", type: "Video", date: "April 1, 2025", size: "45 MB", pinned: true }
   ];
 
   const messages = [
@@ -111,7 +111,7 @@ const StudentDashboard = () => {
           variants={containerVariant}
           className="space-y-6"
         >
-          {/* Header */}
+          {/* Header with Welcome and Quick Stats */}
           <motion.div variants={itemVariant} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold">Student Dashboard</h1>
@@ -120,19 +120,21 @@ const StudentDashboard = () => {
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" size="sm" className="gap-1">
                 <Calendar className="h-4 w-4" />
-                April 10, 2025
+                April 11, 2025
               </Button>
-              <Button variant="default" size="sm" className="gap-1">
-                <Upload className="h-4 w-4" />
-                Submit Assignment
-              </Button>
+              <Link to="/student/assignments">
+                <Button variant="default" size="sm" className="gap-1">
+                  <Upload className="h-4 w-4" />
+                  Submit Assignment
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
-          {/* Stats Cards */}
+          {/* Quick Stats Cards */}
           <motion.div variants={itemVariant}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
+              <Card className="hover:shadow-md transition-shadow">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium">Today's Classes</CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -145,7 +147,7 @@ const StudentDashboard = () => {
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover:shadow-md transition-shadow">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium">Pending Assignments</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground" />
@@ -158,7 +160,7 @@ const StudentDashboard = () => {
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover:shadow-md transition-shadow">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium">Attendance</CardTitle>
                   <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
@@ -171,7 +173,7 @@ const StudentDashboard = () => {
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover:shadow-md transition-shadow">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium">Average Grade</CardTitle>
                   <GraduationCap className="h-4 w-4 text-muted-foreground" />
@@ -191,19 +193,21 @@ const StudentDashboard = () => {
             {/* Left Column */}
             <motion.div variants={itemVariant} className="lg:col-span-1 space-y-6">
               {/* Today's Schedule */}
-              <Card>
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Today's Schedule</CardTitle>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      View All <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    <Link to="/student/timetable">
+                      <Button variant="ghost" size="sm" className="gap-1">
+                        View All <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                   <CardDescription>Your classes for today</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {todayClasses.map((cls, index) => (
-                    <div key={index} className="flex flex-col p-3 rounded-lg bg-muted/40">
+                    <div key={index} className="flex flex-col p-3 rounded-lg bg-muted/40 hover:bg-muted/60 transition-colors">
                       <div className="flex items-center justify-between">
                         <div className="font-medium">{cls.subject}</div>
                         <Badge variant="outline" className="ml-auto">
@@ -218,8 +222,8 @@ const StudentDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Performance */}
-              <Card>
+              {/* Performance Chart */}
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle>Subject Performance</CardTitle>
                   <CardDescription>Current term grades</CardDescription>
@@ -240,19 +244,21 @@ const StudentDashboard = () => {
             {/* Middle Column */}
             <motion.div variants={itemVariant} className="lg:col-span-1 space-y-6">
               {/* Assignments */}
-              <Card>
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Pending Assignments</CardTitle>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      View All <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    <Link to="/student/assignments">
+                      <Button variant="ghost" size="sm" className="gap-1">
+                        View All <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                   <CardDescription>Work due soon</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {assignments.map((assignment) => (
-                    <div key={assignment.id} className="p-3 rounded-lg bg-muted/40">
+                    <div key={assignment.id} className="p-3 rounded-lg bg-muted/40 hover:bg-muted/60 transition-colors">
                       <div className="flex items-center justify-between">
                         <Badge variant="outline" className="font-normal">
                           {assignment.subject}
@@ -277,17 +283,19 @@ const StudentDashboard = () => {
                         </div>
                       )}
                       <div className="flex gap-2 mt-3">
-                        <Button size="sm" variant="default" className="w-full">
-                          {assignment.status === "completed" ? "View Feedback" : "Continue"}
-                        </Button>
+                        <Link to="/student/assignments" className="w-full">
+                          <Button size="sm" variant="default" className="w-full">
+                            {assignment.status === "completed" ? "View Feedback" : "Continue"}
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   ))}
                 </CardContent>
               </Card>
 
-              {/* Attendance */}
-              <Card>
+              {/* Attendance Chart */}
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle>Attendance History</CardTitle>
                   <CardDescription>This academic year</CardDescription>
@@ -307,20 +315,22 @@ const StudentDashboard = () => {
 
             {/* Right Column */}
             <motion.div variants={itemVariant} className="lg:col-span-1 space-y-6">
-              {/* Resources */}
-              <Card>
+              {/* Pinned Resources */}
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Study Resources</CardTitle>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      Browse Library <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    <CardTitle>Pinned Resources</CardTitle>
+                    <Link to="/student/resources">
+                      <Button variant="ghost" size="sm" className="gap-1">
+                        Browse Library <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
-                  <CardDescription>Recently added materials</CardDescription>
+                  <CardDescription>Your important study materials</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {resources.map((resource, index) => (
-                    <div key={index} className="flex items-center gap-3 p-2">
+                  {pinnedResources.map((resource, index) => (
+                    <div key={index} className="flex items-center gap-3 p-2 hover:bg-muted/40 rounded-lg transition-colors">
                       <div className="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
                         {resource.type === "PDF" ? (
                           <FileText className="h-5 w-5 text-primary" />
@@ -339,26 +349,30 @@ const StudentDashboard = () => {
                       </Button>
                     </div>
                   ))}
-                  <Button variant="outline" className="w-full">
-                    View All Resources
-                  </Button>
+                  <Link to="/student/resources">
+                    <Button variant="outline" className="w-full">
+                      View All Resources
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
 
-              {/* Messages */}
-              <Card>
+              {/* Recent Messages */}
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Recent Messages</CardTitle>
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      Inbox <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    <Link to="/student/messages">
+                      <Button variant="ghost" size="sm" className="gap-1">
+                        Inbox <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
                   <CardDescription>Communication from teachers</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {messages.map((message, index) => (
-                    <div key={index} className={`flex gap-3 p-3 rounded-lg ${message.read ? "bg-muted/40" : "bg-primary/5 border border-primary/10"}`}>
+                    <div key={index} className={`flex gap-3 p-3 rounded-lg ${message.read ? "bg-muted/40" : "bg-primary/5 border border-primary/10"} hover:bg-muted/60 transition-colors`}>
                       <Avatar className="h-10 w-10">
                         <AvatarFallback className="bg-primary/10 text-primary">
                           {message.sender.charAt(0)}
@@ -376,21 +390,23 @@ const StudentDashboard = () => {
                       )}
                     </div>
                   ))}
-                  <Button variant="outline" className="w-full">
-                    View All Messages
-                  </Button>
+                  <Link to="/student/messages">
+                    <Button variant="outline" className="w-full">
+                      View All Messages
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
 
               {/* Notifications */}
-              <Card>
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle>Notifications</CardTitle>
                   <CardDescription>System alerts</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {notifications.map((notification, index) => (
-                    <div key={index} className="flex gap-3 p-3 rounded-lg bg-muted/40">
+                    <div key={index} className="flex gap-3 p-3 rounded-lg bg-muted/40 hover:bg-muted/60 transition-colors">
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                         <notification.icon className="h-4 w-4 text-primary" />
                       </div>
