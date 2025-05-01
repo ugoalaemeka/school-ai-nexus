@@ -1,4 +1,3 @@
-
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Map } from "@/components/ui/map";
 import { MapPin, Mail, Phone, Clock, Send } from "lucide-react";
 
 const Contact = () => {
@@ -23,15 +23,34 @@ const Contact = () => {
 
   return (
     <MainLayout>
-      {/* Hero Section */}
-      <section className="relative py-20 bg-muted">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Contact Us</h1>
-            <p className="text-lg text-muted-foreground">
-              Have questions or feedback? We'd love to hear from you. Reach out using any of the methods below.
-            </p>
-          </div>
+      {/* Hero Section with Enhanced Design */}
+      <section className="relative h-[500px] overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624"
+            alt="Modern office space" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-blue-700/80"></div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute inset-0">
+          <svg className="absolute left-0 h-full w-1/3 text-white/5" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
+            <polygon points="0,0 100,0 50,100 0,100" />
+          </svg>
+          <svg className="absolute right-0 h-full w-1/3 text-white/5" viewBox="0 0 100 100" preserveAspectRatio="none" fill="currentColor">
+            <polygon points="100,0 100,100 50,100" />
+          </svg>
+        </div>
+
+        {/* Hero Content */}
+        <div className="container relative z-10 h-full mx-auto flex flex-col items-center justify-center text-center text-white px-4">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">Contact Us</h1>
+          <p className="text-lg md:text-xl max-w-2xl">
+            Have questions or feedback? We'd love to hear from you. Reach out using any of the methods below.
+          </p>
         </div>
       </section>
 
@@ -204,21 +223,36 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Map Section */}
+      {/* Map Section - Updated with the Lagos Map */}
       <section className="py-20 relative overflow-hidden">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Find Us</h2>
+            <h2 className="text-3xl font-bold mb-4">Find Us in Lagos, Nigeria</h2>
             <p className="text-muted-foreground">
               Visit our headquarters to learn more about our services
             </p>
           </div>
         </div>
         
-        <div className="aspect-video max-w-6xl mx-auto bg-muted rounded-lg overflow-hidden">
-          {/* In a real app, this would be an actual map integration */}
-          <div className="w-full h-full flex items-center justify-center">
-            <p className="text-muted-foreground">Interactive map would be displayed here</p>
+        <div className="max-w-6xl mx-auto">
+          <Map />
+        </div>
+        
+        {/* Additional location details */}
+        <div className="container mt-8">
+          <div className="max-w-xl mx-auto bg-card p-6 rounded-lg shadow-md border border-border">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Lagos Office</h3>
+                <p className="text-muted-foreground">Victoria Island, Lagos, Nigeria</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground pl-12 border-l-2 border-primary/20 ml-4">
+              Our Lagos office serves as our main hub for West African operations. The modern facility houses our administrative team, learning resource center, and training facilities.
+            </p>
           </div>
         </div>
       </section>

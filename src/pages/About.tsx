@@ -1,4 +1,3 @@
-
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -41,15 +40,44 @@ const About = () => {
 
   return (
     <MainLayout>
-      {/* Hero Section */}
-      <section className="relative py-20 bg-muted">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">About EduNexus</h1>
-            <p className="text-lg text-muted-foreground mb-8">
-              Discover our commitment to educational excellence through innovative technology and personalized learning experiences.
-            </p>
+      {/* Hero Section - Updated with beautiful design */}
+      <section className="relative h-[500px] overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-500">
+          <img 
+            src="https://images.unsplash.com/photo-1509062522246-3755977927d7"
+            alt="Students in graduation ceremony" 
+            className="w-full h-full object-cover mix-blend-overlay opacity-50"
+          />
+        </div>
+
+        {/* Animated Background Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/70 to-purple-900/70">
+          {/* Decorative Elements */}
+          <div className="absolute inset-0">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full bg-white"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  width: `${Math.random() * 10 + 5}px`,
+                  height: `${Math.random() * 10 + 5}px`,
+                  opacity: Math.random() * 0.5 + 0.3,
+                  animation: `float ${Math.random() * 10 + 10}s infinite ease-in-out`,
+                }}
+              />
+            ))}
           </div>
+        </div>
+
+        {/* Hero Content */}
+        <div className="container relative z-10 h-full mx-auto flex flex-col items-center justify-center text-center text-white px-4">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">About EduNexus</h1>
+          <p className="text-lg md:text-xl max-w-3xl mx-auto drop-shadow-md">
+            Discover our commitment to educational excellence through innovative technology and personalized learning experiences.
+          </p>
         </div>
       </section>
 

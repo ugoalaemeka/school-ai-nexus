@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -108,32 +107,73 @@ const GalleryPage = () => {
 
   return (
     <MainLayout>
-      {/* Hero Section with Parallax */}
-      <section className="relative h-[80vh] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-500">
-          {/* Background animation */}
-          <div className="absolute inset-0 opacity-30">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-white"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${Math.random() * 10 + 5}px`,
-                  height: `${Math.random() * 10 + 5}px`,
-                  opacity: Math.random() * 0.5 + 0.3,
-                  animation: `float ${Math.random() * 10 + 10}s infinite ease-in-out`,
-                }}
-              />
-            ))}
+      {/* Hero Section with Enhanced Parallax */}
+      <section className="relative h-[90vh] overflow-hidden">
+        {/* Main Background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
+          
+          {/* Parallax Image Layers */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="https://images.unsplash.com/photo-1511379938547-c1f69419868d" 
+              alt="Gallery background - Music" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          
+          <div className="absolute inset-0 z-0 opacity-70">
+            <img 
+              src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d" 
+              alt="Gallery background - Science fair" 
+              className="w-full h-full object-cover object-center blur-sm"
+              style={{clipPath: "polygon(0 0, 100% 0, 100% 70%, 0 100%)"}}
+            />
+          </div>
+          
+          <div className="absolute inset-0 z-0 opacity-70">
+            <img 
+              src="https://images.unsplash.com/photo-1576633587382-13ddf37b1fc1" 
+              alt="Gallery background - Sports" 
+              className="w-full h-full object-cover object-bottom blur-sm"
+              style={{clipPath: "polygon(0 30%, 100% 0, 100% 100%, 0 100%)"}}
+            />
           </div>
         </div>
 
+        {/* Floating Images Animation */}
+        <div className="absolute inset-0 z-20 overflow-hidden">
+          {[
+            "https://images.unsplash.com/photo-1491841550275-ad7854e35ca6",
+            "https://images.unsplash.com/photo-1526676037777-05a232554d77",
+            "https://images.unsplash.com/photo-1501555088652-021faa106b9b"
+          ].map((src, i) => (
+            <motion.div
+              key={i}
+              initial={{ y: -100, x: Math.random() * 100 - 50, opacity: 0 }}
+              animate={{ 
+                y: [Math.random() * 100, Math.random() * 500 + 100], 
+                x: [Math.random() * 300 - 150, Math.random() * 300 - 150],
+                opacity: [0.8, 0]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: Math.random() * 15 + 15,
+                delay: i * 4,
+                repeatType: "loop"
+              }}
+              className="absolute w-48 h-48 rounded-lg overflow-hidden shadow-2xl border-2 border-white/20"
+              style={{ left: `${(i * 30) + 10}%` }}
+            >
+              <img src={src} className="w-full h-full object-cover" alt="Gallery floating" />
+            </motion.div>
+          ))}
+        </div>
+
         {/* Hero content */}
-        <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
+        <div className="relative z-30 flex h-full flex-col items-center justify-center text-center text-white px-4">
           <motion.h1 
-            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4"
+            className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6"
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -141,7 +181,7 @@ const GalleryPage = () => {
             Moments That Matter
           </motion.h1>
           <motion.p 
-            className="text-lg sm:text-xl mb-8 max-w-2xl"
+            className="text-xl sm:text-2xl mb-10 max-w-3xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -152,8 +192,9 @@ const GalleryPage = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
+            className="space-x-4"
           >
-            <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+            <Button size="lg" className="bg-white text-blue-700 hover:bg-blue-50 text-lg px-8 py-6">
               View Gallery
             </Button>
           </motion.div>
