@@ -1,10 +1,11 @@
+
 import React from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "@/components/tables/fees-column";
 import { feesData } from "@/data/fees";
-import { PieChart } from "@/components/ui/pie-chart";
+import { PieChart } from "@/components/ui/recharts";
 import { Badge } from "@/components/ui/badge";
 
 const AdminFees = () => {
@@ -35,19 +36,19 @@ export default AdminFees;
 
 const paymentMethodData = [
   {
-    label: "Credit Card",
+    name: "Credit Card",
     value: 45,
   },
   {
-    label: "Bank Transfer",
+    name: "Bank Transfer",
     value: 25,
   },
   {
-    label: "Cash",
+    name: "Cash",
     value: 15,
   },
   {
-    label: "Scholarship",
+    name: "Scholarship",
     value: 15,
   },
 ];
@@ -65,7 +66,6 @@ const FeeCollection = () => {
           <PieChart
             data={paymentMethodData}
             category="value"
-            // Remove the "index" property which is causing the error
             valueFormatter={(value) => `${value}%`}
             colors={["#4285F4", "#34A853", "#FBBC05", "#EA4335"]}
             className="h-full mt-6"
@@ -130,11 +130,10 @@ const OutstandingFees = () => {
           </div>
         </div>
         <div className="mt-4">
-          {/* Change "success" variant to "default" or another valid variant */}
           <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
             Paid
           </Badge>
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 ml-2">
+          <Badge variant="destructive" className="bg-red-100 text-red-800 hover:bg-red-100 ml-2">
             Unpaid
           </Badge>
         </div>

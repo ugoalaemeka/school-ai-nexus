@@ -332,8 +332,8 @@ const UsersPage = () => {
                           </div>
                           <div className="col-span-3 md:col-span-2">
                             <Badge variant={
-                              user.status === "active" ? "success" :
-                              user.status === "pending" ? "warning" :
+                              user.status === "active" ? "default" :
+                              user.status === "pending" ? "outline" :
                               user.status === "suspended" ? "destructive" : 
                               "outline"
                             } className="capitalize">

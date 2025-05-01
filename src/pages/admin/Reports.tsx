@@ -1,7 +1,8 @@
+
 import React from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart } from "@tremor/react";
+import { PieChart } from "@/components/ui/recharts";
 
 const AttendanceChart = () => {
   const attendanceData = [
