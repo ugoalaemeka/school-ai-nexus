@@ -27,6 +27,12 @@ import StudentSettings from "./pages/student/Settings";
 
 // Admin Dashboard
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminClasses from "./pages/admin/Classes";
+import AdminFees from "./pages/admin/Fees";
+import AdminEvents from "./pages/admin/Events";
+import AdminReports from "./pages/admin/Reports";
+import AdminSettings from "./pages/admin/Settings";
 
 // Parent Dashboard
 import ParentDashboard from "./pages/parent/Dashboard";
@@ -76,12 +82,12 @@ const App = () => (
             
             {/* Admin Dashboard Routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<AdminDashboard />} />
-            <Route path="/admin/classes" element={<AdminDashboard />} />
-            <Route path="/admin/fees" element={<AdminDashboard />} />
-            <Route path="/admin/events" element={<AdminDashboard />} />
-            <Route path="/admin/reports" element={<AdminDashboard />} />
-            <Route path="/admin/settings" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/classes" element={<AdminClasses />} />
+            <Route path="/admin/fees" element={<AdminFees />} />
+            <Route path="/admin/events" element={<AdminEvents />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
             
             {/* Parent Dashboard Routes */}
             <Route path="/parent/dashboard" element={<ParentDashboard />} />

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { StudentSidebar } from "@/components/layout/student-sidebar";
@@ -169,7 +168,7 @@ const messageThreads = [
         sender: "Me",
         isMe: true,
         text: "Yes I do! I'll send them to you. We covered photosynthesis and cellular respiration.",
-        time: new Date(2025, 4, 22, 18, 05),
+        time: new Date(2025, 4, 22, 18, 5), // Fixed octal literal by removing the leading zero
         read: true
       },
       {
