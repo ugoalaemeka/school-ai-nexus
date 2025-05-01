@@ -251,8 +251,8 @@ const Admission = () => {
               Join our innovative learning community where every student receives personalized attention to excel academically and develop essential life skills for tomorrow's world.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
-              <Button size="lg" className="text-lg px-8 py-6">
-                Apply Now
+              <Button size="lg" className="text-lg px-8 py-6" asChild>
+                <a href="/admission/apply">Apply Now</a>
               </Button>
               <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm text-white border-white text-lg px-8 py-6">
                 Schedule a Visit

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -191,7 +190,9 @@ const UsersPage = () => {
                 <CardContent className="p-4 flex flex-col items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-500 mb-2" />
                   <p className="text-sm text-muted-foreground">Active</p>
-                  <h3 className="text-2xl font-bold">{userCounts.active}</h3>
+                  <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
+                    Active
+                  </Badge>
                 </CardContent>
               </Card>
               <Card>

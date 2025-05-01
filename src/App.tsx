@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Admission from "./pages/Admission";
+import AdmissionApplication from "./pages/AdmissionApplication";
 import NewsEvents from "./pages/NewsEvents";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
@@ -65,6 +66,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
             <Route path="/admission" element={<Admission />} />
+            <Route path="/admission/apply" element={<AdmissionApplication />} />
             <Route path="/news-events" element={<NewsEvents />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
