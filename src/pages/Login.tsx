@@ -25,9 +25,10 @@ const Login = () => {
   // Redirect logged in users to their dashboard
   useEffect(() => {
     if (user && profile) {
-      navigate(`/${profile.role}/dashboard`);
+      const from = location.state?.from?.pathname || `/${profile.role}/dashboard`;
+      navigate(from);
     }
-  }, [user, profile, navigate]);
+  }, [user, profile, navigate, location]);
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
