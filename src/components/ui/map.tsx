@@ -13,12 +13,14 @@ interface MapProps {
   className?: string;
   location?: { lat: number; lng: number };
   zoom?: number;
+  apiKey?: string;
 }
 
 export const Map = ({ 
   className, 
   location = { lat: 6.5244, lng: 3.3792 }, // Default coordinates for Lagos, Nigeria
-  zoom = 13
+  zoom = 13,
+  apiKey = 'YOUR_API_KEY_HERE' // This should ideally be an environment variable
 }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any | null>(null);
@@ -74,7 +76,7 @@ export const Map = ({
     } else {
       // Load Google Maps API dynamically
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`;
       script.async = true;
       script.defer = true;
       
@@ -89,7 +91,7 @@ export const Map = ({
         script.remove();
       };
     }
-  }, [location, zoom]);
+  }, [location, zoom, apiKey]);
 
   return (
     <div className={`relative w-full h-96 rounded-lg overflow-hidden shadow-lg ${className || ''}`}>

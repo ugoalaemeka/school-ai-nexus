@@ -26,6 +26,7 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
 
   // Role check if allowedRoles is provided
   if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {
+    console.log('User role:', profile.role, 'not in allowed roles:', allowedRoles);
     // Redirect to appropriate dashboard based on user's role
     return <Navigate to={`/${profile.role}/dashboard`} replace />;
   }

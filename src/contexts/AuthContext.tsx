@@ -22,6 +22,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastName: string, role: UserRole) => Promise<void>;
   signOut: () => Promise<void>;
+  updateProfile: (data: Partial<UserProfile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,14 +37,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
+        console.log('Auth state changed:', event);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         // Handle events
         if (event === 'SIGNED_OUT') {
           setProfile(null);
-        } else if (event === 'SIGNED_IN' && currentSession?.user) {
+        } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && currentSession?.user) {
           // Defer profile fetching to avoid supabase deadlock
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
@@ -54,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log('Initial session check:', currentSession ? 'Logged in' : 'Not logged in');
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -71,6 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      console.log('Fetching user profile for:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -83,7 +87,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data) {
+        console.log('Profile fetched:', data);
         setProfile(data as UserProfile);
+      } else {
+        console.log('No profile found for user:', userId);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -101,6 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         toast.success('Logged in successfully');
+        // Profile fetching is handled by the onAuthStateChange listener
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during login');
@@ -109,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, firstName: string, lastName: string, role: UserRole) => {
     try {
+      // First, create the auth user with role metadata
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -127,10 +136,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
+        // The trigger will handle creating the profile record
+        
+        // For role-specific tables, we need to create the corresponding record
+        if (role === 'student') {
+          // Create student record
+          await createStudentRecord(data.user.id);
+        } else if (role === 'teacher') {
+          // Create teacher record
+          await createTeacherRecord(data.user.id);
+        } else if (role === 'parent') {
+          // Create parent record
+          await createParentRecord(data.user.id);
+        }
+        
         toast.success('Signed up successfully! Check your email for confirmation.');
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during signup');
+    }
+  };
+
+  const createStudentRecord = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('students')
+        .insert({
+          user_id: userId,
+          grade: '10', // Default grade, can be updated later
+        });
+
+      if (error) {
+        console.error('Error creating student record:', error);
+      }
+    } catch (error) {
+      console.error('Error creating student record:', error);
+    }
+  };
+
+  const createTeacherRecord = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('teachers')
+        .insert({
+          user_id: userId,
+          subject: ['General'], // Default subject, can be updated later
+        });
+
+      if (error) {
+        console.error('Error creating teacher record:', error);
+      }
+    } catch (error) {
+      console.error('Error creating teacher record:', error);
+    }
+  };
+
+  const createParentRecord = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('parents')
+        .insert({
+          user_id: userId,
+        });
+
+      if (error) {
+        console.error('Error creating parent record:', error);
+      }
+    } catch (error) {
+      console.error('Error creating parent record:', error);
     }
   };
 
@@ -150,6 +223,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateProfile = async (data: Partial<UserProfile>) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('id', user.id);
+        
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      
+      // Update the local state
+      if (profile) {
+        setProfile({
+          ...profile,
+          ...data
+        });
+      }
+      
+      toast.success('Profile updated successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred while updating profile');
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -160,6 +261,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signIn,
         signUp,
         signOut,
+        updateProfile,
       }}
     >
       {children}
