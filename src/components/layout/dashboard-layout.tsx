@@ -18,6 +18,7 @@ import {
   BookOpenCheck,
   DollarSign
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children, userRole = "student" }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const { signOut, profile } = useAuth();
   
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -83,6 +85,9 @@ export function DashboardLayout({ children, userRole = "student" }: DashboardLay
   const links = getLinks();
   const roleName = userRole.charAt(0).toUpperCase() + userRole.slice(1);
   
+  // Get user's full name from profile
+  const userName = profile ? `${profile.first_name} ${profile.last_name}` : 'User';
+  
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -117,7 +122,11 @@ export function DashboardLayout({ children, userRole = "student" }: DashboardLay
           </nav>
         </div>
         <div className="p-4 border-t">
-          <Button variant="ghost" className={`w-full dashboard-link ${isSidebarOpen ? "" : "justify-center"}`}>
+          <Button 
+            variant="ghost" 
+            className={`w-full dashboard-link ${isSidebarOpen ? "" : "justify-center"}`}
+            onClick={signOut}
+          >
             <LogOut className="h-5 w-5" />
             {isSidebarOpen && <span>Logout</span>}
           </Button>
@@ -143,7 +152,7 @@ export function DashboardLayout({ children, userRole = "student" }: DashboardLay
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                 <User className="h-5 w-5 text-primary" />
               </div>
-              <span className="hidden md:inline-block font-medium">John Doe</span>
+              <span className="hidden md:inline-block font-medium">{userName}</span>
             </div>
           </div>
         </header>

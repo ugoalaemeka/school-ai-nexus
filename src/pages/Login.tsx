@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,21 +9,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState("student");
+  const location = useLocation();
+  const { signIn, signUp, user, profile } = useAuth();
   
-  const handleLogin = (e: React.FormEvent) => {
+  const [role, setRole] = useState<"admin" | "student" | "teacher" | "parent">("student");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  
+  // Redirect logged in users to their dashboard
+  useEffect(() => {
+    if (user && profile) {
+      navigate(`/${profile.role}/dashboard`);
+    }
+  }, [user, profile, navigate]);
+  
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For demo, redirect to corresponding dashboard based on role
-    navigate(`/${role}/dashboard`);
+    await signIn(email, password);
   };
   
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For demo, show success message in a real app
-    navigate("/login");
+    await signUp(email, password, firstName, lastName, role);
   };
 
   return (
@@ -59,25 +72,24 @@ const Login = () => {
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" placeholder="youremail@example.com" type="email" required />
+                  <Input 
+                    id="email" 
+                    placeholder="youremail@example.com" 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Login As</Label>
-                  <Select defaultValue={role} onValueChange={setRole}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="student">Student</SelectItem>
-                      <SelectItem value="teacher">Teacher</SelectItem>
-                      <SelectItem value="parent">Parent</SelectItem>
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input 
+                    id="password" 
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required 
+                  />
                 </div>
                 <div className="text-right">
                   <a href="#" className="text-sm text-primary hover:underline">
@@ -93,20 +105,52 @@ const Login = () => {
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="reg-name">Full Name</Label>
-                  <Input id="reg-name" placeholder="John Doe" required />
+                  <Label htmlFor="reg-firstName">First Name</Label>
+                  <Input 
+                    id="reg-firstName" 
+                    placeholder="John" 
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reg-lastName">Last Name</Label>
+                  <Input 
+                    id="reg-lastName" 
+                    placeholder="Doe" 
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="reg-email">Email</Label>
-                  <Input id="reg-email" placeholder="youremail@example.com" type="email" required />
+                  <Input 
+                    id="reg-email" 
+                    placeholder="youremail@example.com" 
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="reg-password">Password</Label>
-                  <Input id="reg-password" type="password" required />
+                  <Input 
+                    id="reg-password" 
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="reg-role">Register As</Label>
-                  <Select defaultValue="student">
+                  <Select 
+                    value={role} 
+                    onValueChange={(value) => setRole(value as "student" | "teacher" | "parent" | "admin")}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
@@ -114,6 +158,7 @@ const Login = () => {
                       <SelectItem value="student">Student</SelectItem>
                       <SelectItem value="teacher">Teacher</SelectItem>
                       <SelectItem value="parent">Parent</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

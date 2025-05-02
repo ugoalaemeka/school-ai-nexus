@@ -1,6 +1,14 @@
 
 import React, { useEffect, useRef } from 'react';
 
+// Add TypeScript definitions for the Google Maps API
+declare global {
+  interface Window {
+    google: any;
+    initMap: () => void;
+  }
+}
+
 interface MapProps {
   className?: string;
   location?: { lat: number; lng: number };
@@ -13,7 +21,7 @@ export const Map = ({
   zoom = 13
 }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const mapInstanceRef = useRef<any | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -22,7 +30,7 @@ export const Map = ({
     const initMap = () => {
       if (!mapRef.current) return;
       
-      mapInstanceRef.current = new google.maps.Map(mapRef.current, {
+      mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
         center: location,
         zoom: zoom,
         styles: [
@@ -53,7 +61,7 @@ export const Map = ({
       });
 
       // Add marker for the location
-      new google.maps.Marker({
+      new window.google.maps.Marker({
         position: location,
         map: mapInstanceRef.current,
         title: "EduNexus Location"
