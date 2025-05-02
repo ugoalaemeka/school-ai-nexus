@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
+import * as L from 'leaflet';
 
 interface MapProps {
   className?: string;
@@ -17,7 +18,7 @@ export const Map = ({
 }: MapProps) => {
   useEffect(() => {
     // This is needed to properly load the marker icons
-    const L = require('leaflet');
+    // Using direct import instead of require()
     
     delete L.Icon.Default.prototype._getIconUrl;
     
