@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Map } from "@/components/ui/map";
+import { MapWrapper } from "@/components/ui/map-wrapper";
 import { MapPin, Mail, Phone, Clock, Send } from "lucide-react";
 
 const Contact = () => {
@@ -20,6 +20,9 @@ const Contact = () => {
     // In a real app, handle form submission here
     console.log("Form submitted");
   };
+
+  // Define the Lagos office location
+  const lagosLocation = { lat: 6.4550, lng: 3.3841 }; // Victoria Island, Lagos coordinates
 
   return (
     <MainLayout>
@@ -223,7 +226,7 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Map Section - Updated with the Lagos Map */}
+      {/* Map Section - Updated with the Leaflet Map */}
       <section className="py-20 relative overflow-hidden">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center mb-12">
@@ -235,7 +238,7 @@ const Contact = () => {
         </div>
         
         <div className="max-w-6xl mx-auto">
-          <Map />
+          <MapWrapper location={lagosLocation} zoom={14} />
         </div>
         
         {/* Additional location details */}
