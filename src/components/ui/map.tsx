@@ -19,7 +19,11 @@ export const Map = ({
     // This is needed to properly load the marker icons
     // Using direct import instead of require()
     
-    delete L.Icon.Default.prototype._getIconUrl;
+    // Fix for Typescript error - use proper type assertion
+    const DefaultIcon = L.Icon.Default;
+    
+    // Delete the _getIconUrl method and recreate it properly
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
     
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',

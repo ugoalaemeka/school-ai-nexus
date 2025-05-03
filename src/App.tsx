@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +17,7 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import ScheduleVisit from "@/pages/ScheduleVisit";
 
 // Student Dashboard
 import StudentDashboard from "./pages/student/Dashboard";
@@ -56,9 +56,9 @@ import TeacherSettings from "./pages/teacher/Settings";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light">
+function App() {
+  return (
+    <ThemeProvider defaultTheme="light" storageKey="edunexus-theme">
       <TooltipProvider>
         <BrowserRouter>
           <AuthProvider>
@@ -70,6 +70,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
               <Route path="/admission" element={<Admission />} />
+              <Route path="/schedule-visit" element={<ScheduleVisit />} />
               <Route path="/admission/apply" element={<AdmissionApplication />} />
               <Route path="/news-events" element={<NewsEvents />} />
               <Route path="/gallery" element={<Gallery />} />
@@ -241,7 +242,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
-  </QueryClientProvider>
-);
+  );
+}
 
 export default App;

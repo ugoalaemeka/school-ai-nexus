@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -49,11 +50,13 @@ import {
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import { Link, useNavigate } from "react-router-dom";
 
 const Admission = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [activeProgramTab, setActiveProgramTab] = useState("early-years");
   const [selectedProgram, setSelectedProgram] = useState(0);
+  const navigate = useNavigate();
 
   const testimonials = [
     {
@@ -229,6 +232,10 @@ const Admission = () => {
     "Advanced Research": <Brain className="h-5 w-5" />,
   };
 
+  const handleScheduleVisit = () => {
+    navigate('/schedule-visit');
+  };
+
   return (
     <MainLayout>
       {/* Hero Section */}
@@ -252,9 +259,14 @@ const Admission = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
               <Button size="lg" className="text-lg px-8 py-6" asChild>
-                <a href="/admission/apply">Apply Now</a>
+                <Link to="/admission/apply">Apply Now</Link>
               </Button>
-              <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm text-white border-white text-lg px-8 py-6">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="bg-white/10 backdrop-blur-sm text-white border-white text-lg px-8 py-6"
+                onClick={handleScheduleVisit}
+              >
                 Schedule a Visit
               </Button>
             </div>
@@ -638,11 +650,16 @@ const Admission = () => {
             Don't miss the opportunity to give your child the education they deserve. Limited seats available for the upcoming academic year.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-primary text-lg px-8">
-              Start Application
+            <Button size="lg" variant="secondary" className="text-primary text-lg px-8" asChild>
+              <Link to="/admission/apply">Start Application</Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-white text-lg px-8">
-              Talk to Admissions Officer
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="text-white border-white text-lg px-8"
+              onClick={handleScheduleVisit}
+            >
+              Schedule a Visit
             </Button>
           </div>
         </div>
@@ -739,7 +756,14 @@ const Admission = () => {
 
       {/* Sticky Mobile CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-lg md:hidden z-50">
-        <Button className="w-full">Apply Now</Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button className="w-full" asChild>
+            <Link to="/admission/apply">Apply Now</Link>
+          </Button>
+          <Button variant="outline" className="w-full" onClick={handleScheduleVisit}>
+            Schedule Visit
+          </Button>
+        </div>
       </div>
     </MainLayout>
   );
