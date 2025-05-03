@@ -850,6 +850,51 @@ export type Database = {
           },
         ]
       }
+      visit_bookings: {
+        Row: {
+          child_class: string
+          child_name: string
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          message: string | null
+          phone: string
+          preferred_date: string
+          preferred_time: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          child_class: string
+          child_name: string
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          message?: string | null
+          phone: string
+          preferred_date: string
+          preferred_time: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          child_class?: string
+          child_name?: string
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string | null
+          phone?: string
+          preferred_date?: string
+          preferred_time?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

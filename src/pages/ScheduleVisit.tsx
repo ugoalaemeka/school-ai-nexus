@@ -29,6 +29,19 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+// Define the table type for visit_bookings since it might not be in the auto-generated types yet
+interface VisitBooking {
+  full_name: string;
+  email: string;
+  phone: string;
+  child_name: string;
+  child_class: string;
+  preferred_date: string;
+  preferred_time: string;
+  message: string | null;
+  status: string;
+}
+
 const ScheduleVisit = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -54,7 +67,7 @@ const ScheduleVisit = () => {
     setIsSubmitting(true);
     
     try {
-      // Save to Supabase if available
+      // Use a generic insert with the table name as a string
       const { error } = await supabase.from('visit_bookings').insert({
         full_name: data.fullName,
         email: data.email,
@@ -65,7 +78,7 @@ const ScheduleVisit = () => {
         preferred_time: data.time,
         message: data.message || null,
         status: 'pending'
-      });
+      } as VisitBooking);
 
       if (error) throw error;
 
