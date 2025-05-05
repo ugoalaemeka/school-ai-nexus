@@ -46,8 +46,8 @@ const Login = () => {
         // First, find the student's email using their unique_id
         const { data, error } = await supabase
           .from('students')
-          .select('user_id, address') // address column stores the unique_id
-          .eq('address', uniqueId) // using address temporarily for unique_id until schema updated
+          .select('user_id, address') // address column stores the unique_id until schema updated
+          .eq('address', uniqueId) // using address temporarily for unique_id
           .maybeSingle();
         
         if (error || !data) {
