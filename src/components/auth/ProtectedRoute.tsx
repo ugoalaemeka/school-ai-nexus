@@ -5,10 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: ('admin' | 'teacher' | 'student' | 'parent')[];
+  requiresPaidFees?: boolean;
 }
 
-export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const { user, profile, loading } = useAuth();
+export const ProtectedRoute = ({ children, allowedRoles, requiresPaidFees = false }: ProtectedRouteProps) => {
+  const { user, profile, loading, hasPaidFees } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -29,6 +30,11 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
     console.log('User role:', profile.role, 'not in allowed roles:', allowedRoles);
     // Redirect to appropriate dashboard based on user's role
     return <Navigate to={`/${profile.role}/dashboard`} replace />;
+  }
+
+  // If student and requires paid fees check
+  if (requiresPaidFees && profile?.role === 'student' && !hasPaidFees) {
+    return <Navigate to="/unpaid-fees" replace />;
   }
 
   return <>{children}</>;

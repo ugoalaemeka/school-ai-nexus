@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen } from "lucide-react";
+import { BookOpen, UserIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,6 +24,11 @@ const Login = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   
+  // For student login with unique_id
+  const [uniqueId, setUniqueId] = useState("");
+  const [surname, setSurname] = useState("");
+  const [isStudentLogin, setIsStudentLogin] = useState(false);
+  
   // Redirect logged in users to their dashboard
   useEffect(() => {
     if (user && profile) {
@@ -32,12 +39,67 @@ const Login = () => {
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signIn(email, password);
+    
+    if (isStudentLogin) {
+      // Handle student login with unique_id
+      try {
+        // First, find the student's email using their unique_id
+        const { data, error } = await supabase
+          .from('students')
+          .select('user_id, address') // address column stores the unique_id
+          .eq('address', uniqueId) // using address temporarily for unique_id until schema updated
+          .maybeSingle();
+        
+        if (error || !data) {
+          toast.error("Student ID not found");
+          return;
+        }
+        
+        // Now we need to verify the surname matches
+        const { data: userData, error: userError } = await supabase
+          .from('profiles')
+          .select('id, last_name')
+          .eq('id', data.user_id)
+          .maybeSingle();
+        
+        if (userError || !userData) {
+          toast.error("Student profile not found");
+          return;
+        }
+        
+        // Check if surname matches
+        if (userData.last_name?.toLowerCase() !== surname.toLowerCase()) {
+          toast.error("Invalid surname");
+          return;
+        }
+        
+        // Get the email for this user to login
+        const { data: authData, error: authError } = await supabase
+          .auth.admin.getUserById(data.user_id);
+        
+        if (authError || !authData?.user?.email) {
+          toast.error("Could not retrieve student email");
+          return;
+        }
+        
+        // Login with the retrieved email and surname as password
+        await signIn(authData.user.email, surname);
+      } catch (error: any) {
+        toast.error(error.message || "An error occurred during student login");
+      }
+    } else {
+      // Regular email/password login
+      await signIn(email, password);
+    }
   };
   
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     await signUp(email, password, firstName, lastName, role);
+  };
+
+  const toggleLoginMethod = () => {
+    setIsStudentLogin(!isStudentLogin);
   };
 
   return (
@@ -70,37 +132,83 @@ const Login = () => {
           
           <CardContent>
             <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    placeholder="youremail@example.com" 
-                    type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required 
-                  />
-                </div>
-                <div className="text-right">
-                  <a href="#" className="text-sm text-primary hover:underline">
-                    Forgot password?
-                  </a>
-                </div>
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-              </form>
+              {isStudentLogin ? (
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="unique-id">Student ID</Label>
+                    <Input 
+                      id="unique-id" 
+                      placeholder="Enter your student ID" 
+                      value={uniqueId}
+                      onChange={(e) => setUniqueId(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="surname">Surname</Label>
+                    <Input 
+                      id="surname" 
+                      type="password"
+                      placeholder="Enter your surname"
+                      value={surname}
+                      onChange={(e) => setSurname(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <Button 
+                    type="button" 
+                    variant="link" 
+                    onClick={toggleLoginMethod} 
+                    className="p-0 h-auto text-xs"
+                  >
+                    Switch to email login
+                  </Button>
+                  <Button type="submit" className="w-full">
+                    Login as Student
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email" 
+                      placeholder="youremail@example.com" 
+                      type="email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input 
+                      id="password" 
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required 
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      onClick={toggleLoginMethod} 
+                      className="flex items-center gap-1 text-xs"
+                    >
+                      <UserIcon className="h-3 w-3" />
+                      Student Login
+                    </Button>
+                    <a href="#" className="text-sm text-primary hover:underline">
+                      Forgot password?
+                    </a>
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Login
+                  </Button>
+                </form>
+              )}
             </TabsContent>
             
             <TabsContent value="register">

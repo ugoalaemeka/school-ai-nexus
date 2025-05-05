@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import ScheduleVisit from "@/pages/ScheduleVisit";
+import UnpaidFeesPage from "./pages/student/UnpaidFees";
 
 // Student Dashboard
 import StudentDashboard from "./pages/student/Dashboard";
@@ -76,45 +78,46 @@ function App() {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/unpaid-fees" element={<UnpaidFeesPage />} />
               
               {/* Student Dashboard Routes - Protected */}
               <Route path="/student/dashboard" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentDashboard />
                 </ProtectedRoute>
               } />
               <Route path="/student/timetable" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentTimetable />
                 </ProtectedRoute>
               } />
               <Route path="/student/assignments" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentAssignments />
                 </ProtectedRoute>
               } />
               <Route path="/student/resources" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentResources />
                 </ProtectedRoute>
               } />
               <Route path="/student/exams" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentExams />
                 </ProtectedRoute>
               } />
               <Route path="/student/messages" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentMessages />
                 </ProtectedRoute>
               } />
               <Route path="/student/messages/:id" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentMessages />
                 </ProtectedRoute>
               } />
               <Route path="/student/settings" element={
-                <ProtectedRoute allowedRoles={['student']}>
+                <ProtectedRoute allowedRoles={['student']} requiresPaidFees={true}>
                   <StudentSettings />
                 </ProtectedRoute>
               } />
