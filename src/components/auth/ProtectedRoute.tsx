@@ -22,6 +22,7 @@ export const ProtectedRoute = ({ children, allowedRoles, requiresPaidFees = fals
 
   // Not authenticated
   if (!user) {
+    // Save the location they were trying to access
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -34,6 +35,7 @@ export const ProtectedRoute = ({ children, allowedRoles, requiresPaidFees = fals
 
   // If student and requires paid fees check
   if (requiresPaidFees && profile?.role === 'student' && !hasPaidFees) {
+    console.log('Student has not paid fees, redirecting to unpaid fees page');
     return <Navigate to="/unpaid-fees" replace />;
   }
 
