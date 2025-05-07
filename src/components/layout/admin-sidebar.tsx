@@ -15,7 +15,11 @@ import {
   ClipboardList
 } from 'lucide-react';
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  // Add any props you might need in the future
+}
+
+export function AdminSidebar({}: AdminSidebarProps) {
   const { pathname } = useLocation();
 
   const isActive = (path: string) => {
