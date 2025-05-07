@@ -374,6 +374,47 @@ export type Database = {
         }
         Relationships: []
       }
+      invite_tokens: {
+        Row: {
+          class_assigned: string | null
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          is_used: boolean | null
+          role: string
+          token: string
+        }
+        Insert: {
+          class_assigned?: string | null
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          is_used?: boolean | null
+          role: string
+          token: string
+        }
+        Update: {
+          class_assigned?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean | null
+          role?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invite_tokens_class_assigned_fkey"
+            columns: ["class_assigned"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -758,36 +799,50 @@ export type Database = {
       }
       teachers: {
         Row: {
+          class_assigned: string | null
           created_at: string | null
           employment_status: string | null
           hire_date: string | null
           id: string
+          is_active: boolean | null
           qualifications: string | null
           subject: string[]
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          class_assigned?: string | null
           created_at?: string | null
           employment_status?: string | null
           hire_date?: string | null
           id?: string
+          is_active?: boolean | null
           qualifications?: string | null
           subject: string[]
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          class_assigned?: string | null
           created_at?: string | null
           employment_status?: string | null
           hire_date?: string | null
           id?: string
+          is_active?: boolean | null
           qualifications?: string | null
           subject?: string[]
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "teachers_class_assigned_fkey"
+            columns: ["class_assigned"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       timetable: {
         Row: {
@@ -900,6 +955,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_teacher: {
+        Args: {
+          activation_token: string
+          password: string
+          first_name: string
+          last_name: string
+        }
+        Returns: Json
+      }
+      assign_teacher_to_class: {
+        Args: { teacher_id: string; class_id: string }
+        Returns: Json
+      }
+      create_teacher_with_invite: {
+        Args: { teacher_name: string; teacher_email: string; class_id: string }
+        Returns: Json
+      }
+      generate_secure_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_teachers: {
+        Args: { status?: string }
+        Returns: Json[]
+      }
       get_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -916,9 +996,17 @@ export type Database = {
         Args: { student_uuid: string }
         Returns: boolean
       }
+      reset_teacher_password: {
+        Args: { teacher_email: string }
+        Returns: Json
+      }
       teaches_class: {
         Args: { class_uuid: string }
         Returns: boolean
+      }
+      toggle_teacher_status: {
+        Args: { teacher_user_id: string; set_active: boolean }
+        Returns: Json
       }
     }
     Enums: {

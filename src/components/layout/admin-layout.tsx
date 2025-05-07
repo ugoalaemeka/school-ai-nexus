@@ -14,7 +14,8 @@ import {
   Search, 
   User,
   Menu,
-  X
+  X,
+  GraduationCap
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <Link to="/admin/users" className={isActive("/admin/users")}>
         <Users className="h-5 w-5" />
         <span className="hidden md:inline">User Management</span>
+      </Link>
+      
+      <Link to="/admin/teachers" className={isActive("/admin/teachers")}>
+        <GraduationCap className="h-5 w-5" />
+        <span className="hidden md:inline">Teachers</span>
       </Link>
       
       <Link to="/admin/classes" className={isActive("/admin/classes")}>

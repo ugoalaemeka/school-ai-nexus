@@ -6,10 +6,16 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles?: ('admin' | 'teacher' | 'student' | 'parent')[];
   requiresPaidFees?: boolean;
+  requiresActiveStatus?: boolean;
 }
 
-export const ProtectedRoute = ({ children, allowedRoles, requiresPaidFees = false }: ProtectedRouteProps) => {
-  const { user, profile, loading, hasPaidFees } = useAuth();
+export const ProtectedRoute = ({ 
+  children, 
+  allowedRoles, 
+  requiresPaidFees = false,
+  requiresActiveStatus = false
+}: ProtectedRouteProps) => {
+  const { user, profile, loading, hasPaidFees, isTeacherActive } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -37,6 +43,12 @@ export const ProtectedRoute = ({ children, allowedRoles, requiresPaidFees = fals
   if (requiresPaidFees && profile?.role === 'student' && !hasPaidFees) {
     console.log('Student has not paid fees, redirecting to unpaid fees page');
     return <Navigate to="/unpaid-fees" replace />;
+  }
+
+  // If teacher and requires active status check
+  if (requiresActiveStatus && profile?.role === 'teacher' && !isTeacherActive) {
+    console.log('Teacher account is not active, redirecting to inactive account page');
+    return <Navigate to="/inactive-account" replace />;
   }
 
   return <>{children}</>;

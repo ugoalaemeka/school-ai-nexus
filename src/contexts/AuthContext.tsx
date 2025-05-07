@@ -20,6 +20,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   hasPaidFees: boolean;
+  isTeacherActive: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, firstName: string, lastName: string, role: UserRole) => Promise<void>;
   signOut: () => Promise<void>;
@@ -34,6 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasPaidFees, setHasPaidFees] = useState(false);
+  const [isTeacherActive, setIsTeacherActive] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (event === 'SIGNED_OUT') {
           setProfile(null);
           setHasPaidFees(false);
+          setIsTeacherActive(false);
         } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && currentSession?.user) {
           // Defer profile fetching to avoid supabase deadlock
           setTimeout(() => {
@@ -96,6 +99,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // If student, check payment status
         if (data.role === 'student') {
           checkPaymentStatus(userId);
+        } 
+        // If teacher, check active status
+        else if (data.role === 'teacher') {
+          checkTeacherActiveStatus(userId);
         }
       } else {
         console.log('No profile found for user:', userId);
@@ -122,6 +129,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error checking payment status:', error);
       setHasPaidFees(false);
+    }
+  };
+
+  const checkTeacherActiveStatus = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('teachers')
+        .select('is_active')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (!error && data && data.is_active) {
+        setIsTeacherActive(true);
+      } else {
+        setIsTeacherActive(false);
+      }
+    } catch (error) {
+      console.error('Error checking teacher active status:', error);
+      setIsTeacherActive(false);
     }
   };
 
@@ -287,6 +313,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         profile,
         loading,
         hasPaidFees,
+        isTeacherActive,
         signIn,
         signUp,
         signOut,
