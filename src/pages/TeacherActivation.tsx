@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { SupabaseJsonResponse } from "@/types/database";
 
 const TeacherActivation = () => {
   const [searchParams] = useSearchParams();
@@ -93,12 +94,14 @@ const TeacherActivation = () => {
         return;
       }
       
-      if (data.success) {
+      const result = data as SupabaseJsonResponse;
+      
+      if (result.success) {
         toast.success("Account activated successfully!");
         // Redirect to login page
         navigate("/login");
       } else {
-        toast.error(data.message || "Failed to activate account");
+        toast.error(result.message || "Failed to activate account");
       }
     } catch (error: any) {
       toast.error(error.message || "An error occurred");
