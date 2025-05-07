@@ -1,93 +1,64 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DataTable } from "@/components/ui/data-table";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { MoreHorizontal, Plus, RefreshCw, UserPlus } from "lucide-react";
 import { Teacher, SupabaseJsonResponse } from "@/types/database";
-import { format } from "date-fns";
+import { Check, X, Mail, UserPlus } from "lucide-react";
 
 const TeachersPage = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [classes, setClasses] = useState<{id: string, name: string}[]>([]);
+  const [classes, setClasses] = useState<Array<{ id: string, name: string }>>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<string>("all");
-  
-  // New teacher form
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newTeacherName, setNewTeacherName] = useState("");
-  const [newTeacherEmail, setNewTeacherEmail] = useState("");
-  const [newTeacherClass, setNewTeacherClass] = useState("");
-  const [addingTeacher, setAddingTeacher] = useState(false);
-  
-  // Reset password dialog
-  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
-  const [resettingPassword, setResettingPassword] = useState(false);
-  
-  // Invite link dialog
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [inviteLink, setInviteLink] = useState("");
-  const [inviteExpiry, setInviteExpiry] = useState("");
-  
-  useEffect(() => {
-    fetchTeachers();
-    fetchClasses();
-  }, [activeTab]);
+  const [selectedClass, setSelectedClass] = useState<string>("");
+  const [resetPasswordEmail, setResetPasswordEmail] = useState<string>("");
+  const [resetPasswordOpen, setResetPasswordOpen] = useState(false);
+  const [inviteData, setInviteData] = useState({
+    teacherName: "",
+    teacherEmail: "",
+    classId: ""
+  });
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [assignClassOpen, setAssignClassOpen] = useState(false);
+  const [teacherForClassAssign, setTeacherForClassAssign] = useState<Teacher | null>(null);
   
   const fetchTeachers = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      
-      // Use the stored function to get teachers based on status
-      const status = activeTab === "active" ? "active" : 
-                     activeTab === "inactive" ? "inactive" : null;
-      
-      const { data, error } = await supabase.rpc(
-        'get_teachers',
-        { status }
-      );
+      const { data, error } = await supabase.rpc('get_teachers');
       
       if (error) {
-        toast.error("Failed to fetch teachers: " + error.message);
+        toast.error(`Error fetching teachers: ${error.message}`);
         return;
       }
       
-      setTeachers(data as Teacher[]);
-    } catch (error) {
-      console.error("Error fetching teachers:", error);
-      toast.error("An error occurred while fetching teachers");
+      // Cast data to Teacher[] with type assertion
+      setTeachers(data as unknown as Teacher[]);
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -100,444 +71,397 @@ const TeachersPage = () => {
         .select('id, name');
       
       if (error) {
-        toast.error("Failed to fetch classes");
+        toast.error(`Error fetching classes: ${error.message}`);
         return;
       }
       
       setClasses(data || []);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`);
     }
   };
   
-  const handleCreateTeacher = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!newTeacherName.trim() || !newTeacherEmail.trim() || !newTeacherClass) {
-      toast.error("Please complete all fields");
-      return;
-    }
-    
+  useEffect(() => {
+    fetchTeachers();
+    fetchClasses();
+  }, []);
+  
+  const handleToggleStatus = async (teacherId: string, isCurrentlyActive: boolean) => {
     try {
-      setAddingTeacher(true);
-      
-      const { data, error } = await supabase.rpc(
-        'create_teacher_with_invite',
-        {
-          teacher_name: newTeacherName,
-          teacher_email: newTeacherEmail,
-          class_id: newTeacherClass
-        }
-      );
+      const { data, error } = await supabase.rpc('toggle_teacher_status', {
+        teacher_user_id: teacherId,
+        set_active: !isCurrentlyActive
+      });
       
       if (error) {
-        toast.error("Failed to create teacher: " + error.message);
+        toast.error(`Error updating teacher status: ${error.message}`);
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
-        toast.success("Teacher created successfully!");
-        // Reset form
-        setNewTeacherName("");
-        setNewTeacherEmail("");
-        setNewTeacherClass("");
-        setShowAddDialog(false);
-        
-        // Show invite link
-        setInviteLink(`${window.location.origin}/activate?token=${result.token}`);
-        setInviteExpiry(result.expires_at || '');
-        setShowInviteDialog(true);
-        
-        // Refresh teacher list
-        fetchTeachers();
+        toast.success(result.message || "Teacher status updated!");
+        fetchTeachers(); // Refresh the list
       } else {
-        toast.error(result.message || "Failed to create teacher");
+        toast.error(result.message || "Failed to update teacher status");
       }
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      toast.error(`Error: ${error.message}`);
+    }
+  };
+  
+  const handleInviteTeacher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    
+    try {
+      const { data, error } = await supabase.rpc('create_teacher_with_invite', {
+        teacher_name: inviteData.teacherName,
+        teacher_email: inviteData.teacherEmail,
+        class_id: inviteData.classId
+      });
+      
+      if (error) {
+        toast.error(`Error inviting teacher: ${error.message}`);
+        return;
+      }
+      
+      const result = data as unknown as SupabaseJsonResponse;
+      
+      if (result.success) {
+        toast.success("Teacher invited successfully!");
+        // Show activation link
+        toast.info(`Activation link will be sent to: ${result.email}`);
+        fetchTeachers(); // Refresh the list
+        setFormOpen(false);
+        setInviteData({ teacherName: "", teacherEmail: "", classId: "" });
+      } else {
+        toast.error(result.message || "Failed to invite teacher");
+      }
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`);
     } finally {
-      setAddingTeacher(false);
+      setIsProcessing(false);
     }
   };
   
   const handleResetPassword = async () => {
-    if (!selectedTeacher) return;
+    setIsProcessing(true);
     
     try {
-      setResettingPassword(true);
-      
-      const { data, error } = await supabase.rpc(
-        'reset_teacher_password',
-        { teacher_email: selectedTeacher.email }
-      );
+      const { data, error } = await supabase.rpc('reset_teacher_password', {
+        teacher_email: resetPasswordEmail
+      });
       
       if (error) {
-        toast.error("Failed to reset password: " + error.message);
+        toast.error(`Error resetting password: ${error.message}`);
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
-        toast.success("Password reset link generated");
-        setShowResetDialog(false);
-        
-        // Show invite link
-        setInviteLink(`${window.location.origin}/activate?token=${result.token}`);
-        setInviteExpiry(result.expires_at || '');
-        setShowInviteDialog(true);
+        toast.success("Password reset successful!");
+        toast.info(`Reset link will be sent to: ${result.email}`);
+        setResetPasswordOpen(false);
+        setResetPasswordEmail("");
       } else {
         toast.error(result.message || "Failed to reset password");
       }
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      toast.error(`Error: ${error.message}`);
     } finally {
-      setResettingPassword(false);
+      setIsProcessing(false);
     }
   };
   
-  const handleToggleActive = async (teacher: Teacher) => {
-    if (!teacher.user_id) {
-      toast.error("Cannot toggle status for pending teacher");
+  const handleAssignClass = async () => {
+    if (!teacherForClassAssign || !selectedClass) {
+      toast.error("Missing required information");
       return;
     }
     
+    setIsProcessing(true);
+    
     try {
-      const { data, error } = await supabase.rpc(
-        'toggle_teacher_status',
-        { 
-          teacher_user_id: teacher.user_id,
-          set_active: !teacher.is_active
-        }
-      );
+      const { data, error } = await supabase.rpc('assign_teacher_to_class', {
+        teacher_id: teacherForClassAssign.id,
+        class_id: selectedClass
+      });
       
       if (error) {
-        toast.error("Failed to update status: " + error.message);
+        toast.error(`Error assigning class: ${error.message}`);
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
-        toast.success(result.message || "Status updated successfully");
-        fetchTeachers();
-      } else {
-        toast.error(result.message || "Failed to update status");
-      }
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred");
-    }
-  };
-  
-  const handleAssignClass = async (teacher: Teacher, classId: string) => {
-    try {
-      const { data, error } = await supabase.rpc(
-        'assign_teacher_to_class',
-        { 
-          teacher_id: teacher.id,
-          class_id: classId
-        }
-      );
-      
-      if (error) {
-        toast.error("Failed to assign class: " + error.message);
-        return;
-      }
-      
-      const result = data as SupabaseJsonResponse;
-      
-      if (result.success) {
-        toast.success("Class assigned successfully");
-        fetchTeachers();
+        toast.success("Teacher assigned to class successfully!");
+        fetchTeachers(); // Refresh the list
+        setAssignClassOpen(false);
+        setTeacherForClassAssign(null);
+        setSelectedClass("");
       } else {
         toast.error(result.message || "Failed to assign class");
       }
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      toast.error(`Error: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
     }
   };
   
-  const copyInviteLink = () => {
-    navigator.clipboard.writeText(inviteLink);
-    toast.success("Invite link copied to clipboard");
-  };
-  
-  return (
-    <AdminLayout>
-      <div className="container py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Teachers Management</h1>
-          
-          <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" onClick={fetchTeachers}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
+  const columns = [
+    {
+      header: "Name",
+      accessorFn: (row: Teacher) => `${row.first_name} ${row.last_name}`,
+      cell: ({ row }: { row: { original: Teacher } }) => {
+        return (
+          <div>
+            {row.original.first_name} {row.original.last_name}
+          </div>
+        );
+      }
+    },
+    {
+      header: "Email",
+      accessorKey: "email",
+    },
+    {
+      header: "Class",
+      accessorKey: "class_name",
+      cell: ({ row }: { row: { original: Teacher } }) => {
+        return row.original.class_name || "Unassigned";
+      }
+    },
+    {
+      header: "Status",
+      accessorKey: "is_active",
+      cell: ({ row }: { row: { original: Teacher } }) => {
+        return row.original.is_active ? 
+          <Badge className="bg-green-500">Active</Badge> : 
+          <Badge className="bg-red-500">Inactive</Badge>;
+      }
+    },
+    {
+      header: "Actions",
+      cell: ({ row }: { row: { original: Teacher } }) => {
+        const teacher = row.original;
+        
+        return (
+          <div className="flex gap-2">
+            <Button 
+              variant={teacher.is_active ? "destructive" : "default"} 
+              size="sm"
+              onClick={() => handleToggleStatus(teacher.user_id, teacher.is_active)}
+            >
+              {teacher.is_active ? <X className="h-4 w-4 mr-1" /> : <Check className="h-4 w-4 mr-1" />}
+              {teacher.is_active ? "Disable" : "Enable"}
             </Button>
             
-            <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-              <DialogTrigger asChild>
-                <Button>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add Teacher
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Teacher</DialogTitle>
-                  <DialogDescription>
-                    Create a new teacher account and send an invitation.
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <form onSubmit={handleCreateTeacher} className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="teacherName">Full Name</Label>
-                    <Input 
-                      id="teacherName"
-                      placeholder="John Smith"
-                      value={newTeacherName}
-                      onChange={(e) => setNewTeacherName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="teacherEmail">Email Address</Label>
-                    <Input 
-                      id="teacherEmail"
-                      type="email"
-                      placeholder="john.smith@example.com"
-                      value={newTeacherEmail}
-                      onChange={(e) => setNewTeacherEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="teacherClass">Assign to Class</Label>
-                    <Select 
-                      value={newTeacherClass} 
-                      onValueChange={setNewTeacherClass}
-                      required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a class" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {classes.map((cls) => (
-                          <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={addingTeacher}>
-                      {addingTeacher ? "Creating..." : "Create & Invite"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setTeacherForClassAssign(teacher);
+                setAssignClassOpen(true);
+                setSelectedClass(teacher.class_assigned || "");
+              }}
+            >
+              Assign Class
+            </Button>
+          </div>
+        );
+      }
+    }
+  ];
+
+  return (
+    <AdminLayout>
+      <div className="p-6">
+        <div className="mb-8 flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Teachers Management</h1>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setResetPasswordOpen(true)}
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              Reset Password
+            </Button>
+            
+            <Button onClick={() => setFormOpen(true)}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Invite Teacher
+            </Button>
           </div>
         </div>
         
         <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Teachers</CardTitle>
-                <CardDescription>
-                  Manage teacher accounts, invitations, and permissions.
-                </CardDescription>
-              </div>
-              
-              <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList>
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="active">Active</TabsTrigger>
-                  <TabsTrigger value="inactive">Inactive</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
+          <CardHeader>
+            <CardTitle>All Teachers</CardTitle>
+            <CardDescription>
+              Manage all teachers in the system. You can enable/disable accounts and assign classes.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-10">
-                      <div className="flex justify-center">
-                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : teachers.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-10">
-                      No teachers found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  teachers.map((teacher) => (
-                    <TableRow key={teacher.id}>
-                      <TableCell className="font-medium">
-                        {teacher.first_name} {teacher.last_name}
-                      </TableCell>
-                      <TableCell>{teacher.email}</TableCell>
-                      <TableCell>
-                        <Select 
-                          value={teacher.class_assigned || ""}
-                          onValueChange={(classId) => handleAssignClass(teacher, classId)}
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <SelectValue placeholder="Not assigned" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {classes.map((cls) => (
-                              <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        {!teacher.user_id ? (
-                          <Badge variant="warning">Pending</Badge>
-                        ) : teacher.is_active ? (
-                          <Badge variant="success">Active</Badge>
-                        ) : (
-                          <Badge variant="destructive">Inactive</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {teacher.created_at ? (
-                          format(new Date(teacher.created_at), 'PP')
-                        ) : '-'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {teacher.user_id && (
-                              <DropdownMenuItem 
-                                onClick={() => handleToggleActive(teacher)}
-                              >
-                                {teacher.is_active ? "Deactivate" : "Activate"}
-                              </DropdownMenuItem>
-                            )}
-                            
-                            {teacher.user_id && (
-                              <>
-                                <DropdownMenuItem onClick={() => {
-                                  setSelectedTeacher(teacher);
-                                  setShowResetDialog(true);
-                                }}>
-                                  Reset Password
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                              </>
-                            )}
-                            
-                            <DropdownMenuItem className="text-destructive">
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            <DataTable 
+              columns={columns} 
+              data={teachers} 
+            />
+            
+            {loading && (
+              <div className="flex justify-center p-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
       
-      {/* Reset Password Confirmation Dialog */}
-      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+      {/* Invite New Teacher Dialog */}
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset Password</DialogTitle>
+            <DialogTitle>Invite New Teacher</DialogTitle>
             <DialogDescription>
-              This will generate a new password reset link for {selectedTeacher?.first_name} {selectedTeacher?.last_name}.
-              The link will be valid for 48 hours.
+              Fill out the form to invite a new teacher to the platform.
             </DialogDescription>
           </DialogHeader>
           
-          <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setShowResetDialog(false)}>
+          <form onSubmit={handleInviteTeacher}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="teacherName">Teacher Name</Label>
+                <Input
+                  id="teacherName"
+                  placeholder="Full Name"
+                  value={inviteData.teacherName}
+                  onChange={(e) => setInviteData({...inviteData, teacherName: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="teacherEmail">Email</Label>
+                <Input
+                  id="teacherEmail"
+                  type="email"
+                  placeholder="teacher@example.com"
+                  value={inviteData.teacherEmail}
+                  onChange={(e) => setInviteData({...inviteData, teacherEmail: e.target.value})}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="classId">Assign to Class</Label>
+                <Select
+                  value={inviteData.classId}
+                  onValueChange={(value) => setInviteData({...inviteData, classId: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map(c => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setFormOpen(false)} disabled={isProcessing}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isProcessing}>
+                {isProcessing ? "Inviting..." : "Send Invite"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Reset Password Dialog */}
+      <Dialog open={resetPasswordOpen} onOpenChange={setResetPasswordOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Teacher Password</DialogTitle>
+            <DialogDescription>
+              Enter the teacher's email to send them a password reset link.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="resetEmail">Teacher Email</Label>
+              <Input
+                id="resetEmail"
+                type="email"
+                placeholder="teacher@example.com"
+                value={resetPasswordEmail}
+                onChange={(e) => setResetPasswordEmail(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setResetPasswordOpen(false)} disabled={isProcessing}>
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleResetPassword}
-              disabled={resettingPassword}
-            >
-              {resettingPassword ? "Generating Link..." : "Reset Password"}
+            <Button onClick={handleResetPassword} disabled={isProcessing || !resetPasswordEmail}>
+              {isProcessing ? "Processing..." : "Reset Password"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       
-      {/* Invite Link Dialog */}
-      <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+      {/* Assign Class Dialog */}
+      <Dialog open={assignClassOpen} onOpenChange={setAssignClassOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Teacher Invitation</DialogTitle>
+            <DialogTitle>Assign Class to Teacher</DialogTitle>
             <DialogDescription>
-              Share this activation link with the teacher. The link will expire in 48 hours.
+              {teacherForClassAssign && (
+                <>Select a class to assign to {teacherForClassAssign.first_name} {teacherForClassAssign.last_name}.</>
+              )}
             </DialogDescription>
           </DialogHeader>
           
-          <div className="mt-4 space-y-4">
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Activation Link</Label>
-              <div className="flex items-center">
-                <Input 
-                  value={inviteLink} 
-                  readOnly 
-                  className="flex-1 mr-2"
-                />
-                <Button variant="outline" onClick={copyInviteLink} type="button">
-                  Copy
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Expires: {inviteExpiry ? format(new Date(inviteExpiry), 'PPp') : '-'}
-              </p>
-            </div>
-            
-            <div className="bg-muted p-3 rounded-md">
-              <p className="text-sm">
-                <span className="font-semibold">Note:</span> You should send this link to the teacher 
-                via email or other secure means. The teacher will use this link to create their password
-                and activate their account.
-              </p>
+              <Label htmlFor="classSelect">Class</Label>
+              <Select
+                value={selectedClass}
+                onValueChange={setSelectedClass}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a class" />
+                </SelectTrigger>
+                <SelectContent>
+                  {classes.map(c => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
-          <DialogFooter className="mt-4">
-            <Button onClick={() => setShowInviteDialog(false)}>
-              Close
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAssignClassOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button onClick={handleAssignClass} disabled={isProcessing || !selectedClass}>
+              {isProcessing ? "Assigning..." : "Assign Class"}
             </Button>
           </DialogFooter>
         </DialogContent>

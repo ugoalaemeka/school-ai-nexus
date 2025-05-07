@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activation_tokens: {
+        Row: {
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          is_used: boolean | null
+          role: string
+          token: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          is_used?: boolean | null
+          role: string
+          token: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean | null
+          role?: string
+          token?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           author_id: string | null
@@ -45,6 +75,39 @@ export type Database = {
           target_audience?: string[] | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      applications: {
+        Row: {
+          class_requested: string
+          created_at: string | null
+          email: string
+          fees_paid: boolean
+          full_name: string
+          id: string
+          parent_email: string
+          status: string
+        }
+        Insert: {
+          class_requested: string
+          created_at?: string | null
+          email: string
+          fees_paid?: boolean
+          full_name: string
+          id?: string
+          parent_email: string
+          status?: string
+        }
+        Update: {
+          class_requested?: string
+          created_at?: string | null
+          email?: string
+          fees_paid?: boolean
+          full_name?: string
+          id?: string
+          parent_email?: string
+          status?: string
         }
         Relationships: []
       }
@@ -955,6 +1018,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_parent: {
+        Args: {
+          activation_token: string
+          password: string
+          first_name: string
+          last_name: string
+        }
+        Returns: Json
+      }
+      activate_student: {
+        Args: {
+          activation_token: string
+          password: string
+          first_name: string
+          last_name: string
+        }
+        Returns: Json
+      }
       activate_teacher: {
         Args: {
           activation_token: string
@@ -964,8 +1045,21 @@ export type Database = {
         }
         Returns: Json
       }
+      admit_student: {
+        Args: { application_id: string; class_id: string }
+        Returns: Json
+      }
       assign_teacher_to_class: {
         Args: { teacher_id: string; class_id: string }
+        Returns: Json
+      }
+      create_application: {
+        Args: {
+          full_name: string
+          email: string
+          parent_email: string
+          class_requested: string
+        }
         Returns: Json
       }
       create_teacher_with_invite: {
@@ -975,6 +1069,10 @@ export type Database = {
       generate_secure_token: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_applications: {
+        Args: { status_filter?: string }
+        Returns: Json[]
       }
       get_teachers: {
         Args: { status?: string }
@@ -1006,6 +1104,14 @@ export type Database = {
       }
       toggle_teacher_status: {
         Args: { teacher_user_id: string; set_active: boolean }
+        Returns: Json
+      }
+      update_application_status: {
+        Args: {
+          application_id: string
+          new_status: string
+          set_fees_paid?: boolean
+        }
         Returns: Json
       }
     }

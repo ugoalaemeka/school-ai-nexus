@@ -1,330 +1,322 @@
-
 import React, { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle } from "lucide-react";
-import { StudentDetailsStep } from "./steps/StudentDetailsStep";
-import { ParentInfoStep } from "./steps/ParentInfoStep";
-import { AcademicInfoStep } from "./steps/AcademicInfoStep";
-import { DocumentUploadStep } from "./steps/DocumentUploadStep";
-import { ReviewStep } from "./steps/ReviewStep";
-import { PaymentStep } from "./steps/PaymentStep";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { BookOpen } from "lucide-react";
+import { CountrySelect } from "@/components/admission/CountrySelect";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { SupabaseJsonResponse } from "@/types/database";
 
-interface AdmissionFormProps {
-  onSuccessfulPayment: (data: any) => void;
-}
+const formSchema = z.object({
+  firstName: z.string().min(2, {
+    message: "First name must be at least 2 characters.",
+  }),
+  lastName: z.string().min(2, {
+    message: "Last name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  dateOfBirth: z.date({
+    required_error: "Please select your date of birth.",
+  }),
+  gradeLevel: z.string().min(1, {
+    message: "Please select a grade level.",
+  }),
+  country: z.string().min(1, {
+    message: "Please select a country.",
+  }),
+  parentFirstName: z.string().min(2, {
+    message: "Parent's first name must be at least 2 characters.",
+  }),
+  parentLastName: z.string().min(2, {
+    message: "Parent's last name must be at least 2 characters.",
+  }),
+  emailConsent: z.boolean().refine((value) => value === true, {
+    message: "You must consent to receive emails.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  parentEmail: z.string().email({
+    message: "Please enter a valid parent email address.",
+  }),
+});
 
-export const AdmissionForm = ({ onSuccessfulPayment }: AdmissionFormProps) => {
-  const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    // Student details
-    fullName: "",
-    dateOfBirth: "",
-    gender: "",
-    photo: null,
-    
-    // Parent/Guardian information
-    parentName: "",
-    relationship: "",
-    email: "",
-    phone: "",
-    address: "",
-    
-    // Academic information
-    desiredClass: "",
-    previousSchool: "",
-    reportCard: null,
-    startDate: "",
-    
-    // Documents
-    birthCertificate: null,
-    immunizationRecord: null,
-    otherDocuments: null,
+export const AdmissionForm = ({ onSuccessfulPayment }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      dateOfBirth: new Date(),
+      gradeLevel: "",
+      country: "",
+      parentFirstName: "",
+      parentLastName: "",
+      emailConsent: false,
+      parentEmail: "",
+    },
   });
-
-  // Generated after payment
-  const [credentials, setCredentials] = useState({
-    studentId: "",
-    username: "",
-    password: "",
-  });
-
-  // Define steps
-  const steps = [
-    { id: 1, name: "Student Details" },
-    { id: 2, name: "Parent Info" },
-    { id: 3, name: "Academic Info" },
-    { id: 4, name: "Documents" },
-    { id: 5, name: "Review" },
-    { id: 6, name: "Payment" },
-  ];
-
-  const updateFormData = (stepData: Partial<typeof formData>) => {
-    setFormData({ ...formData, ...stepData });
+  
+  const studentData = form.watch();
+  const parentData = {
+    firstName: studentData.parentFirstName,
+    lastName: studentData.parentLastName,
+    email: studentData.parentEmail,
   };
 
-  const handleNext = () => {
-    // Form validation based on current step
-    if (currentStep === 1) {
-      if (!formData.fullName || !formData.dateOfBirth || !formData.gender) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all required fields before proceeding.",
-          variant: "destructive",
-        });
-        return;
-      }
-    } else if (currentStep === 2) {
-      if (!formData.parentName || !formData.relationship || !formData.email || !formData.phone || !formData.address) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all required fields before proceeding.",
-          variant: "destructive",
-        });
-        return;
-      }
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        toast({
-          title: "Invalid Email",
-          description: "Please enter a valid email address.",
-          variant: "destructive",
-        });
-        return;
-      }
-      // Validate phone number (simple validation)
-      if (formData.phone.length < 10) {
-        toast({
-          title: "Invalid Phone Number",
-          description: "Please enter a valid phone number.",
-          variant: "destructive",
-        });
-        return;
-      }
-    } else if (currentStep === 3) {
-      if (!formData.desiredClass || !formData.previousSchool || !formData.startDate) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all required fields before proceeding.",
-          variant: "destructive",
-        });
-        return;
-      }
-    } else if (currentStep === 4) {
-      if (!formData.birthCertificate) {
-        toast({
-          title: "Missing Document",
-          description: "Please upload the birth certificate before proceeding.",
-          variant: "destructive",
-        });
-        return;
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast.error("Please correct the errors below.");
+      return;
     }
 
-    setCurrentStep(currentStep + 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handlePrevious = () => {
-    setCurrentStep(currentStep - 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handlePaymentSuccess = () => {
-    // Generate credentials based on form data
-    const studentId = `S${new Date().getFullYear()}${Math.floor(1000 + Math.random() * 9000)}`;
-    const username = formData.email;
-    const password = Math.random().toString(36).slice(-8);
-
-    const studentCredentials = {
-      studentId,
-      username,
-      password,
-    };
-
-    setCredentials(studentCredentials);
-
-    // Store application data and created credentials
-    // This would normally be done through an API call to your backend
-    // For now, we'll simulate a successful storage
-
-    // In a real implementation, you would:
-    // 1. Store the application data in your database
-    // 2. Create a user account with the generated credentials
-    // 3. Send an email to the parent with the login details
-    
-    const studentDataForSuccess = {
-      ...formData,
-      ...studentCredentials,
-      paymentDate: new Date().toISOString(),
-      paymentAmount: getFormattedAmount(formData.desiredClass),
-    };
-    
-    // Notify parent about successful application
-    toast({
-      title: "Application Successful!",
-      description: "Your application has been submitted and payment processed.",
-    });
-
-    // Pass the data to the parent component for displaying the success page
-    onSuccessfulPayment(studentDataForSuccess);
-  };
-
-  const getFormattedAmount = (grade: string) => {
-    // Map grade/class to tuition amount
-    const tuitionMap: Record<string, number> = {
-      "preschool": 3800,
-      "kindergarten": 4200, 
-      "grade1": 4500,
-      "grade2": 4500,
-      "grade3": 4800,
-      "grade4": 4800,
-      "grade5": 5200,
-      "grade6": 5200,
-      "grade7": 5500,
-      "grade8": 5500,
-      "grade9": 6000,
-      "grade10": 6000,
-      "grade11": 6500,
-      "grade12": 6500,
-    };
-    
-    return tuitionMap[grade] || 5000; // Default to $5000 if grade not found
-  };
-
-  // Render the current step
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return <StudentDetailsStep formData={formData} updateFormData={updateFormData} />;
-      case 2:
-        return <ParentInfoStep formData={formData} updateFormData={updateFormData} />;
-      case 3:
-        return <AcademicInfoStep formData={formData} updateFormData={updateFormData} />;
-      case 4:
-        return <DocumentUploadStep formData={formData} updateFormData={updateFormData} />;
-      case 5:
-        return <ReviewStep formData={formData} />;
-      case 6:
-        return (
-          <PaymentStep 
-            formData={formData} 
-            onPaymentSuccess={handlePaymentSuccess}
-          />
-        );
-      default:
-        return null;
+    try {
+      setIsSubmitting(true);
+      
+      // Call the create_application function
+      const { data, error } = await supabase.rpc('create_application', {
+        full_name: `${studentData.firstName} ${studentData.lastName}`,
+        email: studentData.email,
+        parent_email: parentData.parentEmail,
+        class_requested: studentData.gradeLevel
+      });
+      
+      if (error) {
+        toast.error(`Error: ${error.message}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const result = data as SupabaseJsonResponse;
+      
+      if (!result.success) {
+        toast.error(result.message || "Failed to submit application");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      toast.success("Application submitted successfully!");
+      
+      // Simulate payment processing
+      // In a real app, this would integrate with a payment gateway
+      setTimeout(() => {
+        setIsSubmitting(false);
+        onSuccessfulPayment({
+          ...studentData,
+          ...parentData,
+          applicationId: result.id
+        });
+      }, 2000);
+    } catch (error) {
+      toast.error(`An error occurred: ${error.message}`);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-8">
-      {/* Progress Bar */}
-      <div className="hidden md:block">
-        <div className="flex justify-between">
-          {steps.map((step) => (
-            <div 
-              key={step.id} 
-              className={cn(
-                "flex flex-col items-center relative",
-                currentStep >= step.id ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              <div className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all",
-                currentStep > step.id 
-                  ? "bg-primary text-white" 
-                  : currentStep === step.id 
-                    ? "bg-primary/20 text-primary border-2 border-primary" 
-                    : "bg-muted text-muted-foreground"
-              )}>
-                {currentStep > step.id ? (
-                  <CheckCircle className="h-5 w-5" />
-                ) : (
-                  <span>{step.id}</span>
+    <Form {...form}>
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Student Information</CardTitle>
+            <CardDescription>Enter the student's personal details</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
-              <span className={cn(
-                "text-sm font-medium",
-                currentStep === step.id && "font-semibold"
-              )}>
-                {step.name}
-              </span>
-
-              {/* Connector line */}
-              {step.id !== steps.length && (
-                <div className={cn(
-                  "absolute h-0.5 top-5 w-full left-1/2 -z-10",
-                  currentStep > step.id ? "bg-primary" : "bg-muted"
-                )} />
-              )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Mobile Progress Indicator */}
-      <div className="md:hidden">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-medium">
-            Step {currentStep} of {steps.length}
-          </span>
-          <span className="text-sm font-medium text-muted-foreground">
-            {steps[currentStep - 1].name}
-          </span>
-        </div>
-        <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
-          <div 
-            className="bg-primary h-full transition-all duration-300" 
-            style={{ width: `${(currentStep / steps.length) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Form Card */}
-      <Card className="overflow-hidden shadow-lg">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            {renderStep()}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Navigation Buttons */}
-        {currentStep !== 6 && (
-          <div className="px-6 py-4 bg-muted/20 flex justify-between">
-            {currentStep > 1 ? (
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handlePrevious}
-              >
-                Back
-              </Button>
-            ) : (
-              <div></div>
-            )}
-            <Button 
-              type="button" 
-              onClick={handleNext}
-              className="gap-1"
-            >
-              {currentStep === 5 ? "Proceed to Payment" : "Next Step"}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-      </Card>
-    </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="john.doe@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="dateOfBirth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                        onChange={(e) => field.onChange(new Date(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="gradeLevel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Grade Level</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a grade" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1st Grade">1st Grade</SelectItem>
+                        <SelectItem value="2nd Grade">2nd Grade</SelectItem>
+                        <SelectItem value="3rd Grade">3rd Grade</SelectItem>
+                        <SelectItem value="4th Grade">4th Grade</SelectItem>
+                        <SelectItem value="5th Grade">5th Grade</SelectItem>
+                        <SelectItem value="6th Grade">6th Grade</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <CountrySelect {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Parent/Guardian Information</CardTitle>
+            <CardDescription>Enter the parent or guardian's details</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="parentFirstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Jane" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="parentLastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="parentEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="jane.doe@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="emailConsent"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Input
+                      id="emailConsent"
+                      type="checkbox"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      I consent to receiving emails from EduNexus.
+                    </FormLabel>
+                    <FormDescription>
+                      You can unsubscribe at any time.
+                    </FormDescription>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+        <Button type="submit" disabled={isSubmitting} className="w-full">
+          {isSubmitting ? "Submitting..." : "Submit Application"}
+        </Button>
+      </form>
+    </Form>
   );
 };

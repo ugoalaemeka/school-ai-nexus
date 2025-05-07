@@ -46,6 +46,8 @@ import UnpaidFeesPage from './pages/student/UnpaidFees';
 import TeacherActivation from "./pages/TeacherActivation";
 import TeachersPage from "./pages/admin/Teachers";
 import InactiveAccountPage from "./pages/teacher/InactiveAccount";
+import Applications from "./pages/admin/Applications"; 
+import AccountActivation from "./pages/AccountActivation";
 
 function App() {
   return (
@@ -63,8 +65,9 @@ function App() {
         <Route path="/admission/apply" element={<AdmissionApplication />} />
         <Route path="/unpaid-fees" element={<UnpaidFeesPage />} />
         
-        {/* Teacher activation route */}
-        <Route path="/activate" element={<TeacherActivation />} />
+        {/* Account activation routes */}
+        <Route path="/activate" element={<AccountActivation />} />
+        <Route path="/activate/teacher" element={<TeacherActivation />} />
         <Route path="/inactive-account" element={<InactiveAccountPage />} />
         
         {/* Protected routes - Admin */}
@@ -81,6 +84,11 @@ function App() {
         <Route path="/admin/teachers" element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <TeachersPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/applications" element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <Applications />
           </ProtectedRoute>
         } />
         <Route path="/admin/classes" element={

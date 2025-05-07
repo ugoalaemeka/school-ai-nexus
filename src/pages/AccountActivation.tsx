@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SupabaseJsonResponse } from "@/types/database";
 
-const TeacherActivation = () => {
+const AccountActivation = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token");
@@ -22,6 +22,7 @@ const TeacherActivation = () => {
   const [loading, setLoading] = useState(false);
   const [tokenValid, setTokenValid] = useState(true);
   const [tokenChecked, setTokenChecked] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   
   // Check if token is valid
   useEffect(() => {
@@ -34,7 +35,7 @@ const TeacherActivation = () => {
       
       try {
         const { data, error } = await supabase
-          .from('invite_tokens')
+          .from('activation_tokens')
           .select('*')
           .eq('token', token)
           .eq('is_used', false)
@@ -46,6 +47,7 @@ const TeacherActivation = () => {
           setTokenValid(false);
         } else {
           setTokenValid(true);
+          setUserRole(data.role);
         }
       } catch (error) {
         console.error("Token check error:", error);
@@ -80,9 +82,18 @@ const TeacherActivation = () => {
     setLoading(true);
     
     try {
-      // Call the activateTeacher function
+      // Call the appropriate activation function based on user role
+      const functionName = userRole === 'student' ? 'activate_student' : 
+                           userRole === 'parent' ? 'activate_parent' : 
+                           userRole === 'teacher' ? 'activate_teacher' : null;
+                           
+      if (!functionName) {
+        toast.error("Invalid user role");
+        return;
+      }
+      
       const { data, error } = await supabase
-        .rpc('activate_teacher', {
+        .rpc(functionName, {
           activation_token: token,
           password,
           first_name: firstName,
@@ -94,8 +105,7 @@ const TeacherActivation = () => {
         return;
       }
       
-      // Cast the data to our SupabaseJsonResponse type
-      const result = data as unknown as SupabaseJsonResponse;
+      const result = data as SupabaseJsonResponse;
       
       if (result.success) {
         toast.success("Account activated successfully!");
@@ -145,6 +155,10 @@ const TeacherActivation = () => {
     );
   }
   
+  const roleTitle = userRole === 'student' ? 'Student' : 
+                   userRole === 'parent' ? 'Parent' :
+                   userRole === 'teacher' ? 'Teacher' : 'User';
+  
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-muted/50">
       <div className="mb-8 text-center">
@@ -156,7 +170,7 @@ const TeacherActivation = () => {
       
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Teacher Account Activation</CardTitle>
+          <CardTitle>{roleTitle} Account Activation</CardTitle>
           <CardDescription>
             Create your account to get started
           </CardDescription>
@@ -221,4 +235,4 @@ const TeacherActivation = () => {
   );
 };
 
-export default TeacherActivation;
+export default AccountActivation;
