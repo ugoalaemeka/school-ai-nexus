@@ -7,9 +7,9 @@ interface CountrySelectProps {
   value: string;
 }
 
-export const CountrySelect = (props: CountrySelectProps) => {
+export const CountrySelect: React.FC<CountrySelectProps> = ({ onChange, value }) => {
   return (
-    <Select onValueChange={props.onChange} value={props.value}>
+    <Select onValueChange={onChange} value={value}>
       <SelectTrigger>
         <SelectValue placeholder="Select country" />
       </SelectTrigger>
