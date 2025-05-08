@@ -105,7 +105,8 @@ const AccountActivation = () => {
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      // Use proper type casting with unknown
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
         toast.success("Account activated successfully!");

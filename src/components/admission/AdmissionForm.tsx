@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,7 @@ import { CountrySelect } from "@/components/admission/CountrySelect";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SupabaseJsonResponse } from "@/types/database";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -40,14 +42,11 @@ const formSchema = z.object({
   parentLastName: z.string().min(2, {
     message: "Parent's last name must be at least 2 characters.",
   }),
-  emailConsent: z.boolean().refine((value) => value === true, {
-    message: "You must consent to receive emails.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
   parentEmail: z.string().email({
     message: "Please enter a valid parent email address.",
+  }),
+  emailConsent: z.boolean().refine((value) => value === true, {
+    message: "You must consent to receive emails.",
   }),
 });
 
@@ -93,7 +92,7 @@ export const AdmissionForm = ({ onSuccessfulPayment }) => {
       const { data, error } = await supabase.rpc('create_application', {
         full_name: `${studentData.firstName} ${studentData.lastName}`,
         email: studentData.email,
-        parent_email: parentData.parentEmail,
+        parent_email: studentData.parentEmail,
         class_requested: studentData.gradeLevel
       });
       
@@ -103,7 +102,8 @@ export const AdmissionForm = ({ onSuccessfulPayment }) => {
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      // Cast the result properly 
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (!result.success) {
         toast.error(result.message || "Failed to submit application");
@@ -120,7 +120,7 @@ export const AdmissionForm = ({ onSuccessfulPayment }) => {
         onSuccessfulPayment({
           ...studentData,
           ...parentData,
-          applicationId: result.id
+          applicationId: result.application_id  // Using the correct property
         });
       }, 2000);
     } catch (error) {
@@ -231,7 +231,7 @@ export const AdmissionForm = ({ onSuccessfulPayment }) => {
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <CountrySelect {...field} />
+                    <CountrySelect value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -292,9 +292,7 @@ export const AdmissionForm = ({ onSuccessfulPayment }) => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Input
-                      id="emailConsent"
-                      type="checkbox"
+                    <Checkbox 
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />

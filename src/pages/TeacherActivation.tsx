@@ -94,7 +94,7 @@ const TeacherActivation = () => {
         return;
       }
       
-      // Cast the data to our SupabaseJsonResponse type
+      // Cast the data to our SupabaseJsonResponse type with unknown first
       const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {

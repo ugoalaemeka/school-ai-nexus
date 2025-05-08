@@ -44,8 +44,8 @@ const Applications = () => {
         return;
       }
       
-      // Cast data to Application[] and handle possible null
-      setApplications(data as Application[] || []);
+      // Proper type casting
+      setApplications((data as unknown) as Application[] || []);
     } catch (error: any) {
       toast.error(`Error: ${error.message}`);
     } finally {
@@ -96,7 +96,7 @@ const Applications = () => {
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
         toast.success("Student admitted successfully!");
@@ -128,7 +128,7 @@ const Applications = () => {
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
         toast.success("Fees marked as paid!");
@@ -154,7 +154,7 @@ const Applications = () => {
         return;
       }
       
-      const result = data as SupabaseJsonResponse;
+      const result = data as unknown as SupabaseJsonResponse;
       
       if (result.success) {
         toast.success(`Application marked as ${newStatus}!`);
