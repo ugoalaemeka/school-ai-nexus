@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -25,9 +25,28 @@ interface AuthContextType {
   signUp: (email: string, password: string, firstName: string, lastName: string, role: UserRole) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  cleanupAuthState: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Clean up auth state helper
+const cleanupAuthState = () => {
+  // Remove standard auth tokens
+  localStorage.removeItem('supabase.auth.token');
+  // Remove all Supabase auth keys from localStorage
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  // Remove from sessionStorage if in use
+  Object.keys(sessionStorage || {}).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -37,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [hasPaidFees, setHasPaidFees] = useState(false);
   const [isTeacherActive, setIsTeacherActive] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -77,6 +97,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
+
+  // Effect to redirect based on role after profile is loaded
+  useEffect(() => {
+    const redirectBasedOnRole = () => {
+      // Only redirect if user is logged in and profile is loaded, and not already on the correct route
+      if (user && profile && !loading) {
+        const roleBasedRoot = `/${profile.role}`;
+        
+        // Check if the current path is already in the correct section for this role
+        if (!location.pathname.startsWith(roleBasedRoot) && 
+            !location.pathname.includes('login') && 
+            !location.pathname.includes('activate')) {
+          
+          // Redirect to the appropriate dashboard
+          navigate(`${roleBasedRoot}/dashboard`);
+        }
+      }
+    };
+    
+    redirectBasedOnRole();
+  }, [profile, user, loading, navigate, location.pathname]);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -153,6 +194,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      // Clean up existing auth state first
+      cleanupAuthState();
+      
+      // Try to sign out any existing session
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
@@ -162,7 +213,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         toast.success('Logged in successfully');
-        // Profile fetching is handled by the onAuthStateChange listener
+        // Get user profile to determine where to redirect
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (profileData) {
+          const redirectPath = `/${profileData.role}/dashboard`;
+          navigate(redirectPath);
+        } else {
+          navigate('/'); // Fallback to home if no profile found
+        }
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during login');
@@ -171,6 +234,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, firstName: string, lastName: string, role: UserRole) => {
     try {
+      // Clean up existing auth state first
+      cleanupAuthState();
+      
       // First, create the auth user with role metadata
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -263,11 +329,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      // Clean up auth state first
+      cleanupAuthState();
       
-      if (error) {
-        toast.error(error.message);
-        return;
+      // Try to sign out any existing session
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
       }
       
       toast.success('Logged out successfully');
@@ -318,6 +387,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signUp,
         signOut,
         updateProfile,
+        cleanupAuthState,
       }}
     >
       {children}

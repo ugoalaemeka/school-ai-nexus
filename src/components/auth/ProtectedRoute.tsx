@@ -28,8 +28,25 @@ export const ProtectedRoute = ({
 
   // Not authenticated
   if (!user) {
+    // Determine the right login page based on the attempted route
+    let loginRoute = "/login";
+    
+    if (allowedRoles && allowedRoles.length === 1) {
+      const role = allowedRoles[0];
+      loginRoute = `/${role}/login`;
+    } else {
+      // Try to extract role from the URL pattern if no specific role is provided
+      const pathSegments = location.pathname.split('/');
+      if (pathSegments.length > 1) {
+        const potentialRole = pathSegments[1];
+        if (['admin', 'teacher', 'student', 'parent'].includes(potentialRole)) {
+          loginRoute = `/${potentialRole}/login`;
+        }
+      }
+    }
+    
     // Save the location they were trying to access
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to={loginRoute} state={{ from: location }} replace />;
   }
 
   // Role check if allowedRoles is provided

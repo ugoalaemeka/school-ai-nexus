@@ -1,4 +1,3 @@
-
 import { RouteObject } from "react-router-dom";
 import Index from '@/pages/Index';
 import About from '@/pages/About';
@@ -15,6 +14,12 @@ import TeacherActivation from '@/pages/TeacherActivation';
 import InactiveAccountPage from '@/pages/teacher/InactiveAccount';
 import NotFound from '@/pages/NotFound';
 
+// Role-specific login pages
+import AdminLogin from '@/pages/admin/Login';
+import TeacherLogin from '@/pages/teacher/Login';
+import StudentLogin from '@/pages/student/Login';
+import ParentLogin from '@/pages/parent/Login';
+
 export const publicRoutes: RouteObject[] = [
   {
     path: "/",
@@ -28,6 +33,24 @@ export const publicRoutes: RouteObject[] = [
     path: "/login",
     element: <Login />
   },
+  // Role-specific login routes
+  {
+    path: "/admin/login",
+    element: <AdminLogin />
+  },
+  {
+    path: "/teacher/login",
+    element: <TeacherLogin />
+  },
+  {
+    path: "/student/login",
+    element: <StudentLogin />
+  },
+  {
+    path: "/parent/login",
+    element: <ParentLogin />
+  },
+  // Other public routes
   {
     path: "/gallery",
     element: <Gallery />
