@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { AdminSidebar } from "./admin-sidebar";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -30,54 +31,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  const isActive = (path: string) => {
-    return location.pathname === path ? "dashboard-link active" : "dashboard-link";
-  };
-
-  const NavItems = () => (
-    <>
-      <Link to="/admin/dashboard" className={isActive("/admin/dashboard")}>
-        <LayoutDashboard className="h-5 w-5" />
-        <span className="hidden md:inline">Dashboard</span>
-      </Link>
-      
-      <Link to="/admin/users" className={isActive("/admin/users")}>
-        <Users className="h-5 w-5" />
-        <span className="hidden md:inline">User Management</span>
-      </Link>
-      
-      <Link to="/admin/teachers" className={isActive("/admin/teachers")}>
-        <GraduationCap className="h-5 w-5" />
-        <span className="hidden md:inline">Teachers</span>
-      </Link>
-      
-      <Link to="/admin/classes" className={isActive("/admin/classes")}>
-        <BookOpenCheck className="h-5 w-5" />
-        <span className="hidden md:inline">Classes & Subjects</span>
-      </Link>
-      
-      <Link to="/admin/fees" className={isActive("/admin/fees")}>
-        <DollarSign className="h-5 w-5" />
-        <span className="hidden md:inline">Fee Management</span>
-      </Link>
-      
-      <Link to="/admin/events" className={isActive("/admin/events")}>
-        <Calendar className="h-5 w-5" />
-        <span className="hidden md:inline">Events & Schedule</span>
-      </Link>
-      
-      <Link to="/admin/reports" className={isActive("/admin/reports")}>
-        <FileText className="h-5 w-5" />
-        <span className="hidden md:inline">Reports</span>
-      </Link>
-      
-      <Link to="/admin/settings" className={isActive("/admin/settings")}>
-        <Settings className="h-5 w-5" />
-        <span className="hidden md:inline">Settings</span>
-      </Link>
-    </>
-  );
-
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* Desktop Sidebar - Glassmorphic effect */}
@@ -88,11 +41,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
         </div>
 
-        <div className="p-4">
-          <div className="space-y-2">
-            <NavItems />
-          </div>
-        </div>
+        <AdminSidebar />
       </aside>
 
       {/* Mobile/Tablet Sidebar */}
@@ -106,11 +55,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <X className="h-5 w-5" />
             </Button>
           </div>
-          <div className="p-4">
-            <div className="space-y-2">
-              <NavItems />
-            </div>
-          </div>
+          <AdminSidebar />
         </SheetContent>
       </Sheet>
 
