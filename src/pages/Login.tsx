@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -78,10 +77,10 @@ const Login = () => {
       </div>
       
       <div className="mb-8 text-center">
-        <a href="/" className="inline-flex items-center gap-2 font-bold text-2xl">
+        <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl">
           <BookOpen className="h-8 w-8 text-primary" />
           <span>EduSync</span>
-        </a>
+        </Link>
       </div>
       
       <div className="w-full max-w-4xl px-4">
@@ -249,9 +248,9 @@ const Login = () => {
       </div>
       
       <p className="mt-8 text-center text-sm text-muted-foreground">
-        <a href="/" className="hover:text-primary hover:underline">
+        <Link to="/" className="hover:text-primary hover:underline">
           Back to Home
-        </a>
+        </Link>
       </p>
     </div>
   );

@@ -1,6 +1,7 @@
 
 import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { StudentLayout } from "@/components/layout/student-layout";
 import StudentDashboard from "@/pages/student/Dashboard";
 import StudentTimetable from "@/pages/student/Timetable";
 import StudentAssignments from "@/pages/student/Assignments";
@@ -13,7 +14,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student/dashboard",
     element: (
       <ProtectedRoute allowedRoles={["student"]} requiresPaidFees>
-        <StudentDashboard />
+        <StudentLayout>
+          <StudentDashboard />
+        </StudentLayout>
       </ProtectedRoute>
     )
   },
@@ -21,7 +24,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student/timetable",
     element: (
       <ProtectedRoute allowedRoles={["student"]} requiresPaidFees>
-        <StudentTimetable />
+        <StudentLayout>
+          <StudentTimetable />
+        </StudentLayout>
       </ProtectedRoute>
     )
   },
@@ -29,7 +34,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student/assignments",
     element: (
       <ProtectedRoute allowedRoles={["student"]} requiresPaidFees>
-        <StudentAssignments />
+        <StudentLayout>
+          <StudentAssignments />
+        </StudentLayout>
       </ProtectedRoute>
     )
   },
@@ -37,7 +44,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student/resources",
     element: (
       <ProtectedRoute allowedRoles={["student"]} requiresPaidFees>
-        <StudentResources />
+        <StudentLayout>
+          <StudentResources />
+        </StudentLayout>
       </ProtectedRoute>
     )
   },
@@ -45,7 +54,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student/messages",
     element: (
       <ProtectedRoute allowedRoles={["student"]} requiresPaidFees>
-        <StudentMessages />
+        <StudentLayout>
+          <StudentMessages />
+        </StudentLayout>
       </ProtectedRoute>
     )
   },
@@ -53,7 +64,9 @@ export const studentRoutes: RouteObject[] = [
     path: "/student/settings",
     element: (
       <ProtectedRoute allowedRoles={["student"]} requiresPaidFees>
-        <StudentSettings />
+        <StudentLayout>
+          <StudentSettings />
+        </StudentLayout>
       </ProtectedRoute>
     )
   }

@@ -1,6 +1,7 @@
 
 import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { ParentLayout } from "@/components/layout/parent-layout";
 import ParentDashboard from "@/pages/parent/Dashboard";
 import ParentPerformance from "@/pages/parent/Performance";
 import ParentPayments from "@/pages/parent/Payments";
@@ -13,7 +14,9 @@ export const parentRoutes: RouteObject[] = [
     path: "/parent/dashboard",
     element: (
       <ProtectedRoute allowedRoles={["parent"]}>
-        <ParentDashboard />
+        <ParentLayout>
+          <ParentDashboard />
+        </ParentLayout>
       </ProtectedRoute>
     )
   },
@@ -21,7 +24,9 @@ export const parentRoutes: RouteObject[] = [
     path: "/parent/performance",
     element: (
       <ProtectedRoute allowedRoles={["parent"]}>
-        <ParentPerformance />
+        <ParentLayout>
+          <ParentPerformance />
+        </ParentLayout>
       </ProtectedRoute>
     )
   },
@@ -29,7 +34,9 @@ export const parentRoutes: RouteObject[] = [
     path: "/parent/payments",
     element: (
       <ProtectedRoute allowedRoles={["parent"]}>
-        <ParentPayments />
+        <ParentLayout>
+          <ParentPayments />
+        </ParentLayout>
       </ProtectedRoute>
     )
   },
@@ -37,7 +44,9 @@ export const parentRoutes: RouteObject[] = [
     path: "/parent/reports",
     element: (
       <ProtectedRoute allowedRoles={["parent"]}>
-        <ParentReports />
+        <ParentLayout>
+          <ParentReports />
+        </ParentLayout>
       </ProtectedRoute>
     )
   },
@@ -45,7 +54,9 @@ export const parentRoutes: RouteObject[] = [
     path: "/parent/messages",
     element: (
       <ProtectedRoute allowedRoles={["parent"]}>
-        <ParentMessages />
+        <ParentLayout>
+          <ParentMessages />
+        </ParentLayout>
       </ProtectedRoute>
     )
   },
@@ -53,7 +64,9 @@ export const parentRoutes: RouteObject[] = [
     path: "/parent/settings",
     element: (
       <ProtectedRoute allowedRoles={["parent"]}>
-        <ParentSettings />
+        <ParentLayout>
+          <ParentSettings />
+        </ParentLayout>
       </ProtectedRoute>
     )
   }

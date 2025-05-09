@@ -35,9 +35,13 @@ export function RoleLogin({
   const [isAlternateLogin, setIsAlternateLogin] = useState(useAlternateLogin);
   const [uniqueId, setUniqueId] = useState("");
   const [surname, setSurname] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     
     try {
       if (isAlternateLogin) {
@@ -52,6 +56,8 @@ export function RoleLogin({
           
           if (error || !data) {
             toast.error("Student ID not found");
+            setError("Student ID not found");
+            setLoading(false);
             return;
           }
           
@@ -64,12 +70,16 @@ export function RoleLogin({
           
           if (userError || !userData) {
             toast.error("Student profile not found");
+            setError("Student profile not found");
+            setLoading(false);
             return;
           }
           
           // Check if surname matches
           if (userData.last_name?.toLowerCase() !== surname.toLowerCase()) {
             toast.error("Invalid surname");
+            setError("Invalid surname");
+            setLoading(false);
             return;
           }
           
@@ -79,27 +89,86 @@ export function RoleLogin({
           
           if (authError || !authData?.user?.email) {
             toast.error("Could not retrieve student email");
+            setError("Could not retrieve student email");
+            setLoading(false);
             return;
           }
           
           // Login with the retrieved email and surname as password
           await signIn(authData.user.email, surname);
+          toast.success("Login successful!");
         } else if (role === 'parent') {
-          // Handle parent login with phone (similar to student but using parent table)
-          // This can be implemented similarly to student login
-          toast.error("Parent login with phone is not implemented yet");
+          // Try phone login first
+          const { data: parentData, error: parentError } = await supabase
+            .from('parents')
+            .select('user_id')
+            .eq('phone', uniqueId)
+            .maybeSingle();
+          
+          if (parentError || !parentData?.user_id) {
+            // Try alternate email login
+            const { data: altParentData, error: altParentError } = await supabase
+              .from('parents')
+              .select('user_id')
+              .eq('alternate_email', uniqueId)
+              .maybeSingle();
+              
+            if (altParentError || !altParentData?.user_id) {
+              toast.error("Parent not found");
+              setError("Parent not found with that phone number or email");
+              setLoading(false);
+              return;
+            }
+            
+            // Get parent email for auth
+            const { data: authData, error: authError } = await supabase
+              .auth.admin.getUserById(altParentData.user_id);
+            
+            if (authError || !authData?.user?.email) {
+              toast.error("Could not retrieve parent email");
+              setError("Could not retrieve parent email");
+              setLoading(false);
+              return;
+            }
+            
+            // Login with retrieved email and provided password
+            await signIn(authData.user.email, surname);
+            toast.success("Login successful!");
+          } else {
+            // Get parent email for auth
+            const { data: authData, error: authError } = await supabase
+              .auth.admin.getUserById(parentData.user_id);
+            
+            if (authError || !authData?.user?.email) {
+              toast.error("Could not retrieve parent email");
+              setError("Could not retrieve parent email");
+              setLoading(false);
+              return;
+            }
+            
+            // Login with retrieved email and provided password
+            await signIn(authData.user.email, surname);
+            toast.success("Login successful!");
+          }
         }
       } else {
         // Regular email/password login
         await signIn(email, password);
+        toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} login successful!`);
       }
+      
+      // Redirect happens in AuthContext after successful login
     } catch (error: any) {
       toast.error(error.message || `An error occurred during ${role} login`);
+      setError(error.message || `An error occurred during login`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const toggleLoginMethod = () => {
     setIsAlternateLogin(!isAlternateLogin);
+    setError(null);
   };
 
   return (
@@ -129,6 +198,12 @@ export function RoleLogin({
         </CardHeader>
         
         <CardContent>
+          {error && (
+            <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 text-sm">
+              {error}
+            </div>
+          )}
+          
           <form onSubmit={handleLogin} className="space-y-4">
             {isAlternateLogin ? (
               <>
@@ -140,17 +215,21 @@ export function RoleLogin({
                     value={uniqueId}
                     onChange={(e) => setUniqueId(e.target.value)}
                     required 
+                    disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="surname">Surname</Label>
+                  <Label htmlFor="surname">
+                    {role === 'student' ? 'Surname' : 'Password'}
+                  </Label>
                   <Input 
                     id="surname" 
                     type="password"
-                    placeholder="Enter your surname"
+                    placeholder={role === 'student' ? "Enter your surname" : "Enter your password"}
                     value={surname}
                     onChange={(e) => setSurname(e.target.value)}
                     required 
+                    disabled={loading}
                   />
                 </div>
                 {useAlternateLogin && (
@@ -159,6 +238,7 @@ export function RoleLogin({
                     variant="link" 
                     onClick={toggleLoginMethod} 
                     className="p-0 h-auto text-xs"
+                    disabled={loading}
                   >
                     Switch to email login
                   </Button>
@@ -175,6 +255,7 @@ export function RoleLogin({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required 
+                    disabled={loading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -185,6 +266,7 @@ export function RoleLogin({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required 
+                    disabled={loading}
                   />
                 </div>
                 {useAlternateLogin && (
@@ -193,14 +275,15 @@ export function RoleLogin({
                     variant="link" 
                     onClick={toggleLoginMethod} 
                     className="p-0 h-auto text-xs"
+                    disabled={loading}
                   >
                     Login with {alternateLoginLabel}
                   </Button>
                 )}
               </>
             )}
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>

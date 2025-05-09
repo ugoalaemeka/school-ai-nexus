@@ -1,6 +1,7 @@
 
 import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { TeacherLayout } from "@/components/layout/teacher-layout";
 import TeacherDashboard from "@/pages/teacher/Dashboard";
 import Attendance from "@/pages/teacher/Attendance";
 import TeacherAssignments from "@/pages/teacher/Assignments";
@@ -14,7 +15,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/dashboard",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <TeacherDashboard />
+        <TeacherLayout>
+          <TeacherDashboard />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   },
@@ -22,7 +25,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/attendance",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <Attendance />
+        <TeacherLayout>
+          <Attendance />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   },
@@ -30,7 +35,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/assignments",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <TeacherAssignments />
+        <TeacherLayout>
+          <TeacherAssignments />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   },
@@ -38,7 +45,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/exams",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <TeacherExams />
+        <TeacherLayout>
+          <TeacherExams />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   },
@@ -46,7 +55,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/resources",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <TeacherResources />
+        <TeacherLayout>
+          <TeacherResources />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   },
@@ -54,7 +65,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/messages",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <TeacherMessages />
+        <TeacherLayout>
+          <TeacherMessages />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   },
@@ -62,7 +75,9 @@ export const teacherRoutes: RouteObject[] = [
     path: "/teacher/settings",
     element: (
       <ProtectedRoute allowedRoles={["teacher"]} requiresActiveStatus>
-        <TeacherSettings />
+        <TeacherLayout>
+          <TeacherSettings />
+        </TeacherLayout>
       </ProtectedRoute>
     )
   }

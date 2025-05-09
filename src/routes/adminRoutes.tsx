@@ -1,6 +1,7 @@
 
 import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AdminLayout } from "@/components/layout/admin-layout";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import Users from "@/pages/admin/Users";
 import TeachersPage from "@/pages/admin/Teachers";
@@ -16,7 +17,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/dashboard",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <AdminDashboard />
+        <AdminLayout>
+          <AdminDashboard />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -24,7 +27,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/users",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Users />
+        <AdminLayout>
+          <Users />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -32,7 +37,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/teachers",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <TeachersPage />
+        <AdminLayout>
+          <TeachersPage />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -40,7 +47,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/applications",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Applications />
+        <AdminLayout>
+          <Applications />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -48,7 +57,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/classes",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Classes />
+        <AdminLayout>
+          <Classes />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -56,7 +67,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/fees",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Fees />
+        <AdminLayout>
+          <Fees />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -64,7 +77,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/events",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Events />
+        <AdminLayout>
+          <Events />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -72,7 +87,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/reports",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Reports />
+        <AdminLayout>
+          <Reports />
+        </AdminLayout>
       </ProtectedRoute>
     )
   },
@@ -80,7 +97,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/settings",
     element: (
       <ProtectedRoute allowedRoles={["admin"]}>
-        <Settings />
+        <AdminLayout>
+          <Settings />
+        </AdminLayout>
       </ProtectedRoute>
     )
   }

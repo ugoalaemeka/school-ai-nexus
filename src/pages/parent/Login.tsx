@@ -7,7 +7,8 @@ const ParentLogin = () => {
       role="parent"
       title="Parent Login"
       description="Log in to the parent portal"
-      useAlternateLogin={false}
+      useAlternateLogin={true}
+      alternateLoginLabel="Email or Phone"
     />
   );
 };
