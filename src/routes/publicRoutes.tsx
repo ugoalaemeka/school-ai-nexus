@@ -14,7 +14,6 @@ import AccountActivation from "@/pages/AccountActivation";
 import TeacherActivation from "@/pages/TeacherActivation";
 import UnpaidFees from "@/pages/student/UnpaidFees";
 import InactiveAccount from "@/pages/teacher/InactiveAccount";
-import AdminLogin from "@/pages/admin/Login";
 import TeacherLogin from "@/pages/teacher/Login";
 import StudentLogin from "@/pages/student/Login";
 import ParentLogin from "@/pages/parent/Login";
@@ -55,10 +54,6 @@ export const publicRoutes: RouteObject[] = [
   {
     path: "/login",
     element: <Login />
-  },
-  {
-    path: "/admin/login",
-    element: <AdminLogin />
   },
   {
     path: "/teacher/login",
