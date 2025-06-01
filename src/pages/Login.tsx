@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,14 @@ const Login = () => {
 
   const roleLoginPages = [
     {
+      role: 'admin',
+      icon: <UserIcon className="h-5 w-5 mr-2" />,
+      title: 'Admin Login',
+      description: 'School administration and management',
+      path: '/admin/login',
+      color: 'bg-amber-500'
+    },
+    {
       role: 'student',
       icon: <BookOpenCheck className="h-5 w-5 mr-2" />,
       title: 'Student Login',
@@ -56,14 +65,6 @@ const Login = () => {
       description: 'Monitor your child\'s academic progress',
       path: '/parent/login',
       color: 'bg-purple-500'
-    },
-    {
-      role: 'admin',
-      icon: <UserIcon className="h-5 w-5 mr-2" />,
-      title: 'Admin Login',
-      description: 'School administration and management',
-      path: '/admin/login',
-      color: 'bg-amber-500'
     }
   ];
 
