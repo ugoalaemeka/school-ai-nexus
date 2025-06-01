@@ -10,9 +10,10 @@ export const LoginRedirector = () => {
 
   useEffect(() => {
     if (!loading && user && profile) {
-      // Admin role is no longer supported
+      // Admin role is no longer supported - redirect to home
       if (profile.role === 'admin') {
         toast.error("Admin role is no longer supported in this application.");
+        navigate("/", { replace: true });
         return;
       }
       
