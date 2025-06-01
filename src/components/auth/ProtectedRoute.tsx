@@ -33,17 +33,13 @@ export const ProtectedRoute = ({
     
     if (allowedRoles && allowedRoles.length === 1) {
       const role = allowedRoles[0];
-      // Don't redirect to admin login since it's removed
-      if (role !== 'admin') {
-        loginRoute = `/${role}/login`;
-      }
+      loginRoute = `/${role}/login`;
     } else {
       // Try to extract role from the URL pattern if no specific role is provided
       const pathSegments = location.pathname.split('/');
       if (pathSegments.length > 1) {
         const potentialRole = pathSegments[1];
-        // Don't redirect to admin login since it's removed
-        if (['teacher', 'student', 'parent'].includes(potentialRole)) {
+        if (['admin', 'teacher', 'student', 'parent'].includes(potentialRole)) {
           loginRoute = `/${potentialRole}/login`;
         }
       }
@@ -56,12 +52,6 @@ export const ProtectedRoute = ({
   // Role check if allowedRoles is provided
   if (allowedRoles && profile && !allowedRoles.includes(profile.role)) {
     console.log('User role:', profile.role, 'not in allowed roles:', allowedRoles);
-    
-    // Handle admin role specially since admin routes are removed
-    if (profile.role === 'admin') {
-      return <Navigate to="/" replace />;
-    }
-    
     // Redirect to appropriate dashboard based on user's role
     return <Navigate to={`/${profile.role}/dashboard`} replace />;
   }

@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -102,22 +103,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const redirectBasedOnRole = () => {
       // Only redirect if user is logged in and profile is loaded, and not already on the correct route
       if (user && profile && !loading) {
-        // Handle admin role specially since admin routes are removed
-        if (profile.role === 'admin') {
-          // Don't redirect admin users to admin routes, let them stay on current page or go to home
-          if (location.pathname.startsWith('/admin')) {
-            navigate('/');
-          }
-          return;
-        }
-
         const roleBasedRoot = `/${profile.role}`;
         
         // Check if the current path is already in the correct section for this role
         if (!location.pathname.startsWith(roleBasedRoot) && 
             !location.pathname.includes('login') && 
-            !location.pathname.includes('activate') &&
-            !location.pathname.startsWith('/admin')) { // Don't redirect from admin pages
+            !location.pathname.includes('activate')) {
           
           // Redirect to the appropriate dashboard
           navigate(`${roleBasedRoot}/dashboard`);
@@ -230,13 +221,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .single();
           
         if (profileData) {
-          // Handle admin role specially since admin routes are removed
-          if (profileData.role === 'admin') {
-            navigate('/');
-          } else {
-            const redirectPath = `/${profileData.role}/dashboard`;
-            navigate(redirectPath);
-          }
+          const redirectPath = `/${profileData.role}/dashboard`;
+          navigate(redirectPath);
         } else {
           navigate('/'); // Fallback to home if no profile found
         }

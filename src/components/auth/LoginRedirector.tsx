@@ -11,28 +11,7 @@ export const LoginRedirector = () => {
   useEffect(() => {
     if (!loading && user && profile) {
       // User is logged in, redirect to role-specific dashboard
-      let roleDashboard = '/';
-      
-      switch (profile.role) {
-        case 'student':
-          roleDashboard = '/student/dashboard';
-          break;
-        case 'teacher':
-          roleDashboard = '/teacher/dashboard';
-          break;
-        case 'parent':
-          roleDashboard = '/parent/dashboard';
-          break;
-        case 'admin':
-          // Redirect admin users to home page since admin panel is removed
-          roleDashboard = '/';
-          toast.warning("Admin panel is currently unavailable. You've been redirected to the home page.");
-          break;
-        default:
-          roleDashboard = '/';
-          break;
-      }
-      
+      const roleDashboard = `/${profile.role}/dashboard`;
       console.log(`Redirecting to: ${roleDashboard}`);
       
       // Special conditions for students
