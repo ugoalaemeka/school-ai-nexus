@@ -10,9 +10,8 @@ export const LoginRedirector = () => {
 
   useEffect(() => {
     if (!loading && user && profile) {
-      // Only redirect for teacher, student, and parent roles
+      // Admin role is no longer supported
       if (profile.role === 'admin') {
-        // Admin role is no longer supported
         toast.error("Admin role is no longer supported in this application.");
         return;
       }

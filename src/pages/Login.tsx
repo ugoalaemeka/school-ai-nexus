@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, UserIcon, School, BookOpenCheck, Users } from "lucide-react";
+import { BookOpen, School, BookOpenCheck, Users } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -16,7 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
   
-  const [role, setRole] = useState<"admin" | "student" | "teacher" | "parent">("student");
+  const [role, setRole] = useState<"student" | "teacher" | "parent">("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -56,14 +57,6 @@ const Login = () => {
       description: 'Monitor your child\'s academic progress',
       path: '/parent/login',
       color: 'bg-purple-500'
-    },
-    {
-      role: 'admin',
-      icon: <UserIcon className="h-5 w-5 mr-2" />,
-      title: 'Admin Login',
-      description: 'School administration and management',
-      path: '/admin/login',
-      color: 'bg-amber-500'
     }
   ];
 
@@ -86,7 +79,7 @@ const Login = () => {
       <div className="w-full max-w-4xl px-4">
         <h1 className="text-2xl font-bold text-center mb-8">Choose Your Login Portal</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {roleLoginPages.map((item) => (
             <Link to={item.path} key={item.role}>
               <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
@@ -202,7 +195,7 @@ const Login = () => {
                       <Label htmlFor="reg-role">Register As</Label>
                       <Select 
                         value={role} 
-                        onValueChange={(value) => setRole(value as "student" | "teacher" | "parent" | "admin")}
+                        onValueChange={(value) => setRole(value as "student" | "teacher" | "parent")}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select your role" />
@@ -211,7 +204,6 @@ const Login = () => {
                           <SelectItem value="student">Student</SelectItem>
                           <SelectItem value="teacher">Teacher</SelectItem>
                           <SelectItem value="parent">Parent</SelectItem>
-                          <SelectItem value="admin">Administrator</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
