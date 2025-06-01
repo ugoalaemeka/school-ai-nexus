@@ -10,13 +10,6 @@ export const LoginRedirector = () => {
 
   useEffect(() => {
     if (!loading && user && profile) {
-      // Admin role is no longer supported - redirect to home
-      if (profile.role === 'admin') {
-        toast.error("Admin role is no longer supported in this application.");
-        navigate("/", { replace: true });
-        return;
-      }
-      
       // User is logged in, redirect to role-specific dashboard
       const roleDashboard = `/${profile.role}/dashboard`;
       console.log(`Redirecting to: ${roleDashboard}`);
