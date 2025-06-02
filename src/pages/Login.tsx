@@ -11,17 +11,43 @@ import { BookOpen, UserIcon, School, BookOpenCheck, Users } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { LoginRedirector } from "@/components/auth/LoginRedirector";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, profile, loading } = useAuth();
   
   const [role, setRole] = useState<"admin" | "student" | "teacher" | "parent">("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  
+  // Only redirect if user is authenticated AND we have their profile
+  if (!loading && user && profile) {
+    let roleDashboard = '/';
+    
+    switch (profile.role) {
+      case 'student':
+        roleDashboard = '/student/dashboard';
+        break;
+      case 'teacher':
+        roleDashboard = '/teacher/dashboard';
+        break;
+      case 'parent':
+        roleDashboard = '/parent/dashboard';
+        break;
+      case 'admin':
+        roleDashboard = '/';
+        toast.warning("Admin panel is currently unavailable. You've been redirected to the home page.");
+        break;
+      default:
+        roleDashboard = '/';
+        break;
+    }
+    
+    navigate(roleDashboard, { replace: true });
+    return null;
+  }
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,11 +94,17 @@ const Login = () => {
     }
   ];
 
-  // Include redirector for already logged in users
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-muted/50">
-      <LoginRedirector />
-      
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
