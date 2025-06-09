@@ -11,17 +11,43 @@ import { BookOpen, UserIcon, School, BookOpenCheck, Users } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { LoginRedirector } from "@/components/auth/LoginRedirector";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, profile, loading } = useAuth();
   
   const [role, setRole] = useState<"admin" | "student" | "teacher" | "parent">("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  
+  // Only redirect if user is authenticated AND we have their profile
+  if (!loading && user && profile) {
+    let roleDashboard = '/';
+    
+    switch (profile.role) {
+      case 'student':
+        roleDashboard = '/student/dashboard';
+        break;
+      case 'teacher':
+        roleDashboard = '/teacher/dashboard';
+        break;
+      case 'parent':
+        roleDashboard = '/parent/dashboard';
+        break;
+      case 'admin':
+        roleDashboard = '/';
+        toast.warning("Admin panel is currently unavailable. You've been redirected to the home page.");
+        break;
+      default:
+        roleDashboard = '/';
+        break;
+    }
+    
+    navigate(roleDashboard, { replace: true });
+    return null;
+  }
   
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +60,14 @@ const Login = () => {
   };
 
   const roleLoginPages = [
+    {
+      role: 'admin',
+      icon: <UserIcon className="h-5 w-5 mr-2" />,
+      title: 'Admin Login',
+      description: 'School administration and management',
+      path: '/admin/login',
+      color: 'bg-amber-500'
+    },
     {
       role: 'student',
       icon: <BookOpenCheck className="h-5 w-5 mr-2" />,
@@ -60,11 +94,17 @@ const Login = () => {
     }
   ];
 
-  // Include redirector for already logged in users
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-muted/50">
-      <LoginRedirector />
-      
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
@@ -79,7 +119,7 @@ const Login = () => {
       <div className="w-full max-w-4xl px-4">
         <h1 className="text-2xl font-bold text-center mb-8">Choose Your Login Portal</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {roleLoginPages.map((item) => (
             <Link to={item.path} key={item.role}>
               <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
