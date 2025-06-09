@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,9 +23,9 @@ export const LoginRedirector = () => {
           roleDashboard = '/parent/dashboard';
           break;
         case 'admin':
-          // Redirect admin users to home page since admin panel is removed
+          // Keep admin users on home page since admin panel is removed
           roleDashboard = '/';
-          toast.warning("Admin panel is currently unavailable. You've been redirected to the home page.");
+          toast.info("Welcome! Admin functionality is available through the main interface.");
           break;
         default:
           roleDashboard = '/';

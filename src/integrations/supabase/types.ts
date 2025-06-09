@@ -1086,6 +1086,10 @@ export type Database = {
         Args: { required_role: string }
         Returns: boolean
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_in_class: {
         Args: { class_uuid: string }
         Returns: boolean

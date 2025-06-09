@@ -35,14 +35,6 @@ const Login = () => {
 
   const roleLoginPages = [
     {
-      role: 'admin',
-      icon: <UserIcon className="h-5 w-5 mr-2" />,
-      title: 'Admin Login',
-      description: 'School administration and management',
-      path: '/admin/login',
-      color: 'bg-amber-500'
-    },
-    {
       role: 'student',
       icon: <BookOpenCheck className="h-5 w-5 mr-2" />,
       title: 'Student Login',
@@ -87,7 +79,7 @@ const Login = () => {
       <div className="w-full max-w-4xl px-4">
         <h1 className="text-2xl font-bold text-center mb-8">Choose Your Login Portal</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {roleLoginPages.map((item) => (
             <Link to={item.path} key={item.role}>
               <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
