@@ -37,8 +37,7 @@ const Login = () => {
         roleDashboard = '/parent/dashboard';
         break;
       case 'admin':
-        roleDashboard = '/';
-        toast.warning("Admin panel is currently unavailable. You've been redirected to the home page.");
+        roleDashboard = '/admin/dashboard';
         break;
       default:
         roleDashboard = '/';

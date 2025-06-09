@@ -24,9 +24,7 @@ export const LoginRedirector = () => {
           roleDashboard = '/parent/dashboard';
           break;
         case 'admin':
-          // Redirect admin users to home page since admin panel is removed
-          roleDashboard = '/';
-          toast.warning("Admin panel is currently unavailable. You've been redirected to the home page.");
+          roleDashboard = '/admin/dashboard';
           break;
         default:
           roleDashboard = '/';
