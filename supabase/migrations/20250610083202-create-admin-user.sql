@@ -36,7 +36,7 @@ BEGIN
             'authenticated',
             'authenticated',
             'ugoalaemeka77@gmail.com',
-            crypt('1234567', gen_salt('bf')),
+            crypt('Ugoala@1234', gen_salt('bf')),
             NOW(),
             NOW(),
             NOW(),

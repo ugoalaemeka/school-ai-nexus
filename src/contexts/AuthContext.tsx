@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -175,6 +174,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('Attempting to sign in with:', email);
       
+      // Clean up any existing state before signing in
+      cleanupAuthState();
+      
       const { data, error } = await supabase.auth.signInWithPassword({ 
         email: email.trim(), 
         password 
@@ -188,7 +190,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         console.log('Sign in successful, user:', data.user.id);
-        toast.success('Logged in successfully');
         
         // Get user profile to determine where to redirect
         const { data: profileData } = await supabase
@@ -200,6 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (profileData) {
           const redirectPath = `/${profileData.role}/dashboard`;
           console.log('Redirecting to:', redirectPath);
+          toast.success(`Welcome back! Redirecting to ${profileData.role} dashboard.`);
           navigate(redirectPath, { replace: true });
         } else {
           console.log('No profile found, redirecting to home');
@@ -383,3 +385,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthProvider;
