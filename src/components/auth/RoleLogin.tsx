@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,6 @@ import { BookOpen, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 interface RoleLoginProps {
   role: 'admin' | 'teacher' | 'student' | 'parent';
@@ -32,7 +30,7 @@ export function RoleLogin({
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isAlternateLogin, setIsAlternateLogin] = useState(useAlternateLogin);
+  const [isAlternateLogin, setIsAlternateLogin] = useState(false);
   const [uniqueId, setUniqueId] = useState("");
   const [surname, setSurname] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,122 +43,31 @@ export function RoleLogin({
     
     try {
       if (isAlternateLogin) {
-        // Handle student login with unique_id (or parent with phone)
-        if (role === 'student') {
-          // Find the student's email using their unique_id
-          const { data, error } = await supabase
-            .from('students')
-            .select('user_id, address') // address column stores the unique_id until schema updated
-            .eq('address', uniqueId) // using address temporarily for unique_id
-            .maybeSingle();
-          
-          if (error || !data) {
-            toast.error("Student ID not found");
-            setError("Student ID not found");
-            setLoading(false);
-            return;
-          }
-          
-          // Now we need to verify the surname matches
-          const { data: userData, error: userError } = await supabase
-            .from('profiles')
-            .select('id, last_name')
-            .eq('id', data.user_id)
-            .maybeSingle();
-          
-          if (userError || !userData) {
-            toast.error("Student profile not found");
-            setError("Student profile not found");
-            setLoading(false);
-            return;
-          }
-          
-          // Check if surname matches
-          if (userData.last_name?.toLowerCase() !== surname.toLowerCase()) {
-            toast.error("Invalid surname");
-            setError("Invalid surname");
-            setLoading(false);
-            return;
-          }
-          
-          // Get the email for this user to login
-          const { data: authData, error: authError } = await supabase
-            .auth.admin.getUserById(data.user_id);
-          
-          if (authError || !authData?.user?.email) {
-            toast.error("Could not retrieve student email");
-            setError("Could not retrieve student email");
-            setLoading(false);
-            return;
-          }
-          
-          // Login with the retrieved email and surname as password
-          await signIn(authData.user.email, surname);
-          toast.success("Login successful!");
-        } else if (role === 'parent') {
-          // Try phone login first
-          const { data: parentData, error: parentError } = await supabase
-            .from('parents')
-            .select('user_id')
-            .eq('phone', uniqueId)
-            .maybeSingle();
-          
-          if (parentError || !parentData?.user_id) {
-            // Try alternate email login
-            const { data: altParentData, error: altParentError } = await supabase
-              .from('parents')
-              .select('user_id')
-              .eq('alternate_email', uniqueId)
-              .maybeSingle();
-              
-            if (altParentError || !altParentData?.user_id) {
-              toast.error("Parent not found");
-              setError("Parent not found with that phone number or email");
-              setLoading(false);
-              return;
-            }
-            
-            // Get parent email for auth
-            const { data: authData, error: authError } = await supabase
-              .auth.admin.getUserById(altParentData.user_id);
-            
-            if (authError || !authData?.user?.email) {
-              toast.error("Could not retrieve parent email");
-              setError("Could not retrieve parent email");
-              setLoading(false);
-              return;
-            }
-            
-            // Login with retrieved email and provided password
-            await signIn(authData.user.email, surname);
-            toast.success("Login successful!");
-          } else {
-            // Get parent email for auth
-            const { data: authData, error: authError } = await supabase
-              .auth.admin.getUserById(parentData.user_id);
-            
-            if (authError || !authData?.user?.email) {
-              toast.error("Could not retrieve parent email");
-              setError("Could not retrieve parent email");
-              setLoading(false);
-              return;
-            }
-            
-            // Login with retrieved email and provided password
-            await signIn(authData.user.email, surname);
-            toast.success("Login successful!");
-          }
+        // Handle alternate login methods for students/parents
+        // This is not implemented for admin role
+        if (role === 'admin') {
+          setError('Admin login requires email and password');
+          setLoading(false);
+          return;
         }
+        
+        // For now, just use regular email/password login
+        toast.error('Alternate login method not yet implemented');
+        setLoading(false);
+        return;
       } else {
         // Regular email/password login
-        await signIn(email, password);
+        console.log(`Attempting ${role} login with:`, email);
+        await signIn(email.trim(), password);
         toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} login successful!`);
       }
       
       // Redirect happens in AuthContext after successful login
     } catch (error: any) {
-      toast.error(error.message || `An error occurred during ${role} login`);
-      setError(error.message || `An error occurred during login`);
+      console.error('Login error:', error);
+      const errorMessage = error.message || `An error occurred during ${role} login`;
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -205,7 +112,7 @@ export function RoleLogin({
           )}
           
           <form onSubmit={handleLogin} className="space-y-4">
-            {isAlternateLogin ? (
+            {isAlternateLogin && role !== 'admin' ? (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="unique-id">{alternateLoginLabel}</Label>
@@ -232,7 +139,7 @@ export function RoleLogin({
                     disabled={loading}
                   />
                 </div>
-                {useAlternateLogin && (
+                {useAlternateLogin && role !== 'admin' && (
                   <Button 
                     type="button" 
                     variant="link" 
@@ -269,7 +176,7 @@ export function RoleLogin({
                     disabled={loading}
                   />
                 </div>
-                {useAlternateLogin && (
+                {useAlternateLogin && role !== 'admin' && (
                   <Button 
                     type="button" 
                     variant="link" 

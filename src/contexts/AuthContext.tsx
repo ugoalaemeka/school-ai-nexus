@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -97,27 +98,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  // Effect to redirect based on role after profile is loaded
-  useEffect(() => {
-    const redirectBasedOnRole = () => {
-      // Only redirect if user is logged in and profile is loaded, and not already on the correct route
-      if (user && profile && !loading) {
-        const roleBasedRoot = `/${profile.role}`;
-        
-        // Check if the current path is already in the correct section for this role
-        if (!location.pathname.startsWith(roleBasedRoot) && 
-            !location.pathname.includes('login') && 
-            !location.pathname.includes('activate')) {
-          
-          // Redirect to the appropriate dashboard
-          navigate(`${roleBasedRoot}/dashboard`);
-        }
-      }
-    };
-    
-    redirectBasedOnRole();
-  }, [profile, user, loading, navigate, location.pathname]);
-
   const fetchUserProfile = async (userId: string) => {
     try {
       console.log('Fetching user profile for:', userId);
@@ -193,25 +173,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      // Clean up existing auth state first
-      cleanupAuthState();
+      console.log('Attempting to sign in with:', email);
       
-      // Try to sign out any existing session
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        // Continue even if this fails
-      }
-      
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email: email.trim(), 
+        password 
+      });
       
       if (error) {
+        console.error('Sign in error:', error);
         toast.error(error.message);
-        return;
+        throw error;
       }
 
       if (data.user) {
+        console.log('Sign in successful, user:', data.user.id);
         toast.success('Logged in successfully');
+        
         // Get user profile to determine where to redirect
         const { data: profileData } = await supabase
           .from('profiles')
@@ -221,13 +199,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
         if (profileData) {
           const redirectPath = `/${profileData.role}/dashboard`;
-          navigate(redirectPath);
+          console.log('Redirecting to:', redirectPath);
+          navigate(redirectPath, { replace: true });
         } else {
+          console.log('No profile found, redirecting to home');
           navigate('/'); // Fallback to home if no profile found
         }
       }
     } catch (error: any) {
+      console.error('Sign in failed:', error);
       toast.error(error.message || 'An error occurred during login');
+      throw error;
     }
   };
 
