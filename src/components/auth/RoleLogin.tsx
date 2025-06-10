@@ -112,7 +112,7 @@ export function RoleLogin({
           )}
           
           <form onSubmit={handleLogin} className="space-y-4">
-            {isAlternateLogin && role !== 'admin' ? (
+            {isAlternateLogin && useAlternateLogin && role !== 'admin' ? (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="unique-id">{alternateLoginLabel}</Label>
