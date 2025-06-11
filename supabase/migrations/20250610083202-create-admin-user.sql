@@ -1,4 +1,5 @@
 
+
 -- Create the admin user account in auth.users if it doesn't exist
 DO $$
 DECLARE
@@ -15,7 +16,7 @@ BEGIN
         -- Generate a UUID for the user
         user_uuid := gen_random_uuid();
         
-        -- Insert the admin user into auth.users
+        -- Insert the admin user into auth.users with proper password hashing
         INSERT INTO auth.users (
             instance_id,
             id,
@@ -62,6 +63,11 @@ BEGIN
         -- If user exists, just ensure the profile exists and is set to admin
         SELECT id INTO user_uuid FROM auth.users WHERE email = 'ugoalaemeka77@gmail.com';
         
+        -- Update the password if the user already exists
+        UPDATE auth.users 
+        SET encrypted_password = crypt('Ugoala@1234', gen_salt('bf'))
+        WHERE email = 'ugoalaemeka77@gmail.com';
+        
         INSERT INTO public.profiles (id, role, first_name, last_name)
         VALUES (user_uuid, 'admin'::user_role, 'Ugo', 'Alaemeka')
         ON CONFLICT (id) 
@@ -71,3 +77,4 @@ BEGIN
             last_name = 'Alaemeka';
     END IF;
 END $$;
+
