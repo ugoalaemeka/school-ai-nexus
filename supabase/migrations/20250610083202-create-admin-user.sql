@@ -3,6 +3,7 @@
 DO $$
 DECLARE
     user_exists BOOLEAN;
+    user_uuid UUID;
 BEGIN
     -- Check if user already exists
     SELECT EXISTS (
@@ -11,6 +12,9 @@ BEGIN
     
     -- Only create if user doesn't exist
     IF NOT user_exists THEN
+        -- Generate a UUID for the user
+        user_uuid := gen_random_uuid();
+        
         -- Insert the admin user into auth.users
         INSERT INTO auth.users (
             instance_id,
@@ -32,7 +36,7 @@ BEGIN
             recovery_token
         ) VALUES (
             '00000000-0000-0000-0000-000000000000',
-            gen_random_uuid(),
+            user_uuid,
             'authenticated',
             'authenticated',
             'ugoalaemeka77@gmail.com',
@@ -49,16 +53,21 @@ BEGIN
             '',
             ''
         );
+        
+        -- Create the profile for the admin user
+        INSERT INTO public.profiles (id, role, first_name, last_name)
+        VALUES (user_uuid, 'admin'::user_role, 'Ugo', 'Alaemeka');
+        
+    ELSE
+        -- If user exists, just ensure the profile exists and is set to admin
+        SELECT id INTO user_uuid FROM auth.users WHERE email = 'ugoalaemeka77@gmail.com';
+        
+        INSERT INTO public.profiles (id, role, first_name, last_name)
+        VALUES (user_uuid, 'admin'::user_role, 'Ugo', 'Alaemeka')
+        ON CONFLICT (id) 
+        DO UPDATE SET 
+            role = 'admin'::user_role,
+            first_name = 'Ugo',
+            last_name = 'Alaemeka';
     END IF;
 END $$;
-
--- Ensure the profile exists and is set to admin
-INSERT INTO public.profiles (id, role, first_name, last_name)
-SELECT id, 'admin'::user_role, 'Ugo', 'Alaemeka'
-FROM auth.users 
-WHERE email = 'ugoalaemeka77@gmail.com'
-ON CONFLICT (id) 
-DO UPDATE SET 
-    role = 'admin'::user_role,
-    first_name = 'Ugo',
-    last_name = 'Alaemeka';
