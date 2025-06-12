@@ -2,6 +2,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, 
   Calendar, 
@@ -14,7 +15,8 @@ import {
   Search, 
   User,
   Menu,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -28,9 +30,18 @@ interface StudentLayoutProps {
 export function StudentLayout({ children }: StudentLayoutProps) {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { signOut } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path ? "dashboard-link active" : "dashboard-link";
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const NavItems = () => (
@@ -66,6 +77,15 @@ export function StudentLayout({ children }: StudentLayoutProps) {
         <Settings className="h-5 w-5" />
         <span className="hidden md:inline">Settings</span>
       </Link>
+      
+      <Button
+        onClick={handleLogout}
+        variant="ghost"
+        className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted dashboard-link"
+      >
+        <LogOut className="h-5 w-5" />
+        <span className="hidden md:inline">Logout</span>
+      </Button>
     </>
   );
 

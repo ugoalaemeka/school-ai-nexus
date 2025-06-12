@@ -327,6 +327,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Check if current user is admin and redirect accordingly
       if (profile?.role === 'admin') {
         navigate('/admin/login');
+      } else if (profile?.role === 'teacher') {
+        navigate('/teacher/login');
+      } else if (profile?.role === 'student') {
+        navigate('/student/login');
+      } else if (profile?.role === 'parent') {
+        navigate('/parent/login');
       } else {
         navigate('/login');
       }

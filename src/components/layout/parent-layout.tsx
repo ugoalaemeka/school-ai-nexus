@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, 
   User, 
@@ -14,7 +15,8 @@ import {
   Search, 
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  LogOut
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -32,9 +34,18 @@ export function ParentLayout({ children }: ParentLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { signOut } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path ? "dashboard-link active" : "dashboard-link";
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   useEffect(() => {
@@ -83,6 +94,15 @@ export function ParentLayout({ children }: ParentLayoutProps) {
         <Settings className="h-5 w-5" />
         <span className="hidden md:inline">Settings</span>
       </Link>
+      
+      <Button
+        onClick={handleLogout}
+        variant="ghost"
+        className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted dashboard-link"
+      >
+        <LogOut className="h-5 w-5" />
+        <span className="hidden md:inline">Logout</span>
+      </Button>
     </>
   );
 
@@ -230,23 +250,8 @@ export function ParentLayout({ children }: ParentLayoutProps) {
                           Settings
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="sm" className="justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4 mr-2"
-                        >
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                          <polyline points="16 17 21 12 16 7"></polyline>
-                          <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
+                      <Button variant="ghost" size="sm" className="justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50" onClick={handleLogout}>
+                        <LogOut className="h-4 w-4 mr-2" />
                         Sign Out
                       </Button>
                     </div>
