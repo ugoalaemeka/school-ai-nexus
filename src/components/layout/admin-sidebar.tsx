@@ -2,6 +2,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 import {
   BarChart3,
   Users,
@@ -12,7 +14,8 @@ import {
   FileBarChart,
   Settings,
   School,
-  ClipboardList
+  ClipboardList,
+  LogOut
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -21,9 +24,18 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({}: AdminSidebarProps) {
   const { pathname } = useLocation();
+  const { signOut } = useAuth();
 
   const isActive = (path: string) => {
     return pathname === path;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const links = [
@@ -40,9 +52,8 @@ export function AdminSidebar({}: AdminSidebarProps) {
   ];
 
   return (
-    <div className="space-y-4 py-4">
-      <div className="px-4 py-2">
-        <h2 className="mb-2 px-2 text-lg font-semibold">Admin Panel</h2>
+    <div className="space-y-4 py-4 flex flex-col h-full">
+      <div className="px-4 py-2 flex-1">
         <div className="space-y-1">
           {links.map((link) => (
             <Link
@@ -58,6 +69,18 @@ export function AdminSidebar({}: AdminSidebarProps) {
             </Link>
           ))}
         </div>
+      </div>
+      
+      {/* Logout Button at the bottom */}
+      <div className="px-4 py-2 border-t border-border">
+        <Button
+          onClick={handleLogout}
+          variant="ghost"
+          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
     </div>
   );

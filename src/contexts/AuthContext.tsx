@@ -323,7 +323,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       toast.success('Logged out successfully');
-      navigate('/login');
+      
+      // Check if current user is admin and redirect accordingly
+      if (profile?.role === 'admin') {
+        navigate('/admin/login');
+      } else {
+        navigate('/login');
+      }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during logout');
     }
