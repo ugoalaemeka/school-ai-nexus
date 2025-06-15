@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { AuthLayout } from "@/components/auth/AuthLayout";
 
 const UpdatePassword = () => {
   const { session } = useAuth();
@@ -63,79 +64,63 @@ const UpdatePassword = () => {
   }
 
   return (
-    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12 relative">
-        <div className="absolute top-4 right-4 lg:hidden">
-          <ThemeToggle />
-        </div>
-        <div className="w-full max-w-md">
-           <div className="mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl mb-4">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <span>Eko Scholars Academy</span>
-            </Link>
-          </div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Update Your Password</CardTitle>
-              <CardDescription>
-                Enter and confirm your new password below.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleUpdatePassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="password">New Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Updating..." : "Update Password"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+    <AuthLayout
+      imageSrc="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070"
+      imageAlt="Eko Scholars Academy Students"
+      welcomeTitle="A Fresh Start"
+      quote="Create a new, secure password to protect your account."
+    >
+      <div className="absolute top-4 right-4 lg:hidden">
+        <ThemeToggle />
       </div>
-       <div className="hidden lg:block relative">
-        <img
-          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070"
-          alt="Eko Scholars Academy Students"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-primary/80" />
-        <div className="relative h-full flex flex-col justify-between p-12 text-white">
-          <div className="flex justify-end">
-            <ThemeToggle />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-4xl font-bold">A Fresh Start</h2>
-            <p className="text-lg max-w-prose text-primary-foreground/80">
-              Create a new, secure password to protect your account.
-            </p>
-          </div>
+      <div className="w-full max-w-md">
+         <div className="mb-8">
+          <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl mb-4">
+            <BookOpen className="h-8 w-8 text-primary" />
+            <span>Eko Scholars Academy</span>
+          </Link>
         </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Update Your Password</CardTitle>
+            <CardDescription>
+              Enter and confirm your new password below.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="password">New Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Updating..." : "Update Password"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
 

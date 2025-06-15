@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { BookOpen, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { AuthLayout } from "@/components/auth/AuthLayout";
 
 interface RoleLoginProps {
   role: 'admin' | 'teacher' | 'student' | 'parent';
@@ -118,151 +118,135 @@ export function RoleLogin({
   const currentRoleDetails = roleDetails[role];
 
   return (
-    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12 relative">
-        <div className="absolute top-4 left-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Button>
-        </div>
-        <div className="absolute top-4 right-4 lg:hidden">
-          <ThemeToggle />
+    <AuthLayout
+      imageSrc={currentRoleDetails.image}
+      imageAlt={`${currentRoleDetails.welcomeTitle} background`}
+      welcomeTitle={currentRoleDetails.welcomeTitle}
+      quote={currentRoleDetails.quote}
+    >
+      <div className="absolute top-4 left-4">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+      <div className="absolute top-4 right-4 lg:hidden">
+        <ThemeToggle />
+      </div>
+      
+      <div className="w-full max-w-md">
+        <div className="mb-8">
+          <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl mb-4">
+            <BookOpen className="h-8 w-8 text-primary" />
+            <span>Eko Scholars Academy</span>
+          </Link>
         </div>
         
-        <div className="w-full max-w-md">
-          <div className="mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl mb-4">
-              <BookOpen className="h-8 w-8 text-primary" />
-              <span>Eko Scholars Academy</span>
-            </Link>
-          </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>{description}</CardDescription>
+          </CardHeader>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>{title}</CardTitle>
-              <CardDescription>{description}</CardDescription>
-            </CardHeader>
+          <CardContent>
+            {error && (
+              <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 text-sm">
+                {error}
+              </div>
+            )}
             
-            <CardContent>
-              {error && (
-                <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 text-sm">
-                  {error}
-                </div>
+            <form onSubmit={handleLogin} className="space-y-4">
+              {isAlternateLogin && useAlternateLogin && role !== 'admin' ? (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="unique-id">{alternateLoginLabel}</Label>
+                    <Input 
+                      id="unique-id" 
+                      placeholder={`Enter your ${alternateLoginLabel.toLowerCase()}`}
+                      value={uniqueId}
+                      onChange={(e) => setUniqueId(e.target.value)}
+                      required 
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="surname">
+                      {role === 'student' ? 'Surname' : 'Password'}
+                    </Label>
+                    <Input 
+                      id="surname" 
+                      type="password"
+                      placeholder={role === 'student' ? "Enter your surname" : "Enter your password"}
+                      value={surname}
+                      onChange={(e) => setSurname(e.target.value)}
+                      required 
+                      disabled={loading}
+                    />
+                  </div>
+                    <Button 
+                      type="button" 
+                      variant="link" 
+                      onClick={toggleLoginMethod} 
+                      className="p-0 h-auto text-xs"
+                      disabled={loading}
+                    >
+                      Switch to email login
+                    </Button>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email" 
+                      placeholder="youremail@example.com" 
+                      type="email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required 
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input 
+                      id="password" 
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required 
+                      disabled={loading}
+                    />
+                  </div>
+                  {useAlternateLogin && role !== 'admin' && (
+                    <Button 
+                      type="button" 
+                      variant="link" 
+                      onClick={toggleLoginMethod} 
+                      className="p-0 h-auto text-xs"
+                      disabled={loading}
+                    >
+                      Login with {alternateLoginLabel}
+                    </Button>
+                  )}
+                </>
               )}
-              
-              <form onSubmit={handleLogin} className="space-y-4">
-                {isAlternateLogin && useAlternateLogin && role !== 'admin' ? (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="unique-id">{alternateLoginLabel}</Label>
-                      <Input 
-                        id="unique-id" 
-                        placeholder={`Enter your ${alternateLoginLabel.toLowerCase()}`}
-                        value={uniqueId}
-                        onChange={(e) => setUniqueId(e.target.value)}
-                        required 
-                        disabled={loading}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="surname">
-                        {role === 'student' ? 'Surname' : 'Password'}
-                      </Label>
-                      <Input 
-                        id="surname" 
-                        type="password"
-                        placeholder={role === 'student' ? "Enter your surname" : "Enter your password"}
-                        value={surname}
-                        onChange={(e) => setSurname(e.target.value)}
-                        required 
-                        disabled={loading}
-                      />
-                    </div>
-                      <Button 
-                        type="button" 
-                        variant="link" 
-                        onClick={toggleLoginMethod} 
-                        className="p-0 h-auto text-xs"
-                        disabled={loading}
-                      >
-                        Switch to email login
-                      </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        placeholder="youremail@example.com" 
-                        type="email" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required 
-                        disabled={loading}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
-                      <Input 
-                        id="password" 
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required 
-                        disabled={loading}
-                      />
-                    </div>
-                    {useAlternateLogin && role !== 'admin' && (
-                      <Button 
-                        type="button" 
-                        variant="link" 
-                        onClick={toggleLoginMethod} 
-                        className="p-0 h-auto text-xs"
-                        disabled={loading}
-                      >
-                        Login with {alternateLoginLabel}
-                      </Button>
-                    )}
-                  </>
-                )}
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Logging in..." : "Login"}
-                </Button>
-              </form>
-            </CardContent>
-            
-            <CardFooter className="flex-col gap-2 items-start text-sm">
-              <Button variant="link" size="sm" asChild className="p-0 h-auto">
-                <Link to="/forgot-password">Forgot password?</Link>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
               </Button>
-              <Button variant="link" size="sm" asChild className="p-0 h-auto">
-                <Link to="/login">Not a {role}? Go to main login/register page</Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+            </form>
+          </CardContent>
+          
+          <CardFooter className="flex-col gap-2 items-start text-sm">
+            <Button variant="link" size="sm" asChild className="p-0 h-auto">
+              <Link to="/forgot-password">Forgot password?</Link>
+            </Button>
+            <Button variant="link" size="sm" asChild className="p-0 h-auto">
+              <Link to="/login">Not a {role}? Go to main login/register page</Link>
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
-      <div className="hidden lg:block relative">
-        <img
-          src={currentRoleDetails.image}
-          alt={`${currentRoleDetails.welcomeTitle} background`}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-primary/80" />
-        <div className="relative h-full flex flex-col justify-between p-12 text-white">
-          <div className="flex justify-end">
-            <ThemeToggle />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-4xl font-bold">{currentRoleDetails.welcomeTitle}</h2>
-            <p className="text-lg max-w-prose text-primary-foreground/80">
-              {currentRoleDetails.quote}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    </AuthLayout>
   );
 }
