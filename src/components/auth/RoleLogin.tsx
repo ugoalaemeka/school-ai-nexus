@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -93,7 +94,7 @@ export function RoleLogin({
       <div className="mb-8 text-center">
         <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl">
           <BookOpen className="h-8 w-8 text-primary" />
-          <span>EduSync</span>
+          <span>Eko Scholars Academy</span>
         </Link>
       </div>
       

@@ -99,7 +99,7 @@ export function DashboardLayout({ children, userRole = "student" }: DashboardLay
         <div className="p-4 border-b flex items-center justify-between h-16">
           <Link to="/" className={`flex items-center gap-2 font-bold ${!isSidebarOpen && "justify-center"}`}>
             <BookOpen className="h-6 w-6 text-primary" />
-            {isSidebarOpen && <span>EduNexus</span>}
+            {isSidebarOpen && <span>Eko Scholars Academy</span>}
           </Link>
           <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:flex hidden">
             <Menu className="h-4 w-4" />

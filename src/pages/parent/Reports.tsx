@@ -52,11 +52,11 @@ export default function ParentReports() {
 
   const subjectPerformance = [
     { subject: "Mathematics", grade: "A", score: 92, comment: "Excellent understanding of advanced concepts." },
-    { subject: "Science", grade: "A", score: 94, comment: "Outstanding work in laboratory experiments." },
-    { subject: "English", grade: "A-", score: 90, comment: "Strong writing skills, can improve critical analysis." },
-    { subject: "History", grade: "B+", score: 87, comment: "Good understanding of key historical events." },
-    { subject: "Art", grade: "A+", score: 98, comment: "Exceptional creativity and technical skills." },
-    { subject: "Physical Education", grade: "A", score: 95, comment: "Great teamwork and athletic performance." },
+    { subject: "English Language", grade: "A", score: 94, comment: "Outstanding work in comprehension and grammar." },
+    { subject: "Basic Science", grade: "A-", score: 90, comment: "Strong practical skills, can improve on theory." },
+    { subject: "Social Studies", grade: "B+", score: 87, comment: "Good understanding of Nigerian history and culture." },
+    { subject: "Civic Education", grade: "A", score: 95, comment: "Excellent grasp of civic responsibilities." },
+    { subject: "Yoruba Language", grade: "B", score: 85, comment: "Good progress in vocabulary and fluency." },
   ];
 
   // Animation variants

@@ -18,7 +18,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 font-bold text-xl">
             <BookOpen className="h-6 w-6 text-primary" />
-            <span>EduNexus</span>
+            <span>Eko Scholars Academy</span>
           </Link>
         </div>
 

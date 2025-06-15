@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { StudentSidebar } from "@/components/layout/student-sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,66 +31,60 @@ import {
 // Subject colors for visual distinction
 const subjectColors: Record<string, string> = {
   "Mathematics": "bg-blue-500",
-  "English": "bg-green-500",
-  "Science": "bg-purple-500",
-  "History": "bg-amber-500",
-  "Geography": "bg-emerald-500",
-  "Computer Science": "bg-indigo-500",
-  "Physics": "bg-rose-500",
-  "Chemistry": "bg-cyan-500",
-  "Biology": "bg-teal-500",
-  "Art": "bg-pink-500",
-  "Physical Education": "bg-orange-500",
-  "Music": "bg-lime-500",
+  "English Language": "bg-green-500",
+  "Basic Science": "bg-purple-500",
+  "Social Studies": "bg-amber-500",
+  "Civic Education": "bg-emerald-500",
+  "Computer Studies": "bg-indigo-500",
+  "Creative Arts": "bg-rose-500",
+  "Yoruba Language": "bg-cyan-500",
+  "P.H.E": "bg-teal-500",
 };
 
 // Subject icons
 const subjectIcons: Record<string, React.ReactNode> = {
   "Mathematics": <div className="p-2 rounded-full bg-blue-100 text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>,
-  "English": <div className="p-2 rounded-full bg-green-100 text-green-500"><BookOpen size={16} /></div>,
-  "Science": <div className="p-2 rounded-full bg-purple-100 text-purple-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.58 16.5h12.85"></path></svg></div>,
-  "History": <div className="p-2 rounded-full bg-amber-100 text-amber-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>,
-  "Geography": <div className="p-2 rounded-full bg-emerald-100 text-emerald-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg></div>,
-  "Computer Science": <div className="p-2 rounded-full bg-indigo-100 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>,
-  "Physics": <div className="p-2 rounded-full bg-rose-100 text-rose-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 3a9 9 0 0 0-9 9 9 9 0 1 0 18 0"></path></svg></div>,
-  "Chemistry": <div className="p-2 rounded-full bg-cyan-100 text-cyan-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3h6v11l3 3H6l3-3V3z"></path><path d="M9 8h6"></path></svg></div>,
-  "Biology": <div className="p-2 rounded-full bg-teal-100 text-teal-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path><path d="M8 8V5c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v3"></path></svg></div>,
-  "Art": <div className="p-2 rounded-full bg-pink-100 text-pink-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="10.5" r="2.5"></circle><circle cx="8.5" cy="7.5" r="2.5"></circle><circle cx="6.5" cy="12.5" r="2.5"></circle><path d="M12 15.5a4 4 0 1 0 4 4"></path></svg></div>,
-  "Physical Education": <div className="p-2 rounded-full bg-orange-100 text-orange-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18.7 8c-.4-1-1.2-1.9-2.3-2.4-.6-.3-1.4-.6-2.5-.6-.9 0-1.8.1-2.6.5-.8.3-1.6.9-2.2 1.8-.6 1-1 2.3-1 4.1 0 2.1.5 3.6 1.4 4.7.9 1.1 2.1 1.6 3.6 1.6 1.6 0 3-1 4.1-2.9"></path><path d="M13.6 16.6c-1.1 1.3-2.4 2.4-3.9 3.5-1.5-.9-2.9-2-4.1-3.5-.7-.9-1.2-1.9-1.6-3"></path><path d="M16.9 15.3c1.1-1.5 2-3.1 2.7-4.8"></path><path d="M12 4.5c1.9.4 3.6 1 5.1 2"></path><path d="M12 4.5C9.6 5 7.5 5.7 5.5 6.5"></path><path d="M5.5 13.5c-2-1.2-3.4-2.4-4-3.8"></path><path d="M20.5 9.7c2 1.2 3.4 2.5 4 3.8"></path></svg></div>,
-  "Music": <div className="p-2 rounded-full bg-lime-100 text-lime-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>,
+  "English Language": <div className="p-2 rounded-full bg-green-100 text-green-500"><BookOpen size={16} /></div>,
+  "Basic Science": <div className="p-2 rounded-full bg-purple-100 text-purple-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.58 16.5h12.85"></path></svg></div>,
+  "Social Studies": <div className="p-2 rounded-full bg-amber-100 text-amber-500"><Users size={16} /></div>,
+  "Civic Education": <div className="p-2 rounded-full bg-emerald-100 text-emerald-500"><GraduationCap size={16} /></div>,
+  "Computer Studies": <div className="p-2 rounded-full bg-indigo-100 text-indigo-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>,
+  "Creative Arts": <div className="p-2 rounded-full bg-rose-100 text-rose-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="10.5" r="2.5"></circle><circle cx="8.5" cy="7.5" r="2.5"></circle><circle cx="6.5" cy="12.5" r="2.5"></circle><path d="M12 15.5a4 4 0 1 0 4 4"></path></svg></div>,
+  "Yoruba Language": <div className="p-2 rounded-full bg-cyan-100 text-cyan-500"><BookOpen size={16} /></div>,
+  "P.H.E": <div className="p-2 rounded-full bg-teal-100 text-teal-500"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18.7 8c-.4-1-1.2-1.9-2.3-2.4-.6-.3-1.4-.6-2.5-.6-.9 0-1.8.1-2.6.5-.8.3-1.6.9-2.2 1.8-.6 1-1 2.3-1 4.1 0 2.1.5 3.6 1.4 4.7.9 1.1 2.1 1.6 3.6 1.6 1.6 0 3-1 4.1-2.9"></path><path d="M13.6 16.6c-1.1 1.3-2.4 2.4-3.9 3.5-1.5-.9-2.9-2-4.1-3.5-.7-.9-1.2-1.9-1.6-3"></path><path d="M16.9 15.3c1.1-1.5 2-3.1 2.7-4.8"></path><path d="M12 4.5c1.9.4 3.6 1 5.1 2"></path><path d="M12 4.5C9.6 5 7.5 5.7 5.5 6.5"></path><path d="M5.5 13.5c-2-1.2-3.4-2.4-4-3.8"></path><path d="M20.5 9.7c2 1.2 3.4 2.5 4 3.8"></path></svg></div>,
 };
 
 // Sample timetable data
 const weeklyTimetable = {
   "Monday": [
     { id: 1, subject: "Mathematics", time: "08:30 - 09:30", room: "Room 101", teacher: "Mrs. Jenkins" },
-    { id: 2, subject: "English", time: "09:45 - 10:45", room: "Room 203", teacher: "Mr. Rodriguez" },
-    { id: 3, subject: "Computer Science", time: "11:00 - 12:00", room: "Lab 02", teacher: "Ms. Wilson" },
-    { id: 4, subject: "Physics", time: "13:00 - 14:00", room: "Lab 03", teacher: "Dr. Thompson" },
+    { id: 2, subject: "English Language", time: "09:45 - 10:45", room: "Room 203", teacher: "Mr. Rodriguez" },
+    { id: 3, subject: "Computer Studies", time: "11:00 - 12:00", room: "Lab 02", teacher: "Ms. Wilson" },
+    { id: 4, subject: "Basic Science", time: "13:00 - 14:00", room: "Lab 03", teacher: "Dr. Thompson" },
   ],
   "Tuesday": [
-    { id: 5, subject: "Biology", time: "08:30 - 09:30", room: "Lab 01", teacher: "Dr. Martinez" },
-    { id: 6, subject: "History", time: "09:45 - 10:45", room: "Room 105", teacher: "Mr. Anderson" },
-    { id: 7, subject: "Chemistry", time: "11:00 - 12:00", room: "Lab 04", teacher: "Mrs. Taylor" },
-    { id: 8, subject: "Art", time: "13:00 - 14:00", room: "Art Studio", teacher: "Ms. Lopez" },
+    { id: 5, subject: "Yoruba Language", time: "08:30 - 09:30", room: "Room 102", teacher: "Mrs. Adebayo" },
+    { id: 6, subject: "Social Studies", time: "09:45 - 10:45", room: "Room 105", teacher: "Mr. Anderson" },
+    { id: 7, subject: "Civic Education", time: "11:00 - 12:00", room: "Hall A", teacher: "Mrs. Taylor" },
+    { id: 8, subject: "Creative Arts", time: "13:00 - 14:00", room: "Art Studio", teacher: "Ms. Lopez" },
   ],
   "Wednesday": [
     { id: 9, subject: "Mathematics", time: "08:30 - 09:30", room: "Room 101", teacher: "Mrs. Jenkins" },
-    { id: 10, subject: "Geography", time: "09:45 - 10:45", room: "Room 104", teacher: "Mr. Thompson" },
-    { id: 11, subject: "English", time: "11:00 - 12:00", room: "Room 203", teacher: "Mr. Rodriguez" },
-    { id: 12, subject: "Physical Education", time: "13:00 - 14:00", room: "Sports Hall", teacher: "Coach Johnson" },
+    { id: 10, subject: "Basic Science", time: "09:45 - 10:45", room: "Lab 03", teacher: "Dr. Thompson" },
+    { id: 11, subject: "English Language", time: "11:00 - 12:00", room: "Room 203", teacher: "Mr. Rodriguez" },
+    { id: 12, subject: "P.H.E", time: "13:00 - 14:00", room: "Sports Hall", teacher: "Coach Johnson" },
   ],
   "Thursday": [
-    { id: 13, subject: "Science", time: "08:30 - 09:30", room: "Lab 05", teacher: "Mrs. Williams" },
-    { id: 14, subject: "Computer Science", time: "09:45 - 10:45", room: "Lab 02", teacher: "Ms. Wilson" },
+    { id: 13, subject: "Social Studies", time: "08:30 - 09:30", room: "Room 105", teacher: "Mr. Anderson" },
+    { id: 14, subject: "Computer Studies", time: "09:45 - 10:45", room: "Lab 02", teacher: "Ms. Wilson" },
     { id: 15, subject: "Mathematics", time: "11:00 - 12:00", room: "Room 101", teacher: "Mrs. Jenkins" },
-    { id: 16, subject: "Music", time: "13:00 - 14:00", room: "Music Room", teacher: "Mr. Davis" },
+    { id: 16, subject: "Yoruba Language", time: "13:00 - 14:00", room: "Room 102", teacher: "Mrs. Adebayo" },
   ],
   "Friday": [
-    { id: 17, subject: "English", time: "08:30 - 09:30", room: "Room 203", teacher: "Mr. Rodriguez" },
-    { id: 18, subject: "Physics", time: "09:45 - 10:45", room: "Lab 03", teacher: "Dr. Thompson" },
-    { id: 19, subject: "History", time: "11:00 - 12:00", room: "Room 105", teacher: "Mr. Anderson" },
-    { id: 20, subject: "Chemistry", time: "13:00 - 14:00", room: "Lab 04", teacher: "Mrs. Taylor" },
+    { id: 17, subject: "English Language", time: "08:30 - 09:30", room: "Room 203", teacher: "Mr. Rodriguez" },
+    { id: 18, subject: "Basic Science", time: "09:45 - 10:45", room: "Lab 03", teacher: "Dr. Thompson" },
+    { id: 19, subject: "Civic Education", time: "11:00 - 12:00", room: "Hall A", teacher: "Mrs. Taylor" },
+    { id: 20, subject: "Creative Arts", time: "13:00 - 14:00", room: "Art Studio", teacher: "Ms. Lopez" },
   ],
 };
 
