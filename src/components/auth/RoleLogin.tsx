@@ -1,16 +1,13 @@
 
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { BookOpen, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { useRoleLogin } from "./useRoleLogin";
+import { LoginForm } from "./LoginForm";
 
 interface RoleLoginProps {
   role: 'admin' | 'teacher' | 'student' | 'parent';
@@ -52,14 +49,21 @@ export function RoleLogin({
   alternateLoginLabel = 'Student ID'
 }: RoleLoginProps) {
   const navigate = useNavigate();
-  const { signIn, user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isAlternateLogin, setIsAlternateLogin] = useState(false);
-  const [uniqueId, setUniqueId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    uniqueId,
+    setUniqueId,
+    isAlternateLogin,
+    loading,
+    error,
+    handleLogin,
+    toggleLoginMethod,
+  } = useRoleLogin(role);
 
   if (authLoading) {
     return (
@@ -74,70 +78,6 @@ export function RoleLogin({
     return null;
   }
   
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    
-    try {
-      if (isAlternateLogin) {
-        if (role === 'student') {
-          // For student login, we find their email via their student ID from the 'students' table.
-          const { data: student, error: studentError } = await supabase
-            .from('students')
-            .select('email')
-            .eq('student_id', uniqueId.trim())
-            .single();
-
-          if (studentError || !student || !student.email) {
-            console.error('Error fetching student or student not found:', studentError);
-            const message = "Invalid Student ID. Please check and try again.";
-            toast.error(message);
-            setError(message);
-            setLoading(false);
-            return;
-          }
-          
-          const studentEmail = student.email;
-          console.log(`Attempting student login for Student ID ${uniqueId} (email: ${studentEmail})`);
-          await signIn(studentEmail, password);
-          toast.success(`Welcome back! Login successful.`);
-
-        } else if (role === 'parent') {
-          // For now, parent alternate login uses email. Phone login can be added later.
-          console.log(`Attempting parent login with:`, uniqueId);
-          await signIn(uniqueId.trim(), password);
-          toast.success(`Parent login successful!`);
-        
-        } else {
-            toast.error('Alternate login method not available for this role.');
-            setLoading(false);
-            return;
-        }
-
-      } else {
-        // Regular email/password login
-        console.log(`Attempting ${role} login with:`, email);
-        await signIn(email.trim(), password);
-        toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} login successful!`);
-      }
-      
-      // Redirect happens in AuthContext after successful login
-    } catch (error: any) {
-      console.error('Login error:', error);
-      const errorMessage = error.message || `An error occurred during ${role} login`;
-      toast.error(errorMessage);
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleLoginMethod = () => {
-    setIsAlternateLogin(!isAlternateLogin);
-    setError(null);
-  };
-
   const currentRoleDetails = roleDetails[role];
 
   return (
@@ -172,90 +112,22 @@ export function RoleLogin({
           </CardHeader>
           
           <CardContent>
-            {error && (
-              <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 text-sm">
-                {error}
-              </div>
-            )}
-            
-            <form onSubmit={handleLogin} className="space-y-4">
-              {isAlternateLogin && useAlternateLogin && role !== 'admin' ? (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="unique-id">{alternateLoginLabel}</Label>
-                    <Input 
-                      id="unique-id" 
-                      placeholder={`Enter your ${alternateLoginLabel.toLowerCase()}`}
-                      value={uniqueId}
-                      onChange={(e) => setUniqueId(e.target.value)}
-                      required 
-                      disabled={loading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password-alt">Password</Label>
-                    <Input 
-                      id="password-alt" 
-                      type="password"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required 
-                      disabled={loading}
-                    />
-                  </div>
-                    <Button 
-                      type="button" 
-                      variant="link" 
-                      onClick={toggleLoginMethod} 
-                      className="p-0 h-auto text-xs"
-                      disabled={loading}
-                    >
-                      Switch to email login
-                    </Button>
-                </>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email" 
-                      placeholder="youremail@example.com" 
-                      type="email" 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required 
-                      disabled={loading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input 
-                      id="password" 
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required 
-                      disabled={loading}
-                    />
-                  </div>
-                  {useAlternateLogin && role !== 'admin' && (
-                    <Button 
-                      type="button" 
-                      variant="link" 
-                      onClick={toggleLoginMethod} 
-                      className="p-0 h-auto text-xs"
-                      disabled={loading}
-                    >
-                      Login with {alternateLoginLabel}
-                    </Button>
-                  )}
-                </>
-              )}
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-            </form>
+            <LoginForm
+              role={role}
+              useAlternateLogin={useAlternateLogin}
+              alternateLoginLabel={alternateLoginLabel}
+              isAlternateLogin={isAlternateLogin}
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              uniqueId={uniqueId}
+              setUniqueId={setUniqueId}
+              loading={loading}
+              error={error}
+              handleLogin={handleLogin}
+              toggleLoginMethod={toggleLoginMethod}
+            />
           </CardContent>
           
           <CardFooter className="flex-col gap-4 items-start text-sm">
