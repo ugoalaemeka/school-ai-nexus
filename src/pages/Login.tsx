@@ -158,7 +158,10 @@ const Login = () => {
                     </Button>
                   </form>
                 </CardContent>
-                <CardFooter className="flex-col gap-4">
+                <CardFooter className="flex flex-col items-center gap-4">
+                  <Button variant="link" size="sm" asChild className="p-0 h-auto -mt-2 mb-2">
+                    <Link to="/forgot-password">Forgot password?</Link>
+                  </Button>
                   <div className="relative w-full">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t"></span>

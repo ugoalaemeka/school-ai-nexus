@@ -1,16 +1,19 @@
 
 import React from 'react';
-import { Routes, Route, useRoutes } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { routes } from './routes';
+import { AuthHandler } from './components/auth/AuthHandler';
 
 function App() {
   const routeElements = useRoutes(routes);
   
   return (
     <AuthProvider>
-      {routeElements}
+      <AuthHandler>
+        {routeElements}
+      </AuthHandler>
       <Toaster />
     </AuthProvider>
   );

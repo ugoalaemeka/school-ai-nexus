@@ -18,6 +18,8 @@ import AdminLogin from "@/pages/admin/Login";
 import TeacherLogin from "@/pages/teacher/Login";
 import StudentLogin from "@/pages/student/Login";
 import ParentLogin from "@/pages/parent/Login";
+import ForgotPassword from "@/pages/ForgotPassword";
+import UpdatePassword from "@/pages/UpdatePassword";
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -71,6 +73,14 @@ export const publicRoutes: RouteObject[] = [
   {
     path: "/parent/login",
     element: <ParentLogin />
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />
+  },
+  {
+    path: "/update-password",
+    element: <UpdatePassword />
   },
   {
     path: "/activate/:token",
