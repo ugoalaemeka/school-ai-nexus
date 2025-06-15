@@ -41,13 +41,11 @@ export function useRoleLogin(role: 'admin' | 'teacher' | 'student' | 'parent') {
           const studentEmail = student.email;
           console.log(`Attempting student login for Student ID ${uniqueId} (email: ${studentEmail})`);
           await signIn(studentEmail, password);
-          toast.success(`Welcome back! Login successful.`);
 
         } else if (role === 'parent') {
           // For now, parent alternate login uses email. Phone login can be added later.
           console.log(`Attempting parent login with:`, uniqueId);
           await signIn(uniqueId.trim(), password);
-          toast.success(`Parent login successful!`);
         
         } else {
             toast.error('Alternate login method not available for this role.');
@@ -59,14 +57,14 @@ export function useRoleLogin(role: 'admin' | 'teacher' | 'student' | 'parent') {
         // Regular email/password login
         console.log(`Attempting ${role} login with:`, email);
         await signIn(email.trim(), password);
-        toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} login successful!`);
       }
       
-      // Redirect happens in AuthContext after successful login
+      // Redirect and success toast happen in AuthContext after successful login
     } catch (error: any) {
       console.error('Login error:', error);
       const errorMessage = error.message || `An error occurred during ${role} login`;
-      toast.error(errorMessage);
+      // The signIn function from AuthContext already shows a toast on error.
+      // We just set the local error state to display it in the form.
       setError(errorMessage);
     } finally {
       setLoading(false);

@@ -230,11 +230,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     try {
       await UserService.updateUserProfileInDb(user.id, data);
-        
-      if (error) {
-        toast.error(error.message);
-        return;
-      }
       
       // Update the local state
       if (profile) {
