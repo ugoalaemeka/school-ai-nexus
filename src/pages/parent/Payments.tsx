@@ -25,7 +25,7 @@ export default function ParentPayments() {
     {
       id: "INV-001",
       description: "Tuition Fee (Term 2)",
-      amount: "$1,250.00",
+      amount: "₦250,000",
       date: "April 2, 2025",
       status: "paid",
       dueDate: "April 1, 2025",
@@ -34,7 +34,7 @@ export default function ParentPayments() {
     {
       id: "INV-002",
       description: "Technology Fee",
-      amount: "$150.00",
+      amount: "₦25,000",
       date: "March 15, 2025",
       status: "paid",
       dueDate: "March 15, 2025",
@@ -42,8 +42,8 @@ export default function ParentPayments() {
     },
     {
       id: "INV-003",
-      description: "School Trip (Washington DC)",
-      amount: "$350.00",
+      description: "Trip to Lekki Conservation Centre",
+      amount: "₦15,000",
       date: "-",
       status: "pending",
       dueDate: "April 30, 2025",
@@ -52,7 +52,7 @@ export default function ParentPayments() {
     {
       id: "INV-004",
       description: "Extra-curricular Activities",
-      amount: "$200.00",
+      amount: "₦20,000",
       date: "-",
       status: "pending",
       dueDate: "May 15, 2025",
@@ -61,7 +61,7 @@ export default function ParentPayments() {
     {
       id: "INV-005",
       description: "Library Fee",
-      amount: "$75.00",
+      amount: "₦7,500",
       date: "February 10, 2025",
       status: "paid",
       dueDate: "February 15, 2025",
@@ -100,7 +100,7 @@ export default function ParentPayments() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$550.00</div>
+              <div className="text-2xl font-bold">₦35,000</div>
               <p className="text-xs text-muted-foreground">
                 2 pending invoices
               </p>
@@ -112,7 +112,7 @@ export default function ParentPayments() {
               <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">$1,475.00</div>
+              <div className="text-2xl font-bold">₦282,500</div>
               <p className="text-xs text-muted-foreground">
                 3 completed payments
               </p>

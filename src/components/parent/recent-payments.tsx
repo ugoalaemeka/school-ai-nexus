@@ -13,7 +13,7 @@ const paymentData = [
   {
     id: "INV-001",
     description: "Tuition Fee (Term 2)",
-    amount: "$1,250.00",
+    amount: "₦250,000",
     date: "April 2, 2025",
     status: "paid",
     dueDate: "April 1, 2025",
@@ -21,15 +21,15 @@ const paymentData = [
   {
     id: "INV-002",
     description: "Technology Fee",
-    amount: "$150.00",
+    amount: "₦25,000",
     date: "March 15, 2025",
     status: "paid",
     dueDate: "March 15, 2025",
   },
   {
     id: "INV-003",
-    description: "School Trip (Washington DC)",
-    amount: "$350.00",
+    description: "Trip to Lekki Conservation Centre",
+    amount: "₦15,000",
     date: "-",
     status: "pending",
     dueDate: "April 30, 2025",
@@ -37,7 +37,7 @@ const paymentData = [
   {
     id: "INV-004",
     description: "Extra-curricular Activities",
-    amount: "$200.00",
+    amount: "₦20,000",
     date: "-",
     status: "pending",
     dueDate: "May 15, 2025",
@@ -109,7 +109,7 @@ export function RecentPayments({ isLoading, showAll = false }: RecentPaymentsPro
           <div className="flex justify-between items-center">
             <div>
               <div className="text-sm font-medium">Total Due</div>
-              <div className="text-2xl font-bold">$550.00</div>
+              <div className="text-2xl font-bold">₦35,000</div>
             </div>
             <Button>
               <CreditCard className="h-4 w-4 mr-2" />

@@ -87,11 +87,11 @@ const PaymentOverview = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span>Total Fees Collected:</span>
-            <span className="font-medium">$52,000</span>
+            <span className="font-medium">₦5,200,000</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Fees Due:</span>
-            <span className="font-medium">$8,000</span>
+            <span className="font-medium">₦800,000</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Payment Success Rate:</span>
@@ -114,19 +114,19 @@ const OutstandingFees = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span>Student A</span>
-            <span className="font-medium">$500</span>
+            <span className="font-medium">₦50,000</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Student B</span>
-            <span className="font-medium">$300</span>
+            <span className="font-medium">₦30,000</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Student C</span>
-            <span className="font-medium">$200</span>
+            <span className="font-medium">₦20,000</span>
           </div>
           <div className="flex items-center justify-between">
             <span>Student D</span>
-            <span className="font-medium">$100</span>
+            <span className="font-medium">₦10,000</span>
           </div>
         </div>
         <div className="mt-4">

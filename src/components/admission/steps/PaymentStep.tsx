@@ -29,23 +29,23 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
   
   const getTuitionFee = (grade: string) => {
     const tuitionMap: Record<string, number> = {
-      "preschool": 3800,
-      "kindergarten": 4200, 
-      "grade1": 4500,
-      "grade2": 4500,
-      "grade3": 4800,
-      "grade4": 4800,
-      "grade5": 5200,
-      "grade6": 5200,
-      "grade7": 5500,
-      "grade8": 5500,
-      "grade9": 6000,
-      "grade10": 6000,
-      "grade11": 6500,
-      "grade12": 6500,
+      "preschool": 380000,
+      "kindergarten": 420000, 
+      "grade1": 450000,
+      "grade2": 450000,
+      "grade3": 480000,
+      "grade4": 480000,
+      "grade5": 520000,
+      "grade6": 520000,
+      "grade7": 550000,
+      "grade8": 550000,
+      "grade9": 600000,
+      "grade10": 600000,
+      "grade11": 650000,
+      "grade12": 650000,
     };
     
-    return tuitionMap[grade] || 5000; // Default to $5000 if grade not found
+    return tuitionMap[grade] || 500000; // Default to ₦500,000
   };
 
   const handlePayment = () => {
@@ -70,13 +70,15 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-NG', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
-  const totalAmount = getTuitionFee(formData.desiredClass) + 500 + 350;
+  const totalAmount = getTuitionFee(formData.desiredClass) + 50000 + 35000;
 
   return (
     <>
@@ -95,11 +97,11 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Registration Fee:</span>
-                  <span>{formatCurrency(500)}</span>
+                  <span>{formatCurrency(50000)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Books & Materials:</span>
-                  <span>{formatCurrency(350)}</span>
+                  <span>{formatCurrency(35000)}</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t font-semibold">
                   <span>Total Amount:</span>
