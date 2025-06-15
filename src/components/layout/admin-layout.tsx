@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { AdminSidebar } from "./admin-sidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -30,6 +31,8 @@ interface AdminLayoutProps {
 export function AdminLayout({ children }: AdminLayoutProps) {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { profile } = useAuth();
+  const userName = profile ? `${profile.first_name} ${profile.last_name}`.trim() || 'Admin' : 'Admin';
   
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -37,7 +40,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <aside className="hidden lg:block lg:w-64 flex-shrink-0 h-screen sticky top-0 backdrop-blur-lg bg-white/5 border-r border-white/10 dark:bg-gray-900/50 transition-all">
         <div className="p-4 flex items-center justify-between border-b border-white/10">
           <Link to="/" className="flex items-center">
-            <h2 className="text-xl font-bold text-primary">EduSync</h2>
+            <h2 className="text-xl font-bold text-primary">Eko Scholars Academy</h2>
           </Link>
         </div>
 
@@ -49,7 +52,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <SheetContent side="left" className="backdrop-blur-lg bg-white/5 border-r border-white/10 dark:bg-gray-900/50 p-0 w-64">
           <div className="p-4 flex items-center justify-between border-b border-white/10">
             <Link to="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-              <h2 className="text-xl font-bold text-primary">EduSync</h2>
+              <h2 className="text-xl font-bold text-primary">Eko Scholars Academy</h2>
             </Link>
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
               <X className="h-5 w-5" />
@@ -72,7 +75,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               
               {/* Logo - always visible */}
               <Link to="/" className="font-bold text-lg">
-                EduSync
+                Eko Scholars Academy
               </Link>
             </div>
 
@@ -96,7 +99,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               </Button>
               <ThemeToggle />
               <div className="flex items-center gap-2">
-                <span className="hidden md:block font-medium">Admin Carter</span>
+                <span className="hidden md:block font-medium">{userName}</span>
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <User className="h-4 w-4 text-primary" />
                 </div>

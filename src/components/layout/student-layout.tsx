@@ -30,7 +30,8 @@ interface StudentLayoutProps {
 export function StudentLayout({ children }: StudentLayoutProps) {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { signOut } = useAuth();
+  const { signOut, profile } = useAuth();
+  const userName = profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Student' : 'Student';
   
   const isActive = (path: string) => {
     return location.pathname === path ? "dashboard-link active" : "dashboard-link";
@@ -162,7 +163,7 @@ export function StudentLayout({ children }: StudentLayoutProps) {
               </Button>
               <ThemeToggle />
               <div className="flex items-center gap-2">
-                <span className="hidden md:block font-medium">James Smith</span>
+                <span className="hidden md:block font-medium">{userName}</span>
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <User className="h-4 w-4 text-primary" />
                 </div>

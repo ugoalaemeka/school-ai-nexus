@@ -57,16 +57,16 @@ const UsersPage = () => {
     }
   };
 
-  // Sample user data
+  // Sample user data with Nigerian names and classes
   const users = [
-    { id: 1, name: "Sarah Johnson", email: "sjohnson@example.com", role: "teacher", status: "active", lastLogin: "2025-04-29", class: "Science", avatar: null },
-    { id: 2, name: "Michael Brown", email: "mbrown@example.com", role: "student", status: "active", lastLogin: "2025-04-28", class: "Class 9A", avatar: null },
-    { id: 3, name: "Emily Davis", email: "edavis@example.com", role: "parent", status: "active", lastLogin: "2025-04-25", class: "Parent of Alex", avatar: null },
-    { id: 4, name: "Robert Wilson", email: "rwilson@example.com", role: "admin", status: "active", lastLogin: "2025-04-30", class: "Administration", avatar: null },
-    { id: 5, name: "Jennifer Taylor", email: "jtaylor@example.com", role: "teacher", status: "inactive", lastLogin: "2025-04-10", class: "Mathematics", avatar: null },
-    { id: 6, name: "David Martinez", email: "dmartinez@example.com", role: "student", status: "active", lastLogin: "2025-04-28", class: "Class 10B", avatar: null },
-    { id: 7, name: "Amanda Rodriguez", email: "arodriguez@example.com", role: "parent", status: "pending", lastLogin: "N/A", class: "Parent of Sofia", avatar: null },
-    { id: 8, name: "James Wilson", email: "jwilson@example.com", role: "student", status: "suspended", lastLogin: "2025-04-15", class: "Class 11A", avatar: null },
+    { id: 1, name: "Mrs. Funke Adebayo", email: "fadebayo@example.com", role: "teacher", status: "active", lastLogin: "2025-04-29", class: "Nursery 1", avatar: null },
+    { id: 2, name: "Bola Tinubu", email: "bola.t@example.com", role: "student", status: "active", lastLogin: "2025-04-28", class: "JSS 2", avatar: null },
+    { id: 3, name: "Mrs. Davis", email: "edavis@example.com", role: "parent", status: "active", lastLogin: "2025-04-25", class: "Parent of Alex", avatar: null },
+    { id: 4, name: "Admin User", email: "admin@example.com", role: "admin", status: "active", lastLogin: "2025-04-30", class: "Administration", avatar: null },
+    { id: 5, name: "Mr. Chinedu Okafor", email: "cokafor@example.com", role: "teacher", status: "active", lastLogin: "2025-04-10", class: "Primary 3", avatar: null },
+    { id: 6, name: "Ngozi Okoro", email: "nokoro@example.com", role: "student", status: "active", lastLogin: "2025-04-28", class: "SSS 1 (Science)", avatar: null },
+    { id: 7, name: "Alhaji Musa", email: "amusa@example.com", role: "parent", status: "pending", lastLogin: "N/A", class: "Parent of Ngozi", avatar: null },
+    { id: 8, name: "Dayo Kuti", email: "dkuti@example.com", role: "student", status: "suspended", lastLogin: "2025-04-15", class: "Primary 6", avatar: null },
   ];
 
   const filteredUsers = users
@@ -189,7 +189,7 @@ const UsersPage = () => {
               <Card>
                 <CardContent className="p-4 flex flex-col items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-500 mb-2" />
-                  <p className="text-sm text-muted-foreground">Active</p>
+                  <p className="text-sm text-muted-foreground">Active Users</p>
                   <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-100">
                     Active
                   </Badge>

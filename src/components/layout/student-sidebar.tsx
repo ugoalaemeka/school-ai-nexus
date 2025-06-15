@@ -55,7 +55,7 @@ export function StudentSidebar({ children }: StudentSidebarProps) {
       <aside className="hidden lg:block lg:w-64 flex-shrink-0 h-screen sticky top-0 backdrop-blur-lg bg-white/5 border-r border-white/10 dark:bg-gray-900/50 transition-all z-30">
         <div className="p-4 flex items-center justify-between border-b border-white/10">
           <Link to="/" className="flex items-center">
-            <h2 className="text-xl font-bold text-primary">EduNexus</h2>
+            <h2 className="text-xl font-bold text-primary">Eko Scholars Academy</h2>
           </Link>
         </div>
 
@@ -86,7 +86,7 @@ export function StudentSidebar({ children }: StudentSidebarProps) {
         <SheetContent side="left" className="backdrop-blur-lg bg-white/5 border-r border-white/10 dark:bg-gray-900/50 p-0 w-64 z-50">
           <div className="p-4 flex items-center justify-between border-b border-white/10">
             <Link to="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-              <h2 className="text-xl font-bold text-primary">EduNexus</h2>
+              <h2 className="text-xl font-bold text-primary">Eko Scholars Academy</h2>
             </Link>
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
               <X className="h-5 w-5" />
@@ -132,7 +132,7 @@ export function StudentSidebar({ children }: StudentSidebarProps) {
               
               {/* Logo - always visible */}
               <Link to="/" className="font-bold text-lg">
-                EduNexus
+                Eko Scholars Academy
               </Link>
             </div>
 
