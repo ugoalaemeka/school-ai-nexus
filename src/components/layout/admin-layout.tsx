@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -73,10 +72,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <Menu className="h-6 w-6" />
               </Button>
               
-              {/* Logo - always visible */}
-              <Link to="/" className="font-bold text-lg">
-                Eko Scholars Academy
-              </Link>
+              <div className="hidden lg:flex items-center">
+                <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+              </div>
             </div>
 
             {/* Search - hidden on mobile */}

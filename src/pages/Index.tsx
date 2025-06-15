@@ -1,19 +1,19 @@
 
 import { MainLayout } from "@/components/layout/main-layout";
-import { HeroSection } from "@/components/home/HeroSection";
-import { UserPortalsSection } from "@/components/home/UserPortalsSection";
-import { FeaturesSection } from "@/components/home/FeaturesSection";
-import { CTASection } from "@/components/home/CTASection";
 
-const Index = () => {
+// Sections
+import { HeroSection } from "@/components/home/reworked/HeroSection";
+import { FeaturesSection } from "@/components/home/reworked/FeaturesSection";
+import { UserPortalsSection } from "@/components/home/reworked/UserPortalsSection";
+import { CTASection } from "@/components/home/reworked/CTASection";
+
+export default function Home() {
   return (
     <MainLayout>
       <HeroSection />
-      <UserPortalsSection />
       <FeaturesSection />
+      <UserPortalsSection />
       <CTASection />
     </MainLayout>
   );
-};
-
-export default Index;
+}

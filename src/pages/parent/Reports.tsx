@@ -53,10 +53,12 @@ export default function ParentReports() {
   const subjectPerformance = [
     { subject: "Mathematics", grade: "A", score: 92, comment: "Excellent understanding of advanced concepts." },
     { subject: "English Language", grade: "A", score: 94, comment: "Outstanding work in comprehension and grammar." },
-    { subject: "Basic Science", grade: "A-", score: 90, comment: "Strong practical skills, can improve on theory." },
-    { subject: "Social Studies", grade: "B+", score: 87, comment: "Good understanding of Nigerian history and culture." },
-    { subject: "Civic Education", grade: "A", score: 95, comment: "Excellent grasp of civic responsibilities." },
+    { subject: "Basic Science & Technology", grade: "A-", score: 90, comment: "Strong practical skills, can improve on theory." },
+    { subject: "National Values Education", grade: "B+", score: 87, comment: "Good understanding of Nigerian history and culture. (Contains Social Studies, Civic Education, Security Education)" },
+    { subject: "Pre-vocational Studies", grade: "A", score: 95, comment: "Excellent grasp of concepts. (Contains Home Economics and Agricultural Science)" },
     { subject: "Yoruba Language", grade: "B", score: 85, comment: "Good progress in vocabulary and fluency." },
+    { subject: "Business Studies", grade: "A-", score: 89, comment: "Shows great potential in entrepreneurial skills." },
+    { subject: "Creative Arts", grade: "B+", score: 88, comment: "Very creative and expressive in practical sessions." },
   ];
 
   // Animation variants

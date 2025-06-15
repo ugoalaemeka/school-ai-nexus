@@ -1,11 +1,11 @@
 
-import { BookOpen, GraduationCap, Users } from "lucide-react";
-import { UserPortalCard } from "./UserPortalCard";
+import { BookOpen, GraduationCap, ShieldCheck, Users } from "lucide-react";
+import { UserPortalCard } from "../UserPortalCard";
 
 export const UserPortalsSection = () => {
   const portalData = [
     {
-      icon: <Users className="h-6 w-6 text-primary" />,
+      icon: <ShieldCheck className="h-6 w-6 text-primary" />,
       title: "Admin Portal",
       description: "Comprehensive school management tools",
       features: [
@@ -35,9 +35,9 @@ export const UserPortalsSection = () => {
       features: [
         "Personalized Dashboard",
         "Homework & Exam Submission",
-        "Attendance & Grades Tracking",
+        "Timetable & Attendance",
         "Real-time Notifications",
-        "AI Chatbot Assistant"
+        "Access to Resources"
       ]
     },
     {
@@ -59,8 +59,8 @@ export const UserPortalsSection = () => {
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Specialized Portals for Everyone</h2>
-          <p className="text-muted-foreground">
-            Our platform provides tailored experiences for every stakeholder in the educational ecosystem.
+          <p className="text-muted-foreground text-lg">
+            Our platform provides tailored experiences for every member of our school community.
           </p>
         </div>
         

@@ -1,6 +1,6 @@
 
 import { BarChart3, Calendar, Globe, MessageSquare, Users, Award } from "lucide-react";
-import { FeatureCard } from "./FeatureCard";
+import { FeatureCard } from "../FeatureCard";
 
 export const FeaturesSection = () => {
   const features = [
@@ -40,9 +40,9 @@ export const FeaturesSection = () => {
     <section className="py-20">
       <div className="container">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
-          <p className="text-muted-foreground">
-            Explore the innovative tools that make EduNexus the ultimate school management solution.
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Eko Scholars Academy?</h2>
+          <p className="text-muted-foreground text-lg">
+            We provide a world-class education powered by innovative technology to nurture the leaders of tomorrow.
           </p>
         </div>
         

@@ -49,7 +49,7 @@ export function Navbar() {
           <Link to="/login">
             <Button className="gap-2">
               <LogIn className="h-4 w-4" />
-              Login
+              Portal Login
             </Button>
           </Link>
         </div>
@@ -112,7 +112,7 @@ export function Navbar() {
             <Link to="/login" onClick={() => setIsMenuOpen(false)}>
               <Button className="w-full gap-2">
                 <LogIn className="h-4 w-4" />
-                Login
+                Portal Login
               </Button>
             </Link>
           </nav>
