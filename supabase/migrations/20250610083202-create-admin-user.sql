@@ -1,5 +1,4 @@
 
-
 -- Create the admin user account in auth.users if it doesn't exist
 DO $$
 DECLARE
@@ -8,7 +7,7 @@ DECLARE
 BEGIN
     -- Check if user already exists
     SELECT EXISTS (
-        SELECT 1 FROM auth.users WHERE email = 'ugoalaemeka77@gmail.com'
+        SELECT 1 FROM auth.users WHERE email = 'admin@ekoscholars.com'
     ) INTO user_exists;
     
     -- Only create if user doesn't exist
@@ -40,13 +39,13 @@ BEGIN
             user_uuid,
             'authenticated',
             'authenticated',
-            'ugoalaemeka77@gmail.com',
-            crypt('Ugoala@1234', gen_salt('bf')),
+            'admin@ekoscholars.com',
+            crypt('password', gen_salt('bf')),
             NOW(),
             NOW(),
             NOW(),
             '{"provider": "email", "providers": ["email"]}',
-            '{"first_name": "Ugo", "last_name": "Alaemeka", "role": "admin"}',
+            '{"first_name": "Admin", "last_name": "User", "role": "admin"}',
             NOW(),
             NOW(),
             '',
@@ -57,24 +56,23 @@ BEGIN
         
         -- Create the profile for the admin user
         INSERT INTO public.profiles (id, role, first_name, last_name)
-        VALUES (user_uuid, 'admin'::user_role, 'Ugo', 'Alaemeka');
+        VALUES (user_uuid, 'admin'::user_role, 'Admin', 'User');
         
     ELSE
         -- If user exists, just ensure the profile exists and is set to admin
-        SELECT id INTO user_uuid FROM auth.users WHERE email = 'ugoalaemeka77@gmail.com';
+        SELECT id INTO user_uuid FROM auth.users WHERE email = 'admin@ekoscholars.com';
         
         -- Update the password if the user already exists
         UPDATE auth.users 
-        SET encrypted_password = crypt('Ugoala@1234', gen_salt('bf'))
-        WHERE email = 'ugoalaemeka77@gmail.com';
+        SET encrypted_password = crypt('password', gen_salt('bf'))
+        WHERE email = 'admin@ekoscholars.com';
         
         INSERT INTO public.profiles (id, role, first_name, last_name)
-        VALUES (user_uuid, 'admin'::user_role, 'Ugo', 'Alaemeka')
+        VALUES (user_uuid, 'admin'::user_role, 'Admin', 'User')
         ON CONFLICT (id) 
         DO UPDATE SET 
             role = 'admin'::user_role,
-            first_name = 'Ugo',
-            last_name = 'Alaemeka';
+            first_name = 'Admin',
+            last_name = 'User';
     END IF;
 END $$;
-
