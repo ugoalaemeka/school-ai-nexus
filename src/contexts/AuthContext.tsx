@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -55,8 +54,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [hasPaidFees, setHasPaidFees] = useState(false);
   const [isTeacherActive, setIsTeacherActive] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const fetchFullUserProfile = async (userId: string) => {
     const userProfile = await UserService.fetchUserProfile(userId);
@@ -141,9 +138,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
         if (userProfile) {
           const redirectPath = `/${userProfile.role}/dashboard`;
-          console.log('Redirecting to:', redirectPath);
+          console.log('Redirecting with full page reload to:', redirectPath);
           toast.success(`Welcome back! Redirecting to ${userProfile.role} dashboard.`);
-          navigate(redirectPath, { replace: true });
+          // Use full page reload to ensure clean state
+          window.location.href = redirectPath;
         } else {
           console.error('No profile found after sign in, logging out.');
           await supabase.auth.signOut({ scope: 'global' });
@@ -215,13 +213,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success('Logged out successfully');
     }
 
-    // `onAuthStateChange` will clear the user and profile from state.
+    // `onAuthStateChange` would clear state, but we are doing a hard reload.
     // Navigate to the appropriate login page based on the role we captured.
     if (lastKnownRole) {
-      navigate(`/${lastKnownRole}/login`, { replace: true });
+        const redirectPath = `/${lastKnownRole}/login`;
+        console.log('Signing out with full page reload to:', redirectPath);
+        window.location.href = redirectPath;
     } else {
-      // Fallback to the main login gateway
-      navigate('/login', { replace: true });
+        // Fallback to the main login gateway
+        console.log('Signing out with full page reload to /login');
+        window.location.href = '/login';
     }
   };
 
