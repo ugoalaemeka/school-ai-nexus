@@ -799,12 +799,14 @@ export type Database = {
           address: string | null
           created_at: string | null
           date_of_birth: string | null
+          email: string | null
           emergency_contact: string | null
           enrollment_date: string | null
           grade: string
           id: string
           medical_info: string | null
           phone: string | null
+          student_id: string | null
           updated_at: string | null
           user_id: string
         }
@@ -812,12 +814,14 @@ export type Database = {
           address?: string | null
           created_at?: string | null
           date_of_birth?: string | null
+          email?: string | null
           emergency_contact?: string | null
           enrollment_date?: string | null
           grade: string
           id?: string
           medical_info?: string | null
           phone?: string | null
+          student_id?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -825,12 +829,14 @@ export type Database = {
           address?: string | null
           created_at?: string | null
           date_of_birth?: string | null
+          email?: string | null
           emergency_contact?: string | null
           enrollment_date?: string | null
           grade?: string
           id?: string
           medical_info?: string | null
           phone?: string | null
+          student_id?: string | null
           updated_at?: string | null
           user_id?: string
         }

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -81,16 +82,15 @@ export function RoleLogin({
     try {
       if (isAlternateLogin) {
         if (role === 'student') {
-          // For student login, we find their email via their student ID (uniqueId)
-          // This requires a 'profiles' table with 'student_id' and a denormalized 'email' column.
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
+          // For student login, we find their email via their student ID from the 'students' table.
+          const { data: student, error: studentError } = await supabase
+            .from('students')
             .select('email')
             .eq('student_id', uniqueId.trim())
             .single();
 
-          if (profileError || !profile || !profile.email) {
-            console.error('Error fetching profile or profile not found:', profileError);
+          if (studentError || !student || !student.email) {
+            console.error('Error fetching student or student not found:', studentError);
             const message = "Invalid Student ID. Please check and try again.";
             toast.error(message);
             setError(message);
@@ -98,7 +98,7 @@ export function RoleLogin({
             return;
           }
           
-          const studentEmail = profile.email;
+          const studentEmail = student.email;
           console.log(`Attempting student login for Student ID ${uniqueId} (email: ${studentEmail})`);
           await signIn(studentEmail, password);
           toast.success(`Welcome back! Login successful.`);
