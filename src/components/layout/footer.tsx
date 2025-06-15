@@ -12,10 +12,10 @@ export function Footer() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2 font-bold text-xl">
               <BookOpen className="h-6 w-6 text-primary" />
-              <span>EduNexus</span>
+              <span>Eko Scholars Academy</span>
             </Link>
             <p className="text-muted-foreground">
-              Empowering education through innovative technology solutions.
+              Nurturing minds, building futures.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
@@ -47,7 +47,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/news" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/news-events" className="text-muted-foreground hover:text-primary transition-colors">
                   News & Events
                 </Link>
               </li>
@@ -95,22 +95,22 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <span className="text-muted-foreground">123 Education St, Knowledge City, EduLand</span>
+                <span className="text-muted-foreground">123 Eko Scholars Avenue, Lekki, Lagos, Nigeria</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">+1 (555) 123-4567</span>
+                <span className="text-muted-foreground">+234 801 234 5678</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">info@edunexus.edu</span>
+                <span className="text-muted-foreground">info@ekoscholars.edu.ng</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t text-center text-muted-foreground">
-          <p>&copy; {currentYear} EduNexus. All rights reserved.</p>
+          <p>&copy; {currentYear} Eko Scholars Academy. All rights reserved.</p>
         </div>
       </div>
     </footer>
