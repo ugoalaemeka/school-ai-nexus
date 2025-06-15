@@ -68,22 +68,22 @@ export function Footer() {
             <h3 className="font-semibold text-lg">Portals</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/login" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/student/login" className="text-muted-foreground hover:text-primary transition-colors">
                   Student Portal
                 </Link>
               </li>
               <li>
-                <Link to="/login" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/teacher/login" className="text-muted-foreground hover:text-primary transition-colors">
                   Teacher Portal
                 </Link>
               </li>
               <li>
-                <Link to="/login" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/parent/login" className="text-muted-foreground hover:text-primary transition-colors">
                   Parent Portal
                 </Link>
               </li>
               <li>
-                <Link to="/login" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/admin/login" className="text-muted-foreground hover:text-primary transition-colors">
                   Admin Portal
                 </Link>
               </li>
