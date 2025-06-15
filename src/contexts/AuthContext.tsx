@@ -310,33 +310,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    try {
-      // Clean up auth state first
-      cleanupAuthState();
-      
-      // Try to sign out any existing session
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        // Continue even if this fails
-      }
-      
-      toast.success('Logged out successfully');
-      
-      // Check if current user is admin and redirect accordingly
-      if (profile?.role === 'admin') {
-        navigate('/admin/login');
-      } else if (profile?.role === 'teacher') {
-        navigate('/teacher/login');
-      } else if (profile?.role === 'student') {
-        navigate('/student/login');
-      } else if (profile?.role === 'parent') {
-        navigate('/parent/login');
-      } else {
-        navigate('/login');
-      }
-    } catch (error: any) {
+    const lastKnownRole = profile?.role; // Capture role before it's cleared by onAuthStateChange
+
+    // Clean up local storage first to prevent limbo states
+    cleanupAuthState();
+    
+    // Sign out from Supabase
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
+
+    if (error) {
+      console.error("Sign out error:", error);
       toast.error(error.message || 'An error occurred during logout');
+    } else {
+      toast.success('Logged out successfully');
+    }
+
+    // `onAuthStateChange` will clear the user and profile from state.
+    // Navigate to the appropriate login page based on the role we captured.
+    if (lastKnownRole) {
+      navigate(`/${lastKnownRole}/login`, { replace: true });
+    } else {
+      // Fallback to the main login gateway
+      navigate('/login', { replace: true });
     }
   };
 
