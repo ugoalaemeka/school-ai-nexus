@@ -61,7 +61,7 @@ const Login = () => {
   const roleLoginPages = [
     {
       role: 'admin',
-      icon: <UserIcon className="h-5 w-5 mr-2" />,
+      icon: <UserIcon className="h-5 w-5" />,
       title: 'Admin Login',
       description: 'School administration and management',
       path: '/admin/login',
@@ -69,7 +69,7 @@ const Login = () => {
     },
     {
       role: 'student',
-      icon: <BookOpenCheck className="h-5 w-5 mr-2" />,
+      icon: <BookOpenCheck className="h-5 w-5" />,
       title: 'Student Login',
       description: 'Access your classes, assignments, and grades',
       path: '/student/login',
@@ -77,7 +77,7 @@ const Login = () => {
     },
     {
       role: 'teacher',
-      icon: <School className="h-5 w-5 mr-2" />,
+      icon: <School className="h-5 w-5" />,
       title: 'Teacher Login',
       description: 'Manage your classes and student progress',
       path: '/teacher/login',
@@ -85,7 +85,7 @@ const Login = () => {
     },
     {
       role: 'parent',
-      icon: <Users className="h-5 w-5 mr-2" />,
+      icon: <Users className="h-5 w-5" />,
       title: 'Parent Login',
       description: 'Monitor your child\'s academic progress',
       path: '/parent/login',
@@ -103,62 +103,34 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-muted/50">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
-      
-      <div className="mb-8 text-center">
-        <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl">
-          <BookOpen className="h-8 w-8 text-primary" />
-          <span>EduSync</span>
-        </Link>
-      </div>
-      
-      <div className="w-full max-w-4xl px-4">
-        <h1 className="text-2xl font-bold text-center mb-8">Choose Your Login Portal</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {roleLoginPages.map((item) => (
-            <Link to={item.path} key={item.role}>
-              <Card className="h-full hover:shadow-md transition-all hover:-translate-y-1">
-                <CardHeader className={`${item.color} text-white rounded-t-lg`}>
-                  <CardTitle className="flex items-center">
-                    {item.icon}
-                    {item.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <CardDescription>{item.description}</CardDescription>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">
-                    Login as {item.role.charAt(0).toUpperCase() + item.role.slice(1)}
-                  </Button>
-                </CardFooter>
-              </Card>
+    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
+      <div className="flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12">
+        <div className="w-full max-w-md mx-auto">
+          <div className="absolute top-4 right-4 lg:hidden">
+            <ThemeToggle />
+          </div>
+          
+          <div className="mb-8">
+            <Link to="/" className="inline-flex items-center gap-2 font-bold text-2xl mb-4">
+              <BookOpen className="h-8 w-8 text-primary" />
+              <span>Eko Scholars Academy</span>
             </Link>
-          ))}
-        </div>
-        
-        <div className="mt-12">
-          <Card>
-            <Tabs defaultValue="login">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>Quick Access</CardTitle>
-                  <TabsList>
-                    <TabsTrigger value="login">Login</TabsTrigger>
-                    <TabsTrigger value="register">Register</TabsTrigger>
-                  </TabsList>
-                </div>
-                <CardDescription>
-                  Enter your credentials to access your account
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent>
-                <TabsContent value="login">
+            <h1 className="text-3xl font-bold tracking-tight">Portal Access</h1>
+            <p className="text-muted-foreground">Select your portal, or log in/register below.</p>
+          </div>
+
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
+            </TabsList>
+            <TabsContent value="login" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Login to your Account</CardTitle>
+                  <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+                </CardHeader>
+                <CardContent>
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
@@ -181,34 +153,63 @@ const Login = () => {
                         required 
                       />
                     </div>
-                    <Button type="submit" className="w-full">
-                      Login
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? 'Logging in...' : 'Login'}
                     </Button>
                   </form>
-                </TabsContent>
-                
-                <TabsContent value="register">
+                </CardContent>
+                <CardFooter className="flex-col gap-4">
+                  <div className="relative w-full">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t"></span>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 w-full">
+                    <Button variant="outline" type="button">
+                      Google
+                    </Button>
+                    <Button variant="outline" type="button">
+                      Microsoft
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            <TabsContent value="register" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Create an Account</CardTitle>
+                  <CardDescription>Join our community. Fill in the details to get started.</CardDescription>
+                </CardHeader>
+                <CardContent>
                   <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-firstName">First Name</Label>
-                      <Input 
-                        id="reg-firstName" 
-                        placeholder="John" 
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-lastName">Last Name</Label>
-                      <Input 
-                        id="reg-lastName" 
-                        placeholder="Doe" 
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        required 
-                      />
-                    </div>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="reg-firstName">First Name</Label>
+                          <Input 
+                            id="reg-firstName" 
+                            placeholder="John" 
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            required 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="reg-lastName">Last Name</Label>
+                          <Input 
+                            id="reg-lastName" 
+                            placeholder="Doe" 
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            required 
+                          />
+                        </div>
+                      </div>
                     <div className="space-y-2">
                       <Label htmlFor="reg-email">Email</Label>
                       <Input 
@@ -247,43 +248,49 @@ const Login = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button type="submit" className="w-full">
-                      Register
+                    <Button type="submit" className="w-full" disabled={loading}>
+                      {loading ? 'Registering...' : 'Register'}
                     </Button>
                   </form>
-                </TabsContent>
-              </CardContent>
-              
-              <CardFooter className="flex flex-col space-y-4">
-                <div className="relative w-full">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t"></span>
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 w-full">
-                  <Button variant="outline" type="button">
-                    Google
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            <p className="mb-4">Or, choose a specific portal login:</p>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              {roleLoginPages.map((item) => (
+                <Link to={item.path} key={item.role}>
+                  <Button variant="outline" className="w-full h-full flex flex-col items-center justify-center gap-2 py-3 px-1 text-xs sm:text-sm">
+                    {item.icon}
+                    <span>{item.title}</span>
                   </Button>
-                  <Button variant="outline" type="button">
-                    Microsoft
-                  </Button>
-                </div>
-              </CardFooter>
-            </Tabs>
-          </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-      
-      <p className="mt-8 text-center text-sm text-muted-foreground">
-        <Link to="/" className="hover:text-primary hover:underline">
-          Back to Home
-        </Link>
-      </p>
+      <div className="hidden lg:block relative">
+        <img
+          src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070"
+          alt="Eko Scholars Academy Students"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-primary/80" />
+        <div className="relative h-full flex flex-col justify-between p-12 text-white">
+          <div className="flex justify-end">
+            <ThemeToggle />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-4xl font-bold">Welcome to Eko Scholars Academy</h2>
+            <p className="text-lg max-w-prose text-primary-foreground/80">
+              The premier institution for nurturing the next generation of leaders. Access your portal to begin.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
