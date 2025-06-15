@@ -3,10 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import * as UserService from '@/services/user.service';
 
-type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
+export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
 
-interface UserProfile {
+export interface UserProfile {
   id: string;
   role: UserRole;
   first_name: string | null;
@@ -57,6 +58,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
   const location = useLocation();
 
+  const fetchFullUserProfile = async (userId: string) => {
+    const userProfile = await UserService.fetchUserProfile(userId);
+    setProfile(userProfile);
+
+    if (userProfile) {
+      if (userProfile.role === 'student') {
+        const hasPaid = await UserService.checkPaymentStatus(userId);
+        setHasPaidFees(hasPaid);
+      } else if (userProfile.role === 'teacher') {
+        const isActive = await UserService.checkTeacherActiveStatus(userId);
+        setIsTeacherActive(isActive);
+      }
+    } else {
+      setHasPaidFees(false);
+      setIsTeacherActive(false);
+    }
+    return userProfile;
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -73,20 +93,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') && currentSession?.user) {
           // Defer profile fetching to avoid supabase deadlock
           setTimeout(() => {
-            fetchUserProfile(currentSession.user.id);
+            fetchFullUserProfile(currentSession.user.id);
           }, 0);
         }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
       console.log('Initial session check:', currentSession ? 'Logged in' : 'Not logged in');
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
+        await fetchFullUserProfile(currentSession.user.id);
       }
       
       setLoading(false);
@@ -96,83 +116,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
-
-  const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
-    try {
-      console.log('Fetching user profile for:', userId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        setProfile(null);
-        return null;
-      }
-
-      if (data) {
-        console.log('Profile fetched:', data);
-        const userProfile = data as UserProfile;
-        setProfile(userProfile);
-        
-        if (userProfile.role === 'student') {
-          checkPaymentStatus(userId);
-        } else if (userProfile.role === 'teacher') {
-          checkTeacherActiveStatus(userId);
-        }
-        return userProfile;
-      } else {
-        console.log('No profile found for user:', userId);
-        setProfile(null);
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setProfile(null);
-      return null;
-    }
-  };
-
-  const checkPaymentStatus = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('payments')
-        .select('status')
-        .eq('student_id', userId)
-        .eq('status', 'paid')
-        .maybeSingle();
-
-      if (!error && data) {
-        setHasPaidFees(true);
-      } else {
-        setHasPaidFees(false);
-      }
-    } catch (error) {
-      console.error('Error checking payment status:', error);
-      setHasPaidFees(false);
-    }
-  };
-
-  const checkTeacherActiveStatus = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('teachers')
-        .select('is_active')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (!error && data && data.is_active) {
-        setIsTeacherActive(true);
-      } else {
-        setIsTeacherActive(false);
-      }
-    } catch (error) {
-      console.error('Error checking teacher active status:', error);
-      setIsTeacherActive(false);
-    }
-  };
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -194,7 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         console.log('Sign in successful, user:', data.user.id);
-        const userProfile = await fetchUserProfile(data.user.id);
+        const userProfile = await fetchFullUserProfile(data.user.id);
           
         if (userProfile) {
           const redirectPath = `/${userProfile.role}/dashboard`;
@@ -242,70 +185,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // For role-specific tables, we need to create the corresponding record
         if (role === 'student') {
-          // Create student record
-          await createStudentRecord(data.user.id);
+          await UserService.createStudentRecord(data.user.id);
         } else if (role === 'teacher') {
-          // Create teacher record
-          await createTeacherRecord(data.user.id);
+          await UserService.createTeacherRecord(data.user.id);
         } else if (role === 'parent') {
-          // Create parent record
-          await createParentRecord(data.user.id);
+          await UserService.createParentRecord(data.user.id);
         }
         
         toast.success('Signed up successfully! Check your email for confirmation.');
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred during signup');
-    }
-  };
-
-  const createStudentRecord = async (userId: string) => {
-    try {
-      const { error } = await supabase
-        .from('students')
-        .insert({
-          user_id: userId,
-          grade: '10', // Default grade, can be updated later
-        });
-
-      if (error) {
-        console.error('Error creating student record:', error);
-      }
-    } catch (error) {
-      console.error('Error creating student record:', error);
-    }
-  };
-
-  const createTeacherRecord = async (userId: string) => {
-    try {
-      const { error } = await supabase
-        .from('teachers')
-        .insert({
-          user_id: userId,
-          subject: ['General'], // Default subject, can be updated later
-        });
-
-      if (error) {
-        console.error('Error creating teacher record:', error);
-      }
-    } catch (error) {
-      console.error('Error creating teacher record:', error);
-    }
-  };
-
-  const createParentRecord = async (userId: string) => {
-    try {
-      const { error } = await supabase
-        .from('parents')
-        .insert({
-          user_id: userId,
-        });
-
-      if (error) {
-        console.error('Error creating parent record:', error);
-      }
-    } catch (error) {
-      console.error('Error creating parent record:', error);
     }
   };
 
@@ -339,10 +229,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(data)
-        .eq('id', user.id);
+      await UserService.updateUserProfileInDb(user.id, data);
         
       if (error) {
         toast.error(error.message);
