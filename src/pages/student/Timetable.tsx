@@ -22,6 +22,7 @@ import {
   PlusCircle,
   ChevronRight,
   User,
+  Users,
   MapPin,
   BookOpen,
   GraduationCap,
