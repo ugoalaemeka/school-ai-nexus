@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -139,7 +138,7 @@ export function RoleLogin({
                     disabled={loading}
                   />
                 </div>
-                {useAlternateLogin && role !== 'admin' && (
+                {useAlternateLogin && (
                   <Button 
                     type="button" 
                     variant="link" 
