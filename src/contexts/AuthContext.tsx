@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(null);
           setHasPaidFees(false);
           setIsTeacherActive(false);
-        } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && currentSession?.user) {
+        } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') && currentSession?.user) {
           // Defer profile fetching to avoid supabase deadlock
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
     try {
       console.log('Fetching user profile for:', userId);
       const { data, error } = await supabase
@@ -108,26 +108,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('Error fetching user profile:', error);
-        return;
+        setProfile(null);
+        return null;
       }
 
       if (data) {
         console.log('Profile fetched:', data);
-        setProfile(data as UserProfile);
+        const userProfile = data as UserProfile;
+        setProfile(userProfile);
         
-        // If student, check payment status
-        if (data.role === 'student') {
+        if (userProfile.role === 'student') {
           checkPaymentStatus(userId);
-        } 
-        // If teacher, check active status
-        else if (data.role === 'teacher') {
+        } else if (userProfile.role === 'teacher') {
           checkTeacherActiveStatus(userId);
         }
+        return userProfile;
       } else {
         console.log('No profile found for user:', userId);
+        setProfile(null);
+        return null;
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setProfile(null);
+      return null;
     }
   };
 
@@ -190,22 +194,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (data.user) {
         console.log('Sign in successful, user:', data.user.id);
-        
-        // Get user profile to determine where to redirect
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
+        const userProfile = await fetchUserProfile(data.user.id);
           
-        if (profileData) {
-          const redirectPath = `/${profileData.role}/dashboard`;
+        if (userProfile) {
+          const redirectPath = `/${userProfile.role}/dashboard`;
           console.log('Redirecting to:', redirectPath);
-          toast.success(`Welcome back! Redirecting to ${profileData.role} dashboard.`);
+          toast.success(`Welcome back! Redirecting to ${userProfile.role} dashboard.`);
           navigate(redirectPath, { replace: true });
         } else {
-          console.log('No profile found, redirecting to home');
-          navigate('/'); // Fallback to home if no profile found
+          console.error('No profile found after sign in, logging out.');
+          await supabase.auth.signOut({ scope: 'global' });
+          throw new Error("Your user profile could not be loaded. Please contact an administrator.");
         }
       }
     } catch (error: any) {
