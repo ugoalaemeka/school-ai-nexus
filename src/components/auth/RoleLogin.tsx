@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RoleLoginProps {
   role: 'admin' | 'teacher' | 'student' | 'parent';
@@ -56,7 +57,6 @@ export function RoleLogin({
   const [password, setPassword] = useState("");
   const [isAlternateLogin, setIsAlternateLogin] = useState(false);
   const [uniqueId, setUniqueId] = useState("");
-  const [surname, setSurname] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -80,18 +80,41 @@ export function RoleLogin({
     
     try {
       if (isAlternateLogin) {
-        // Handle alternate login methods for students/parents
-        // This is not implemented for admin role
-        if (role === 'admin') {
-          setError('Admin login requires email and password');
-          setLoading(false);
-          return;
-        }
+        if (role === 'student') {
+          // For student login, we find their email via their student ID (uniqueId)
+          // This requires a 'profiles' table with 'student_id' and a denormalized 'email' column.
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('student_id', uniqueId.trim())
+            .single();
+
+          if (profileError || !profile || !profile.email) {
+            console.error('Error fetching profile or profile not found:', profileError);
+            const message = "Invalid Student ID. Please check and try again.";
+            toast.error(message);
+            setError(message);
+            setLoading(false);
+            return;
+          }
+          
+          const studentEmail = profile.email;
+          console.log(`Attempting student login for Student ID ${uniqueId} (email: ${studentEmail})`);
+          await signIn(studentEmail, password);
+          toast.success(`Welcome back! Login successful.`);
+
+        } else if (role === 'parent') {
+          // For now, parent alternate login uses email. Phone login can be added later.
+          console.log(`Attempting parent login with:`, uniqueId);
+          await signIn(uniqueId.trim(), password);
+          toast.success(`Parent login successful!`);
         
-        // For now, just use regular email/password login
-        toast.error('Alternate login method not yet implemented');
-        setLoading(false);
-        return;
+        } else {
+            toast.error('Alternate login method not available for this role.');
+            setLoading(false);
+            return;
+        }
+
       } else {
         // Regular email/password login
         console.log(`Attempting ${role} login with:`, email);
@@ -125,9 +148,9 @@ export function RoleLogin({
       quote={currentRoleDetails.quote}
     >
       <div className="absolute top-4 left-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2">
+        <Button variant="ghost" size="sm" onClick={() => navigate("/login")} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Back to Home
+          Back to Portal Gateway
         </Button>
       </div>
       <div className="absolute top-4 right-4 lg:hidden">
@@ -170,15 +193,13 @@ export function RoleLogin({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="surname">
-                      {role === 'student' ? 'Surname' : 'Password'}
-                    </Label>
+                    <Label htmlFor="password-alt">Password</Label>
                     <Input 
-                      id="surname" 
+                      id="password-alt" 
                       type="password"
-                      placeholder={role === 'student' ? "Enter your surname" : "Enter your password"}
-                      value={surname}
-                      onChange={(e) => setSurname(e.target.value)}
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required 
                       disabled={loading}
                     />
@@ -237,12 +258,12 @@ export function RoleLogin({
             </form>
           </CardContent>
           
-          <CardFooter className="flex-col gap-2 items-start text-sm">
+          <CardFooter className="flex-col gap-4 items-start text-sm">
             <Button variant="link" size="sm" asChild className="p-0 h-auto">
               <Link to="/forgot-password">Forgot password?</Link>
             </Button>
             <Button variant="link" size="sm" asChild className="p-0 h-auto">
-              <Link to="/login">Not a {role}? Go to main login/register page</Link>
+              <Link to="/login">Not a {role}? Choose another portal</Link>
             </Button>
           </CardFooter>
         </Card>
