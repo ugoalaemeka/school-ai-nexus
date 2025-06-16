@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   BarChart3,
   Users,
@@ -15,7 +16,12 @@ import {
   Settings,
   School,
   ClipboardList,
-  LogOut
+  LogOut,
+  Award,
+  MessageSquare,
+  Bell,
+  MapPin,
+  Shield
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -38,48 +44,122 @@ export function AdminSidebar({}: AdminSidebarProps) {
     }
   };
 
-  const links = [
-    { name: 'Dashboard', href: '/admin/dashboard', icon: BarChart3 },
-    { name: 'User Management', href: '/admin/users', icon: Users },
-    { name: 'Teachers', href: '/admin/teachers', icon: School },
-    { name: 'Applications', href: '/admin/applications', icon: ClipboardList },
-    { name: 'Classes', href: '/admin/classes', icon: GraduationCap },
-    { name: 'Subjects', href: '/admin/subjects', icon: BookOpen },
-    { name: 'Fee Management', href: '/admin/fees', icon: Receipt },
-    { name: 'Events & Schedule', href: '/admin/events', icon: CalendarDays },
-    { name: 'Reports', href: '/admin/reports', icon: FileBarChart },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
+  const navigationSections = [
+    {
+      title: "School Overview",
+      links: [
+        { name: 'Dashboard', href: '/admin/dashboard', icon: BarChart3, badge: null },
+        { name: 'Analytics', href: '/admin/analytics', icon: FileBarChart, badge: null },
+      ]
+    },
+    {
+      title: "Academic Management",
+      links: [
+        { name: 'Classes & Levels', href: '/admin/classes', icon: GraduationCap, badge: null },
+        { name: 'Subjects', href: '/admin/subjects', icon: BookOpen, badge: null },
+        { name: 'Academic Calendar', href: '/admin/calendar', icon: CalendarDays, badge: null },
+        { name: 'Examinations', href: '/admin/exams', icon: Award, badge: 'New' },
+      ]
+    },
+    {
+      title: "People Management",
+      links: [
+        { name: 'Students', href: '/admin/students', icon: Users, badge: null },
+        { name: 'Teachers & Staff', href: '/admin/teachers', icon: School, badge: null },
+        { name: 'Parents', href: '/admin/parents', icon: Users, badge: null },
+        { name: 'User Accounts', href: '/admin/users', icon: Shield, badge: null },
+      ]
+    },
+    {
+      title: "Operations",
+      links: [
+        { name: 'Admissions', href: '/admin/applications', icon: ClipboardList, badge: '5' },
+        { name: 'Fee Management', href: '/admin/fees', icon: Receipt, badge: null },
+        { name: 'School Events', href: '/admin/events', icon: CalendarDays, badge: null },
+        { name: 'Communications', href: '/admin/messages', icon: MessageSquare, badge: '12' },
+        { name: 'Announcements', href: '/admin/announcements', icon: Bell, badge: null },
+      ]
+    },
+    {
+      title: "Reports & Settings",
+      links: [
+        { name: 'Academic Reports', href: '/admin/reports', icon: FileBarChart, badge: null },
+        { name: 'School Settings', href: '/admin/settings', icon: Settings, badge: null },
+      ]
+    }
   ];
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full">
-      <div className="px-4 py-2 flex-1">
-        <div className="space-y-1">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              className={cn(
-                "flex items-center rounded-lg px-3 py-2 text-sm transition-all hover:bg-muted hover:text-foreground",
-                isActive(link.href) ? "bg-muted text-foreground font-medium" : "text-muted-foreground"
-              )}
-            >
-              <link.icon className="mr-2 h-4 w-4" />
-              {link.name}
-            </Link>
-          ))}
+    <div className="space-y-1 py-4 flex flex-col h-full bg-gradient-to-b from-green-50 to-blue-50">
+      {/* School Header */}
+      <div className="px-4 py-3 border-b border-green-200 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-blue-600 rounded-lg flex items-center justify-center">
+            <School className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h2 className="font-bold text-gray-900 text-sm">Eko Scholars Academy</h2>
+            <p className="text-xs text-gray-500 flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              Lagos, Nigeria
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Navigation */}
+      <div className="px-3 flex-1 space-y-6">
+        {navigationSections.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              {section.title}
+            </h3>
+            <div className="space-y-1">
+              {section.links.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={cn(
+                    "flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-all hover:bg-white/60 hover:shadow-sm",
+                    isActive(link.href) 
+                      ? "bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium shadow-md" 
+                      : "text-gray-700 hover:text-gray-900"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <link.icon className="h-4 w-4" />
+                    <span>{link.name}</span>
+                  </div>
+                  {link.badge && (
+                    <Badge 
+                      variant={isActive(link.href) ? "secondary" : "default"}
+                      className="text-xs h-5 px-2"
+                    >
+                      {link.badge}
+                    </Badge>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
       
-      {/* Logout Button at the bottom */}
-      <div className="px-4 py-2 border-t border-border">
+      {/* User Info & Logout */}
+      <div className="px-3 py-4 border-t border-green-200 space-y-3">
+        <div className="px-3 py-2 bg-white/50 rounded-lg">
+          <p className="text-xs text-gray-500">Logged in as</p>
+          <p className="text-sm font-medium text-gray-900">School Administrator</p>
+          <p className="text-xs text-gray-500">2024/2025 Academic Session</p>
+        </div>
+        
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted"
+          className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors"
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
+          <LogOut className="mr-3 h-4 w-4" />
+          Sign Out
         </Button>
       </div>
     </div>
