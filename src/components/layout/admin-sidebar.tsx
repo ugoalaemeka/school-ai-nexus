@@ -20,8 +20,10 @@ import {
   Award,
   MessageSquare,
   Bell,
-  MapPin,
-  Shield
+  Shield,
+  UserCheck,
+  Building,
+  TrendingUp
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -49,7 +51,7 @@ export function AdminSidebar({}: AdminSidebarProps) {
       title: "School Overview",
       links: [
         { name: 'Dashboard', href: '/admin/dashboard', icon: BarChart3, badge: null },
-        { name: 'Analytics', href: '/admin/analytics', icon: FileBarChart, badge: null },
+        { name: 'Analytics', href: '/admin/analytics', icon: TrendingUp, badge: null },
       ]
     },
     {
@@ -66,7 +68,7 @@ export function AdminSidebar({}: AdminSidebarProps) {
       links: [
         { name: 'Students', href: '/admin/students', icon: Users, badge: null },
         { name: 'Teachers & Staff', href: '/admin/teachers', icon: School, badge: null },
-        { name: 'Parents', href: '/admin/parents', icon: Users, badge: null },
+        { name: 'Parents', href: '/admin/parents', icon: UserCheck, badge: null },
         { name: 'User Accounts', href: '/admin/users', icon: Shield, badge: null },
       ]
     },
@@ -90,50 +92,42 @@ export function AdminSidebar({}: AdminSidebarProps) {
   ];
 
   return (
-    <div className="space-y-1 py-4 flex flex-col h-full bg-gradient-to-b from-green-50 to-blue-50">
-      {/* School Header */}
-      <div className="px-4 py-3 border-b border-green-200 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-blue-600 rounded-lg flex items-center justify-center">
-            <School className="h-6 w-6 text-white" />
-          </div>
-          <div>
-            <h2 className="font-bold text-gray-900 text-sm">Eko Scholars Academy</h2>
-            <p className="text-xs text-gray-500 flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              Lagos, Nigeria
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <div className="h-full flex flex-col bg-white">
       {/* Navigation */}
-      <div className="px-3 flex-1 space-y-6">
+      <div className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
         {navigationSections.map((section, sectionIndex) => (
           <div key={sectionIndex}>
-            <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+            <h3 className="px-3 mb-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
               {section.title}
             </h3>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {section.links.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
                   className={cn(
-                    "flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-all hover:bg-white/60 hover:shadow-sm",
+                    "flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 hover:shadow-md",
                     isActive(link.href) 
-                      ? "bg-gradient-to-r from-green-600 to-blue-600 text-white font-medium shadow-md" 
-                      : "text-gray-700 hover:text-gray-900"
+                      ? "bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg transform scale-105" 
+                      : "text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 hover:text-green-700"
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <link.icon className="h-4 w-4" />
+                    <link.icon className={cn(
+                      "h-5 w-5",
+                      isActive(link.href) ? "text-white" : "text-green-600"
+                    )} />
                     <span>{link.name}</span>
                   </div>
                   {link.badge && (
                     <Badge 
                       variant={isActive(link.href) ? "secondary" : "default"}
-                      className="text-xs h-5 px-2"
+                      className={cn(
+                        "text-xs h-6 px-2 font-medium",
+                        isActive(link.href) 
+                          ? "bg-white/20 text-white" 
+                          : "bg-green-100 text-green-700"
+                      )}
                     >
                       {link.badge}
                     </Badge>
@@ -146,19 +140,19 @@ export function AdminSidebar({}: AdminSidebarProps) {
       </div>
       
       {/* User Info & Logout */}
-      <div className="px-3 py-4 border-t border-green-200 space-y-3">
-        <div className="px-3 py-2 bg-white/50 rounded-lg">
-          <p className="text-xs text-gray-500">Logged in as</p>
-          <p className="text-sm font-medium text-gray-900">School Administrator</p>
-          <p className="text-xs text-gray-500">2024/2025 Academic Session</p>
+      <div className="p-4 border-t border-green-100 space-y-4">
+        <div className="px-4 py-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl">
+          <p className="text-xs font-medium text-gray-500 mb-1">Current Session</p>
+          <p className="text-sm font-bold text-gray-800">2024/2025 Academic Year</p>
+          <p className="text-xs text-gray-600">Second Term Active</p>
         </div>
         
         <Button
           onClick={handleLogout}
           variant="ghost"
-          className="w-full justify-start text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors"
+          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors rounded-xl py-3"
         >
-          <LogOut className="mr-3 h-4 w-4" />
+          <LogOut className="mr-3 h-5 w-5" />
           Sign Out
         </Button>
       </div>
