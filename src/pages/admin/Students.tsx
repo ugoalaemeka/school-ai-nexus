@@ -26,16 +26,74 @@ import {
   Award,
   Clock
 } from 'lucide-react';
-import { sampleNigerianStudents } from '@/data/nigerianStudentData';
+import { NigerianStudent } from '@/data/nigerianStudentData';
 import { nigerianClasses } from '@/data/nigerianEducationData';
 
 const Students = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState('all');
   const [selectedGender, setSelectedGender] = useState('all');
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState<NigerianStudent | null>(null);
 
-  const filteredStudents = sampleNigerianStudents.filter(student => {
+  // Sample students data - using the proper type
+  const sampleStudents: NigerianStudent[] = [
+    {
+      id: '1',
+      fullName: 'Adebayo Olumide',
+      studentId: 'EKO/2024/001',
+      currentClass: 'JSS 1A',
+      age: 12,
+      gender: 'Male',
+      dateOfBirth: '2012-03-15',
+      parentName: 'Mr. Adebayo Taiwo',
+      parentPhone: '+234 803 456 7890',
+      parentEmail: 'taiwo.adebayo@gmail.com',
+      parentOccupation: 'Engineer',
+      address: 'No. 15 Adeniyi Jones Avenue, Ikeja, Lagos',
+      enrollmentDate: '2024-09-15',
+      bloodGroup: 'O+',
+      genotype: 'AA',
+      previousSchool: 'Divine Mercy Primary School'
+    },
+    {
+      id: '2',
+      fullName: 'Chioma Okafor',
+      studentId: 'EKO/2024/002',
+      currentClass: 'SSS 2B',
+      age: 16,
+      gender: 'Female',
+      dateOfBirth: '2008-07-22',
+      parentName: 'Mrs. Okafor Grace',
+      parentPhone: '+234 807 123 4567',
+      parentEmail: 'grace.okafor@yahoo.com',
+      parentOccupation: 'Doctor',
+      address: 'Plot 42 Victoria Garden City, Lagos',
+      enrollmentDate: '2022-09-10',
+      bloodGroup: 'A+',
+      genotype: 'AS',
+      previousSchool: 'Grace Land Primary School'
+    },
+    {
+      id: '3',
+      fullName: 'Ibrahim Musa',
+      studentId: 'EKO/2024/003',
+      currentClass: 'Primary 5A',
+      age: 10,
+      gender: 'Male',
+      dateOfBirth: '2014-01-08',
+      parentName: 'Alhaji Musa Ibrahim',
+      parentPhone: '+234 812 987 6543',
+      parentEmail: 'musa.ibrahim@hotmail.com',
+      parentOccupation: 'Businessman',
+      address: 'No. 8 Alhaji Masha Road, Surulere, Lagos',
+      enrollmentDate: '2024-09-15',
+      bloodGroup: 'B+',
+      genotype: 'AA',
+      previousSchool: 'Al-Hikmah Primary School'
+    }
+  ];
+
+  const filteredStudents = sampleStudents.filter(student => {
     const matchesSearch = student.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          student.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          student.parentName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -45,13 +103,13 @@ const Students = () => {
   });
 
   const studentStats = {
-    total: sampleNigerianStudents.length * 35, // Estimate total students
-    male: Math.floor(sampleNigerianStudents.length * 35 * 0.52),
-    female: Math.floor(sampleNigerianStudents.length * 35 * 0.48),
-    nursery: sampleNigerianStudents.filter(s => s.currentClass.startsWith('Nursery')).length * 8,
-    primary: sampleNigerianStudents.filter(s => s.currentClass.startsWith('Primary')).length * 12,
-    jss: sampleNigerianStudents.filter(s => s.currentClass.startsWith('JSS')).length * 8,
-    sss: sampleNigerianStudents.filter(s => s.currentClass.startsWith('SSS')).length * 7
+    total: 847,
+    male: 441,
+    female: 406,
+    nursery: 125,
+    primary: 312,
+    jss: 235,
+    sss: 175
   };
 
   const getGenderColor = (gender: string) => {
@@ -85,11 +143,11 @@ const Students = () => {
           <p className="text-gray-600 mt-1">Manage all students across Nursery, Primary and Secondary levels</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
+          <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50">
             <Download className="w-4 h-4 mr-2" />
             Export Data
           </Button>
-          <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
+          <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
             <Plus className="w-4 h-4 mr-2" />
             Add New Student
           </Button>
@@ -178,7 +236,7 @@ const Students = () => {
       </div>
 
       {/* Filters */}
-      <Card className="border-green-200">
+      <Card className="border-purple-200">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
@@ -188,13 +246,13 @@ const Students = () => {
                   placeholder="Search by student name, ID, or parent name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-green-200 focus:border-green-400"
+                  className="pl-10 border-purple-200 focus:border-purple-400"
                 />
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
               <Select value={selectedClass} onValueChange={setSelectedClass}>
-                <SelectTrigger className="w-[150px] border-green-200">
+                <SelectTrigger className="w-[150px] border-purple-200">
                   <SelectValue placeholder="All Classes" />
                 </SelectTrigger>
                 <SelectContent>
@@ -206,7 +264,7 @@ const Students = () => {
               </Select>
 
               <Select value={selectedGender} onValueChange={setSelectedGender}>
-                <SelectTrigger className="w-[120px] border-green-200">
+                <SelectTrigger className="w-[120px] border-purple-200">
                   <SelectValue placeholder="Gender" />
                 </SelectTrigger>
                 <SelectContent>
@@ -222,13 +280,13 @@ const Students = () => {
 
       {/* Students Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredStudents.map((student, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow duration-200 border-green-200">
+        {filteredStudents.map((student) => (
+          <Card key={student.id} className="hover:shadow-lg transition-shadow duration-200 border-purple-200">
             <CardContent className="p-4">
               <div className="space-y-4">
                 {/* Student Header */}
                 <div className="flex items-center gap-3">
-                  <Avatar className="w-12 h-12 bg-gradient-to-br from-green-600 to-blue-600">
+                  <Avatar className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600">
                     <AvatarFallback className="text-white font-bold">
                       {student.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                     </AvatarFallback>
@@ -242,7 +300,7 @@ const Students = () => {
                 {/* Student Details */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
-                    <GraduationCap className="w-4 h-4 text-green-600" />
+                    <GraduationCap className="w-4 h-4 text-purple-600" />
                     <span className="font-medium">{student.currentClass}</span>
                     <Badge className={getLevelColor(getClassLevel(student.currentClass))}>
                       {getClassLevel(student.currentClass)}
@@ -250,7 +308,7 @@ const Students = () => {
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <User className="w-4 h-4 text-green-600" />
+                    <User className="w-4 h-4 text-purple-600" />
                     <span>Age: {student.age}</span>
                     <Badge className={getGenderColor(student.gender)}>
                       {student.gender}
@@ -258,22 +316,22 @@ const Students = () => {
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <User className="w-4 h-4 text-green-600" />
+                    <User className="w-4 h-4 text-purple-600" />
                     <span className="truncate">{student.parentName}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Phone className="w-4 h-4 text-green-600" />
+                    <Phone className="w-4 h-4 text-purple-600" />
                     <span>{student.parentPhone}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 text-green-600" />
+                    <MapPin className="w-4 h-4 text-purple-600" />
                     <span className="truncate">{student.address}</span>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar className="w-4 h-4 text-green-600" />
+                    <Calendar className="w-4 h-4 text-purple-600" />
                     <span>Enrolled: {student.enrollmentDate}</span>
                   </div>
                 </div>
@@ -285,7 +343,7 @@ const Students = () => {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="flex-1 border-green-200 text-green-700 hover:bg-green-50"
+                        className="flex-1 border-purple-200 text-purple-700 hover:bg-purple-50"
                         onClick={() => setSelectedStudent(student)}
                       >
                         <Eye className="w-4 h-4 mr-1" />
@@ -333,6 +391,14 @@ const Students = () => {
                                 <label className="text-sm font-medium text-gray-600">Enrollment Date</label>
                                 <p className="text-lg">{selectedStudent.enrollmentDate}</p>
                               </div>
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-600">Blood Group</label>
+                                <p className="text-lg">{selectedStudent.bloodGroup}</p>
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-600">Genotype</label>
+                                <p className="text-lg">{selectedStudent.genotype}</p>
+                              </div>
                             </div>
                           </TabsContent>
                           
@@ -351,8 +417,8 @@ const Students = () => {
                                 <p className="text-lg">2024/2025</p>
                               </div>
                               <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-600">Current Term</label>
-                                <p className="text-lg">Second Term</p>
+                                <label className="text-sm font-medium text-gray-600">Previous School</label>
+                                <p className="text-lg">{selectedStudent.previousSchool}</p>
                               </div>
                             </div>
                           </TabsContent>
@@ -385,7 +451,7 @@ const Students = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="border-green-200 text-green-700 hover:bg-green-50"
+                    className="border-purple-200 text-purple-700 hover:bg-purple-50"
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -397,10 +463,10 @@ const Students = () => {
       </div>
 
       {filteredStudents.length === 0 && (
-        <Card className="border-green-200">
+        <Card className="border-purple-200">
           <CardContent className="p-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-              <Users className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+              <Users className="w-8 h-8 text-purple-600" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No Students Found</h3>
             <p className="text-gray-600">No students match your current search criteria. Try adjusting your filters.</p>

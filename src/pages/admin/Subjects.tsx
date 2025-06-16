@@ -43,7 +43,7 @@ const Subjects = () => {
   const filteredSubjects = nigerianSubjects.filter(subject => {
     const matchesSearch = subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          subject.code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLevel = selectedLevel === 'all' || subject.level === selectedLevel;
+    const matchesLevel = selectedLevel === 'all' || subject.levels.includes(selectedLevel);
     return matchesSearch && matchesLevel;
   });
 
@@ -77,7 +77,7 @@ const Subjects = () => {
       name: subject.name,
       code: subject.code,
       description: subject.description || '',
-      level: subject.level,
+      level: subject.levels[0] || '',
       category: subject.category || 'Core',
       weeksPerTerm: '13',
       periodsPerWeek: '4'
@@ -89,14 +89,18 @@ const Subjects = () => {
     toast.success(`Subject "${subject.name}" deleted successfully!`);
   };
 
-  const getLevelBadge = (level: string) => {
+  const getLevelBadge = (levels: string[]) => {
     const levelColors = {
       nursery: 'bg-purple-100 text-purple-800',
       primary: 'bg-green-100 text-green-800',
       jss: 'bg-blue-100 text-blue-800',
       sss: 'bg-orange-100 text-orange-800'
     };
-    return levelColors[level] || 'bg-gray-100 text-gray-800';
+    return levels.map((level, index) => (
+      <Badge key={index} className={levelColors[level] || 'bg-gray-100 text-gray-800'}>
+        {level.toUpperCase()}
+      </Badge>
+    ));
   };
 
   const getCategoryBadge = (category: string) => {
@@ -112,10 +116,10 @@ const Subjects = () => {
 
   const subjectStats = {
     total: nigerianSubjects.length,
-    nursery: nigerianSubjects.filter(s => s.level === 'nursery').length,
-    primary: nigerianSubjects.filter(s => s.level === 'primary').length,
-    jss: nigerianSubjects.filter(s => s.level === 'jss').length,
-    sss: nigerianSubjects.filter(s => s.level === 'sss').length
+    nursery: nigerianSubjects.filter(s => s.levels.includes('nursery')).length,
+    primary: nigerianSubjects.filter(s => s.levels.includes('primary')).length,
+    jss: nigerianSubjects.filter(s => s.levels.includes('jss')).length,
+    sss: nigerianSubjects.filter(s => s.levels.includes('sss')).length
   };
 
   return (
@@ -128,7 +132,7 @@ const Subjects = () => {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
+            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
               <Plus className="w-4 h-4 mr-2" />
               Add New Subject
             </Button>
@@ -233,7 +237,7 @@ const Subjects = () => {
                 <Button variant="outline" type="button" onClick={() => setIsDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-gradient-to-r from-green-600 to-blue-600">
+                <Button type="submit" className="bg-gradient-to-r from-purple-600 to-blue-600">
                   {editingSubject ? 'Update Subject' : 'Create Subject'}
                 </Button>
               </DialogFooter>
@@ -306,7 +310,7 @@ const Subjects = () => {
       </div>
 
       {/* Filters */}
-      <Card className="border-green-200">
+      <Card className="border-purple-200">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
@@ -316,13 +320,13 @@ const Subjects = () => {
                   placeholder="Search subjects by name or code..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-green-200 focus:border-green-400"
+                  className="pl-10 border-purple-200 focus:border-purple-400"
                 />
               </div>
             </div>
             <div className="flex gap-2">
               <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                <SelectTrigger className="w-[180px] border-green-200">
+                <SelectTrigger className="w-[180px] border-purple-200">
                   <SelectValue placeholder="All Levels" />
                 </SelectTrigger>
                 <SelectContent>
@@ -351,7 +355,7 @@ const Subjects = () => {
         <TabsContent value="all" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredSubjects.map((subject, index) => (
-              <Card key={index} className="border-l-4 border-l-green-500 hover:shadow-lg transition-shadow">
+              <Card key={index} className="border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div>
@@ -370,10 +374,8 @@ const Subjects = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Badge className={getLevelBadge(subject.level)}>
-                        {subject.level.toUpperCase()}
-                      </Badge>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {getLevelBadge(subject.levels)}
                       <Badge className={getCategoryBadge(subject.category || 'Core')}>
                         {subject.category || 'Core'}
                       </Badge>
@@ -395,8 +397,8 @@ const Subjects = () => {
         {['nursery', 'primary', 'jss', 'sss'].map(level => (
           <TabsContent key={level} value={level} className="space-y-4 mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {nigerianSubjects.filter(s => s.level === level).map((subject, index) => (
-                <Card key={index} className="border-l-4 border-l-green-500 hover:shadow-lg transition-shadow">
+              {nigerianSubjects.filter(s => s.levels.includes(level)).map((subject, index) => (
+                <Card key={index} className="border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div>
