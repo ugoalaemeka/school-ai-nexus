@@ -3,10 +3,13 @@ import { RouteObject } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import AdminDashboard from "@/pages/admin/Dashboard";
+import Analytics from "@/pages/admin/Analytics";
 import Users from "@/pages/admin/Users";
 import TeachersPage from "@/pages/admin/Teachers";
+import Students from "@/pages/admin/Students";
 import Applications from "@/pages/admin/Applications";
 import Classes from "@/pages/admin/Classes";
+import Subjects from "@/pages/admin/Subjects";
 import Fees from "@/pages/admin/Fees";
 import Events from "@/pages/admin/Events";
 import Reports from "@/pages/admin/Reports";
@@ -19,6 +22,26 @@ export const adminRoutes: RouteObject[] = [
       <ProtectedRoute allowedRoles={["admin"]}>
         <AdminLayout>
           <AdminDashboard />
+        </AdminLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/admin/analytics",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminLayout>
+          <Analytics />
+        </AdminLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/admin/students",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminLayout>
+          <Students />
         </AdminLayout>
       </ProtectedRoute>
     )
@@ -59,6 +82,16 @@ export const adminRoutes: RouteObject[] = [
       <ProtectedRoute allowedRoles={["admin"]}>
         <AdminLayout>
           <Classes />
+        </AdminLayout>
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/admin/subjects",
+    element: (
+      <ProtectedRoute allowedRoles={["admin"]}>
+        <AdminLayout>
+          <Subjects />
         </AdminLayout>
       </ProtectedRoute>
     )
